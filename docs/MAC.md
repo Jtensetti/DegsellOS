@@ -16,8 +16,8 @@ alla Apple Silicon-Macar.
    som en befintlig disk (*Import*). Ta bort den tomma disken UTM skapade.
 4. Ge maskinen minst **4 GB RAM** (8 GB rekommenderas om du ska köra lokal AI)
    och 4 CPU-kärnor.
-5. Starta. GNOME:s välkomstguide skapar ditt konto. Kör sedan
-   *ForskarOS – installera verktyg* från programmenyn.
+5. Starta. GNOME:s välkomstguide skapar ditt konto. Vid första inloggningen
+   öppnas *ForskarOS – verktygslåda* där du väljer forskningsverktyg.
 
 Vid första start installeras grundverktygen automatiskt i bakgrunden (kräver
 nätverk, tar en stund). Vid första inloggningen öppnas verktygslådan där du
