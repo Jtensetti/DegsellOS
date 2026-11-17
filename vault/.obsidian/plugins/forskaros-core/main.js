@@ -52,6 +52,10 @@ const PHASE_TOOLS = {
 };
 
 const MAX_AKTIVA_FRÅGOR = 2;
+/** Aktiva plus vilande. Vila ska inte bli ett sätt att runda gränsen ovan. */
+const MAX_ÖPPNA_FRÅGOR = 4;
+/** Sätt att avsluta en fråga. Förkastad är ett resultat, inte ett misslyckande. */
+const UTFALL = { besvarad: 'Besvarad', förkastad: 'Hypotesen förkastad', övergiven: 'Övergiven' };
 const MIN_EGNA_ORD = 50;
 
 /** Uppgifter som en AI-konsultation kan ha. */
@@ -293,6 +297,27 @@ function audit(notes, date) {
       `${active.length} aktiva forskningsfrågor. Arbetsmetoden rekommenderar högst ${MAX_AKTIVA_FRÅGOR}. Parkera eller lägg några att vila.`));
   }
 
+  // Öppna frågor (aktiva + vilande).
+  const öppna = questions.filter(q => ['aktiv', 'vilar'].includes(q.fm.status || 'aktiv'));
+  if (öppna.length > MAX_ÖPPNA_FRÅGOR) {
+    out.push(finding('varning', 'Många öppna frågor',
+      `${öppna.length} frågor är aktiva eller vilar. Avsluta några med ett utfall (besvarad, förkastad eller övergiven).`));
+  }
+
+  // Påbörjade jämfört med avslutade: fler nya frågor än avslutade är det
+  // mönster arbetsmetoden ska fånga.
+  const påbörjade90 = questions.filter(q => q.fm.status !== 'förslag' && noteDate(q) && daysBetween(noteDate(q), date) <= 90);
+  const avslutade90 = questions.filter(q => q.fm.status === 'avslutad' && q.fm.avslutad && daysBetween(String(q.fm.avslutad), date) <= 90);
+  if (påbörjade90.length >= 3 && avslutade90.length === 0) {
+    out.push(finding('varning', 'Påbörjat mer än avslutat',
+      `${påbörjade90.length} frågor påbörjade de senaste 90 dagarna och ingen avslutad.`));
+  }
+
+  for (const q of questions.filter(q => q.fm.status === 'vilar' && Number(q.fm.vilat || 0) >= 3)) {
+    out.push(finding('påminnelse', 'Vilar ofta',
+      `"${basename(q.path)}" har lagts att vila ${q.fm.vilat} gånger. Ta upp den eller avsluta den med ett utfall.`, q.path));
+  }
+
   for (const q of active) {
     const fas = q.fm.fas || 'utforska';
     const sedan = q.fm.fas_ändrad || noteDate(q);
@@ -322,8 +347,14 @@ function audit(notes, date) {
   // Hypoteser utan motprov.
   for (const h of of('hypotes')) {
     const ålder = daysBetween(noteDate(h) || date, date);
-    const harMotprov = of('motprov').some(m => linkTarget(m.fm.gäller) &&
-      (linkTarget(m.fm.gäller) === h.path.replace(/\.md$/, '') || linkTarget(m.fm.gäller) === basename(h.path)));
+    // Ett motprov gäller hypotesen om det pekar på den, eller om det inte pekar
+    // på någon särskild hypotes men hör till samma forskningsfråga.
+    const harMotprov = of('motprov').some(m => {
+      const g = linkTarget(m.fm.gäller);
+      if (g) return g === h.path.replace(/\.md$/, '') || g === basename(h.path);
+      const fm = linkTarget(m.fm.fråga), fh = linkTarget(h.fm.fråga);
+      return Boolean(fm) && fm === fh;
+    });
     if (!harMotprov && ålder > 14 && (h.fm.status || 'oprövad') === 'oprövad') {
       out.push(finding('påminnelse', 'Oprövad hypotes',
         `Hypotesen "${basename(h.path)}" har inget motprov efter ${ålder} dagar.`, h.path));
@@ -338,6 +369,13 @@ function audit(notes, date) {
       senasteMöte
         ? `Senaste forskningsmötet var för ${daysBetween(senasteMöte, date)} dagar sedan.`
         : 'Inget forskningsmöte dokumenterat än.'));
+  }
+
+  // Nätverk: nya kontakter tillför fler perspektiv än samma personer.
+  const möten180 = of('forskningsmöte').filter(m => noteDate(m) && daysBetween(noteDate(m), date) <= 180);
+  if (möten180.length >= 3 && !möten180.some(m => m.fm.ny_kontakt === 'ja')) {
+    out.push(finding('påminnelse', 'Inga nya kontakter',
+      `${möten180.length} forskningsmöten senaste halvåret, inget med en ny kontakt.`));
   }
 
   // Tillit: öppna felrättningar.
@@ -404,6 +442,16 @@ function metrics(notes, date) {
     tolkning += (b.match(/\[!tolkning\]/gi) || []).length;
     spekulation += (b.match(/\[!spekulation\]/gi) || []).length;
   }
+  const möten90 = of('forskningsmöte').filter(n => inom(n, 90));
+  // Fokuspass loggas av forskaros-fokus: "- 2026-11-10 09:00–09:50 (50 av 50 min): …"
+  let fokuspass = 0, fokusminuter = 0;
+  for (const logg of of('fokuslogg')) {
+    for (const m of String(logg.body || '').matchAll(/^- (\d{4}-\d{2}-\d{2}) [^(]*\((\d+) av \d+ min\)/gm)) {
+      if (daysBetween(m[1], date) <= 30) { fokuspass++; fokusminuter += Number(m[2]); }
+    }
+  }
+  const avslutade = of('forskningsfråga').filter(q => q.fm.status === 'avslutad');
+  const utfall = Object.fromEntries(Object.keys(UTFALL).map(k => [k, avslutade.filter(q => q.fm.utfall === k).length]));
   return {
     aiKonsultationer: ai.length,
     tänktFörst: ai.filter(a => a.fm.egen_tanke_först === 'ja').length,
@@ -411,7 +459,11 @@ function metrics(notes, date) {
     motprov: of('motprov').length,
     omprövningar: of('omprövning').length,
     felrättningar: of('felrättning').length,
-    avslutadeCykler: of('forskningsfråga').reduce((s, q) => s + Math.max(0, Number(q.fm.cykel || 1) - 1), 0),
+    möten: möten90.length,
+    nyaKontakter: möten90.filter(n => n.fm.ny_kontakt === 'ja').length,
+    fokuspass,
+    fokusminuter,
+    utfall,
     förmåga: sista ? score(sista) : null,
     förmågaFörra: förra ? score(förra) : null,
     epistemik: { belagt, tolkning, spekulation }
@@ -499,6 +551,9 @@ ${source || ''}
 
 ## Den ovanliga kombinationen
 > Vilka fält, idéer eller metoder kombineras som sällan möts?
+
+
+## Vilket etablerat antagande utmanar hypotesen?
 
 
 ## Prediktioner
@@ -764,7 +819,7 @@ function appendPhaseLog(body, line) {
 }
 
 const engine = {
-  PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, EPISTEMIC_CONTRACT, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
+  PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, EPISTEMIC_CONTRACT, UTFALL, MAX_ÖPPNA_FRÅGOR, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
   today, addDays, daysBetween, phaseOf, nextPhase, linkTarget, refersTo, section, ownWords,
   phaseRequirements, audit, metrics, buildPrompt, appendPhaseLog, questionNote, ideaNote, TYPES
 };
@@ -817,6 +872,34 @@ class FormModal extends Modal {
 }
 
 /** Dialog för att lämna en fas: visar kraven och kräver motivering om de inte är uppfyllda. */
+/** Avsluta en forskningsfråga med ett utfall och en motivering. */
+class CloseModal extends Modal {
+  constructor(app, plugin, question) {
+    super(app);
+    Object.assign(this, { plugin, question });
+  }
+  onOpen() {
+    const el = this.contentEl;
+    el.empty();
+    el.addClass('forskaros-modal');
+    el.createEl('h3', { text: `Avsluta: ${basename(this.question.path)}` });
+    el.createEl('p', { text: 'En förkastad hypotes är också ett resultat. Övergiven betyder att frågan läggs ner utan svar.' });
+    el.createEl('label', { text: 'Utfall', cls: 'forskaros-label' });
+    const utfall = el.createEl('select', { cls: 'forskaros-input' });
+    for (const [id, namn] of Object.entries(UTFALL)) utfall.createEl('option', { text: namn, value: id });
+    el.createEl('label', { text: 'Vad blev resultatet, eller varför läggs frågan ner?', cls: 'forskaros-label' });
+    const why = el.createEl('textarea', { cls: 'forskaros-input' });
+    const row = el.createDiv({ cls: 'forskaros-row' });
+    row.createEl('button', { text: 'Avsluta frågan', cls: 'mod-cta' }).addEventListener('click', async () => {
+      if (!why.value.trim()) { new Notice('Skriv en motivering.'); return; }
+      this.close();
+      await this.plugin.closeQuestion(this.question, utfall.value, why.value.trim());
+    });
+    row.createEl('button', { text: 'Avbryt' }).addEventListener('click', () => this.close());
+  }
+  onClose() { this.contentEl.empty(); }
+}
+
 class PhaseModal extends Modal {
   constructor(app, plugin, question, requirements) {
     super(app);
@@ -943,8 +1026,10 @@ class ForskarOSView extends ItemView {
     }
     for (const q of active) this.renderQuestion(root, q, notes);
     const vilande = questions.filter(q => q.fm.status === 'vilar');
-    if (vilande.length) {
-      root.createEl('p', { cls: 'forskaros-muted', text: `Vilar: ${vilande.map(q => `${basename(q.path)} (till ${q.fm.vila_till || '?'})`).join(', ')}` });
+    for (const q of vilande) {
+      const rad = root.createDiv({ cls: 'forskaros-resting' });
+      rad.createEl('span', { cls: 'forskaros-muted', text: `Vilar: ${basename(q.path)} (till ${q.fm.vila_till || '?'})` });
+      rad.createEl('button', { text: 'Återuppta' }).addEventListener('click', () => void this.plugin.resumeQuestion(q));
     }
 
     // Granskning.
@@ -973,6 +1058,10 @@ class ForskarOSView extends ItemView {
     card(String(m.motprov), 'Motprov');
     card(String(m.omprövningar), 'Omprövningar');
     card(String(m.felrättningar), 'Felrättningar');
+    card(String(m.möten), `Forskningsmöten 90 d (${m.nyaKontakter} nya kontakter)`);
+    card(String(m.fokuspass), `Fokuspass (${Math.round(m.fokusminuter / 60 * 10) / 10} h)`);
+    const u = m.utfall;
+    card(String(u.besvarad + u.förkastad), `Avslutade frågor (${u.övergiven} övergivna)`);
     const e = m.epistemik;
     root.createEl('p', { cls: 'forskaros-muted', text: `Märkta påståenden: ${e.belagt} belagt, ${e.tolkning} tolkning, ${e.spekulation} spekulation` });
 
@@ -1010,6 +1099,8 @@ class ForskarOSView extends ItemView {
       .addEventListener('click', () => new PhaseModal(this.app, this.plugin, q, reqs).open());
     row.createEl('button', { text: 'Lägg att vila' })
       .addEventListener('click', () => void this.plugin.restQuestion(q));
+    row.createEl('button', { text: 'Avsluta' })
+      .addEventListener('click', () => new CloseModal(this.app, this.plugin, q).open());
   }
 }
 
@@ -1021,6 +1112,11 @@ module.exports = class ForskarOSPlugin extends Plugin {
     this.addCommand({ id: 'new-question', name: 'Ny forskningsfråga', callback: () => this.newQuestion() });
     this.addCommand({ id: 'park-idea', name: 'Parkera en idé', callback: () => this.parkIdea() });
     this.addCommand({ id: 'consult-ai', name: 'Be AI om hjälp', callback: () => void this.consultAI() });
+    this.addCommand({ id: 'close-question', name: 'Avsluta forskningsfrågan', callback: () => void (async () => {
+      const q = await this.focusQuestion();
+      if (!q) { new Notice('Öppna den forskningsfråga du vill avsluta.'); return; }
+      new CloseModal(this.app, this, q).open();
+    })() });
     this.addCommand({ id: 'advance-phase', name: 'Gå vidare till nästa fas', callback: () => void this.advanceFromActive() });
     for (const [type, spec] of Object.entries(TYPES)) {
       this.addCommand({ id: `new-${type}`, name: spec.label, callback: () => void this.createNote(type) });
@@ -1039,6 +1135,12 @@ module.exports = class ForskarOSPlugin extends Plugin {
     let timer = null;
     const refresh = () => { clearTimeout(timer); timer = setTimeout(() => this.refreshDashboard(), 400); };
     if (this.app.metadataCache && this.app.metadataCache.on) this.registerEvent(this.app.metadataCache.on('changed', refresh));
+    // Panelen öppnas när vaulten öppnas.
+    if (this.app.workspace.onLayoutReady) {
+      this.app.workspace.onLayoutReady(() => {
+        if (!this.app.workspace.getLeavesOfType(VIEW_TYPE).length) void this.activateDashboard();
+      });
+    }
   }
 
   /** Läser alla anteckningar som har en ForskarOS-typ. */
@@ -1204,10 +1306,34 @@ module.exports = class ForskarOSPlugin extends Plugin {
     const file = this.app.vault.getAbstractFileByPath(q.path);
     if (!file) return;
     const till = addDays(today(), 14);
-    await this.app.fileManager.processFrontMatter(file, f => { f.status = 'vilar'; f.vila_till = till; });
+    await this.app.fileManager.processFrontMatter(file, f => { f.status = 'vilar'; f.vila_till = till; f.vilat = Number(f.vilat || 0) + 1; });
     const body = await this.app.vault.read(file);
     await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Lagd att vila till ${till} (inkubation).`));
     new Notice(`"${basename(q.path)}" vilar till ${till}.`);
+    this.refreshDashboard();
+  }
+
+  async resumeQuestion(q) {
+    const file = this.app.vault.getAbstractFileByPath(q.path);
+    if (!file) return;
+    await this.app.fileManager.processFrontMatter(file, f => { f.status = 'aktiv'; f.fas_ändrad = today(); delete f.vila_till; });
+    const body = await this.app.vault.read(file);
+    await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Återupptagen.`));
+    const notes = await this.collectNotes();
+    const aktiva = notes.filter(n => n.fm.typ === 'forskningsfråga' && (n.fm.status || 'aktiv') === 'aktiv').length;
+    new Notice(aktiva > MAX_AKTIVA_FRÅGOR ? `${aktiva} aktiva frågor nu.` : `"${basename(q.path)}" är aktiv igen.`);
+    this.refreshDashboard();
+  }
+
+  async closeQuestion(q, utfall, motivering) {
+    const file = this.app.vault.getAbstractFileByPath(q.path);
+    if (!file || !UTFALL[utfall]) return;
+    await this.app.fileManager.processFrontMatter(file, f => {
+      f.status = 'avslutad'; f.utfall = utfall; f.avslutad = today(); delete f.vila_till;
+    });
+    const body = await this.app.vault.read(file);
+    await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Avslutad i fasen ${phaseOf(q.fm.fas).namn}. Utfall: ${UTFALL[utfall]}. ${motivering}`));
+    new Notice(`"${basename(q.path)}" avslutad: ${UTFALL[utfall]}.`);
     this.refreshDashboard();
   }
 

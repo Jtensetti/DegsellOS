@@ -15,7 +15,7 @@ typ: handbok
 
 Kraven för varje fas står i [[00 START/Arbetsmetod]]. De går att hoppa över, men motiveringen loggas i frågan. Arbetet är sällan linjärt, och loggen gör det möjligt att se i efterhand var genvägar togs.
 
-Metoden tillåter högst två aktiva frågor. Nya idéer sparas i idébanken så att de inte tränger undan det pågående arbetet.
+Metoden tillåter högst två aktiva frågor och fyra öppna, där vilande räknas. Nya idéer sparas i idébanken så att de inte tränger undan det pågående arbetet. När en fråga är klar avslutas den med ett utfall; *hypotesen förkastad* räknas som ett resultat. Panelen varnar om tre eller fler frågor påbörjats på 90 dagar utan att någon avslutats.
 
 ## Övning utan AI
 Ta en idé du har haft länge och avgör vilken fas den är i och vad som saknas för nästa. Jämför sedan med panelen.

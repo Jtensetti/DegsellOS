@@ -14,16 +14,16 @@ Varje forskningsfråga går igenom sju faser. Panelen visar kraven för att gå 
 | 6. Ompröva | En omprövning och nedskrivna lärdomar |
 | 7. Dela | Resultatet har delats med någon som kan granska det |
 
-Efter Dela börjar en ny cykel.
+Efter Dela börjar en ny cykel. En fråga avslutas med *Avsluta* och ett utfall: besvarad, hypotesen förkastad eller övergiven. En förkastad hypotes räknas som ett resultat.
 
 ## Regler
 
-- **Högst två aktiva frågor.** Nya idéer sparas i idébanken (*Parkera en idé*).
+- **Högst två aktiva och fyra öppna frågor.** Vilande frågor räknas som öppna. Nya idéer sparas i idébanken (*Parkera en idé*).
 - **Eget utkast före AI.** *Be AI om hjälp* kräver minst 50 egna ord i anteckningen för utvecklings- och prövningsläget.
 - **Varje hypotes ska ha ett motprov**, och minst en person utanför projektet ska ha sett idén.
 - **Märk påståenden** som belagt (med källa), tolkning eller spekulation.
 - **Rätta fel öppet** med en felrättning.
-- **Vila.** En fråga kan läggas att vila i två veckor.
+- **Vila.** En fråga kan läggas att vila i två veckor och återupptas från panelen.
 
 ## AI-konsultationer
 
@@ -43,11 +43,11 @@ Med profilen *Lokal AI* körs modellerna på datorn. Molntjänster installeras b
 
 ## Granskning
 
-Panelens lista *Att åtgärda* bygger på reglerna ovan: för många aktiva frågor, en fråga som stått still i över 30 dagar, hypoteser utan motprov, inget forskningsmöte på 30 dagar, AI-konsultationer utan eget utkast eller utan sammanfattning, öppna felrättningar, utebliven förmågegranskning och vilande frågor som är redo att tas upp igen.
+Panelens lista *Att åtgärda* bygger på reglerna ovan: för många aktiva eller öppna frågor, tre eller fler påbörjade frågor de senaste 90 dagarna utan att någon avslutats, en fråga som lagts att vila tre gånger, en fråga som stått still i över 30 dagar, hypoteser utan motprov, inget forskningsmöte på 30 dagar, AI-konsultationer utan eget utkast eller utan sammanfattning, öppna felrättningar, utebliven förmågegranskning vilande frågor som är redo att tas upp igen och forskningsmöten utan nya kontakter under ett halvår.
 
 ## Mått
 
-Panelen visar andelen AI-konsultationer med eget utkast, övningar utan AI, motprov, omprövningar och felrättningar. Förmågegranskningen skattar sju förmågor 1–5 en gång i månaden. Måtten är självskattningar och inte validerade.
+Panelen visar andelen AI-konsultationer med eget utkast, övningar utan AI, motprov, omprövningar, felrättningar, forskningsmöten och nya kontakter, fokuspass och avslutade frågor. Förmågegranskningen skattar sju förmågor 1–5 en gång i månaden. Måtten är självskattningar och inte validerade.
 
 ## Bakgrund
 

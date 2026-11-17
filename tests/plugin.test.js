@@ -91,7 +91,7 @@ const { engine } = ForskarOSPlugin;
   const p = new ForskarOSPlugin();
   await p.onload();
   const ids = commands.map(c => c.id);
-  for (const id of ['open-dashboard', 'new-question', 'park-idea', 'consult-ai', 'advance-phase', 'mark-belagt', 'mark-tolkning', 'mark-spekulation']) {
+  for (const id of ['open-dashboard', 'close-question', 'new-question', 'park-idea', 'consult-ai', 'advance-phase', 'mark-belagt', 'mark-tolkning', 'mark-spekulation']) {
     assert(ids.includes(id), `kommandot ${id} saknas`);
   }
   assert.equal(new Set(ids).size, ids.length, 'kommando-id ska vara unika');
@@ -136,6 +136,20 @@ const { engine } = ForskarOSPlugin;
   await p.restQuestion(q3);
   assert.match(qFile.content, /status: vilar/);
   assert.match(qFile.content, /vila_till: \d{4}-\d{2}-\d{2}/);
+
+  // Vila räknas, återupptagning och avslut med utfall loggas.
+  assert.match(qFile.content, /vilat: 1/);
+  const q4 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
+  await p.resumeQuestion(q4);
+  assert.match(qFile.content, /status: aktiv/);
+  assert.doesNotMatch(qFile.content, /vila_till/);
+  assert.match(qFile.content, /Återupptagen\./);
+  const q5 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
+  await p.closeQuestion(q5, 'förkastad', 'Ingen skillnad mellan grupperna.');
+  assert.match(qFile.content, /status: avslutad/);
+  assert.match(qFile.content, /utfall: förkastad/);
+  assert.match(qFile.content, /Utfall: Hypotesen förkastad\. Ingen skillnad mellan grupperna\./);
+  assert.equal(engine.metrics(await p.collectNotes(), engine.today()).utfall.förkastad, 1);
 
   // Idéparkering.
   await p.saveIdea('AI som handledare i språkundervisning\nKanske en senare fråga.');

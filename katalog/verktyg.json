@@ -36,6 +36,12 @@
       "beskrivning": "Installeras automatiskt vid första start: webbläsare, kontorspaket, referenshantering, statistik, PDF-anteckningar och säkerhetskopiering."
     },
     {
+      "id": "obsidian",
+      "namn": "Obsidian (krävs för ForskarOS Core)",
+      "beskrivning": "Gränssnittet för vaulten och panelen. Gratis men inte öppen källkod.",
+      "aktivt_val": "licens"
+    },
+    {
       "id": "rekommenderat",
       "namn": "Rekommenderat urval",
       "beskrivning": "Tio verktyg som de flesta forskare har nytta av."
@@ -71,10 +77,10 @@
       "beskrivning": "Språkmodeller som körs helt på din dator. Inget lämnar maskinen."
     },
     {
-      "id": "proprietart",
-      "namn": "Proprietärt och moln (aktivt val)",
-      "beskrivning": "Inte öppen källkod, eller skickar data till en molntjänst. Installeras bara om du uttryckligen väljer det.",
-      "aktivt_val": true
+      "id": "moln",
+      "namn": "AI-tjänster i molnet (tillval)",
+      "beskrivning": "Genvägar till Perplexity, Elicit och Consensus. Det du skriver skickas till tjänsterna.",
+      "aktivt_val": "moln"
     }
   ],
   "verktyg": [
@@ -379,7 +385,7 @@
       "id": "md.obsidian.Obsidian",
       "typ": "flatpak",
       "namn": "Obsidian",
-      "profil": "proprietart",
+      "profil": "obsidian",
       "fas": "utforska",
       "kort": "Gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)",
       "metod": "Gränssnittet för vaulten och ForskarOS Core. Gratis men inte öppen källkod.",
@@ -390,7 +396,7 @@
       "typ": "webb",
       "url": "https://www.perplexity.ai",
       "namn": "Perplexity",
-      "profil": "proprietart",
+      "profil": "moln",
       "fas": "utforska",
       "kort": "AI-sök i molnet",
       "metod": "AI-sök med källhänvisningar. Molntjänst.",
@@ -401,7 +407,7 @@
       "typ": "webb",
       "url": "https://elicit.com",
       "namn": "Elicit",
-      "profil": "proprietart",
+      "profil": "moln",
       "fas": "utforska",
       "kort": "AI-stöd för litteraturöversikter i molnet",
       "metod": "AI-stöd för litteraturöversikter. Molntjänst.",
@@ -412,7 +418,7 @@
       "typ": "webb",
       "url": "https://consensus.app",
       "namn": "Consensus",
-      "profil": "proprietart",
+      "profil": "moln",
       "fas": "utforska",
       "kort": "AI-sök i forskningsartiklar i molnet",
       "metod": "AI-sök i forskningsartiklar. Molntjänst.",

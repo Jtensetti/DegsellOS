@@ -1,14 +1,14 @@
 ---
 typ: verktygskort
 fas: utforska
-profil: proprietart
+profil: moln
 ---
 # Consensus
 
 > AI-sök i forskningsartiklar i molnet
 
 **Fas:** 1 · Utforska  
-**Profil:** Proprietärt och moln (aktivt val)
+**Profil:** AI-tjänster i molnet (tillval)
 
 ## Vad det används till
 
@@ -16,10 +16,10 @@ AI-sök i forskningsartiklar. Molntjänst. Det du skriver skickas till tjänsten
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Proprietärt och moln (aktivt val)**, eller kör:
+Öppna *ForskarOS – verktygslåda* och välj **AI-tjänster i molnet (tillval)**, eller kör:
 
 ```bash
-forskaros-setup --profil proprietart
+forskaros-setup --profil moln
 ```
 
 ## Läs mer

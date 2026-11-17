@@ -17,7 +17,8 @@ Status: avbildningen byggs i CI för amd64 och arm64. Den har inte startats på 
 Ett Obsidian-tillägg. Allt sker lokalt; tillägget gör inga nätverksanrop.
 
 - **Faser:** varje forskningsfråga går igenom Utforska, Kombinera, Välj, Pröva, Utveckla, Ompröva och Dela. Varje fas har krav (till exempel ett besvarat motprov och ett möte med någon utanför projektet innan Pröva är klar). Kraven går att hoppa över, men motiveringen loggas i frågan.
-- **Att åtgärda:** en lista som bygger på vaultens innehåll, till exempel hypoteser utan motprov, frågor som stått still i 30 dagar och fler än två aktiva frågor.
+- **Avslut:** en fråga avslutas med ett utfall: besvarad, hypotesen förkastad eller övergiven.
+- **Att åtgärda:** en lista som bygger på vaultens innehåll, till exempel hypoteser utan motprov, frågor som stått still i 30 dagar, fler påbörjade än avslutade frågor och för många öppna frågor (vilande räknas).
 - **AI-konsultationer:** tillägget skapar en text att kopiera till valfri AI och loggar konsultationen. Utvecklings- och prövningsläget kräver att anteckningen har minst 50 egna ord.
 - **Mallar** för forskningsfrågor, hypoteser, motprov, perspektivkartor, experiment, omprövningar, forskningsmöten, felrättningar, övningar och en månatlig förmågegranskning.
 
@@ -38,6 +39,7 @@ Verktygen definieras i [`katalog/verktyg.json`](katalog/verktyg.json). Därifrå
 | Profil | Innehåll |
 |---|---|
 | Grund (installeras vid första start) | Firefox, LibreOffice, Zotero, JASP, Xournal++, Déjà Dup |
+| Obsidian (krävs för ForskarOS Core) | Obsidian; inte öppen källkod, installeras efter licensgodkännande |
 | Rekommenderat urval | Tio verktyg ur övriga profiler |
 | Skriva och publicera | Zettlr, ONLYOFFICE, TeXstudio, Pandoc, Typst |
 | Statistik och data | jamovi, LabPlot, R, DuckDB, JupyterLab |
@@ -45,7 +47,7 @@ Verktygen definieras i [`katalog/verktyg.json`](katalog/verktyg.json). Därifrå
 | Kvalitativ forskning | Speech Note, Taguette |
 | Idéer och modeller | draw.io, Freeplane, Rnote |
 | Lokal AI | Ollama, Alpaca |
-| Proprietärt och moln (tillval) | Obsidian, Perplexity, Elicit, Consensus |
+| AI-tjänster i molnet (tillval) | Genvägar till Perplexity, Elicit, Consensus |
 
 ```bash
 forskaros-setup                       # välj profiler interaktivt
@@ -53,7 +55,7 @@ forskaros-setup --profil statistik    # installera en profil
 forskaros-setup --lista               # visa profilerna
 ```
 
-Allt utom den sista profilen är öppen källkod. CI kontrollerar att varje verktyg finns för både amd64 och arm64 på Flathub, Homebrew eller PyPI.
+Allt utom Obsidian och molntjänsterna är öppen källkod. CI kontrollerar att varje verktyg finns för både amd64 och arm64 på Flathub, Homebrew eller PyPI.
 
 ## Labbet
 

@@ -204,6 +204,62 @@ test('varje fas har verktyg', () => {
   for (const ph of e.PHASES) assert(e.PHASE_TOOLS[ph.id], `verktyg saknas för ${ph.id}`);
 });
 
+test('granskning: vila räknas som öppen fråga', () => {
+  const qs = [1, 2, 3, 4, 5].map(i => note(`q${i}.md`, { typ: 'forskningsfråga', status: i < 4 ? 'vilar' : 'aktiv', vila_till: '2026-12-30', fas: 'utforska', fas_ändrad: DAY, datum: DAY }));
+  assert.equal(princip(e.audit(qs, DAY), 'Många öppna frågor').length, 1);
+  assert.equal(princip(e.audit(qs.slice(0, 4), DAY), 'Många öppna frågor').length, 0);
+});
+
+test('granskning: fler påbörjade än avslutade frågor', () => {
+  const qs = [1, 2, 3].map(i => note(`q${i}.md`, { typ: 'forskningsfråga', status: 'vilar', vila_till: '2026-12-30', datum: '2026-10-0' + i }));
+  assert.equal(princip(e.audit(qs, DAY), 'Påbörjat mer än avslutat').length, 1);
+  const klar = note('q4.md', { typ: 'forskningsfråga', status: 'avslutad', utfall: 'förkastad', avslutad: '2026-11-01', datum: '2026-09-01' });
+  assert.equal(princip(e.audit([...qs, klar], DAY), 'Påbörjat mer än avslutat').length, 0, 'en förkastad hypotes räknas som avslutad');
+  const förslag = [1, 2, 3].map(i => note(`f${i}.md`, { typ: 'forskningsfråga', status: 'förslag', datum: DAY }));
+  assert.equal(princip(e.audit(förslag, DAY), 'Påbörjat mer än avslutat').length, 0, 'förslag räknas inte');
+});
+
+test('granskning: en fråga som vilat tre gånger', () => {
+  const q = note(Q, { typ: 'forskningsfråga', status: 'vilar', vila_till: '2026-12-30', vilat: 3 });
+  assert.equal(princip(e.audit([q], DAY), 'Vilar ofta').length, 1);
+});
+
+test('granskning: motprov på frågan täcker dess hypoteser, inte andras', () => {
+  const h = note('h.md', { typ: 'hypotes', fråga: link, datum: '2026-10-01' });
+  const m = note('m.md', { typ: 'motprov', fråga: link, datum: DAY });
+  assert.equal(princip(e.audit([h, m], DAY), 'Oprövad hypotes').length, 0);
+  const annan = note('m2.md', { typ: 'motprov', fråga: '[[Annan]]', datum: DAY });
+  assert.equal(princip(e.audit([h, annan], DAY), 'Oprövad hypotes').length, 1);
+  const riktad = note('m3.md', { typ: 'motprov', fråga: link, gäller: '[[annan-hypotes]]', datum: DAY });
+  assert.equal(princip(e.audit([h, riktad], DAY), 'Oprövad hypotes').length, 1, 'riktat motprov gäller bara sin hypotes');
+});
+
+test('granskning: inga nya kontakter på ett halvår', () => {
+  const m = i => note(`mö${i}.md`, { typ: 'forskningsmöte', ny_kontakt: 'nej', datum: '2026-1' + i + '-01' });
+  assert.equal(princip(e.audit([0, 1].map(m).concat(note('mö9.md', { typ: 'forskningsmöte', ny_kontakt: 'nej', datum: '2026-09-01' })), DAY), 'Inga nya kontakter').length, 1);
+  const ny = note('mö5.md', { typ: 'forskningsmöte', ny_kontakt: 'ja', datum: '2026-11-05' });
+  assert.equal(princip(e.audit([0, 1].map(m).concat(ny), DAY), 'Inga nya kontakter').length, 0);
+});
+
+test('mått: forskningsmöten, fokuspass och utfall', () => {
+  const m = e.metrics([
+    note('mö.md', { typ: 'forskningsmöte', ny_kontakt: 'ja', datum: '2026-11-01' }),
+    note('mö2.md', { typ: 'forskningsmöte', ny_kontakt: 'nej', datum: '2026-06-01' }),
+    note('f.md', { typ: 'fokuslogg' }, '- 2026-11-10 09:00–09:50 (50 av 50 min): \n- 2026-11-12 09:00–10:30 (90 av 90 min): klar\n- 2026-08-01 09:00–09:25 (25 av 25 min): '),
+    note('q1.md', { typ: 'forskningsfråga', status: 'avslutad', utfall: 'besvarad' }),
+    note('q2.md', { typ: 'forskningsfråga', status: 'avslutad', utfall: 'övergiven' })
+  ], DAY);
+  assert.equal(m.möten, 1);
+  assert.equal(m.nyaKontakter, 1);
+  assert.equal(m.fokuspass, 2);
+  assert.equal(m.fokusminuter, 140);
+  assert.deepEqual(m.utfall, { besvarad: 1, förkastad: 0, övergiven: 1 });
+});
+
+test('hypotesmallen frågar efter utmanat antagande', () => {
+  assert.match(e.TYPES.hypothesis.render({ date: DAY }), /## Vilket etablerat antagande utmanar hypotesen\?/);
+});
+
 test('datumhjälp', () => {
   assert.equal(e.addDays('2026-12-25', 14), '2027-01-08');
   assert.equal(e.daysBetween('2026-11-01', '2026-11-17'), 16);

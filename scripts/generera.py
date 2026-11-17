@@ -95,7 +95,8 @@ def generate(out: Path):
             f'# beskrivning: {p["beskrivning"]}',
         ]
         if p.get("aktivt_val"):
-            lines.append("# aktivt-val: ja")
+            assert p["aktivt_val"] in ("licens", "moln"), p["id"]
+            lines.append(f'# aktivt-val: {p["aktivt_val"]}')
         lines += [profile_line(t) for t in members]
         (out / PROFILDIR / f'{n:02d}-{p["id"]}.profil').write_text("\n".join(lines) + "\n", encoding="utf-8")
 

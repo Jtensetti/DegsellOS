@@ -74,14 +74,14 @@ if [[ -n "$WANT" ]]; then
   done
 else
   echo "ForskarOS – forskarens verktygslåda"
-  echo "Öppna verktyg är standard. Proprietärt och moln-AI installeras bara om du väljer det."
+  echo "ForskarOS Core kräver Obsidian (profil 2). Molntjänster installeras bara om du väljer dem."
   echo
   show_profiles
   echo
-  read -r -p "Vilka profiler? (t.ex. 2 3 5, 'alla' = alla öppna, Enter = avbryt) " reply
+  read -r -p "Vilka profiler? (t.ex. 2 3 5, 'alla' = alla öppna profiler, Enter = avbryt) " reply
   [[ -n "$reply" ]] || exit 0
   if [[ "$reply" == "alla" ]]; then
-    for p in "${PROFILES[@]}"; do [[ "$(meta "$p" aktivt-val)" == ja ]] || SELECTED+=("$p"); done
+    for p in "${PROFILES[@]}"; do [[ -n "$(meta "$p" aktivt-val)" ]] || SELECTED+=("$p"); done
   else
     for n in $reply; do
       [[ "$n" =~ ^[0-9]+$ && $n -ge 1 && $n -le ${#PROFILES[@]} ]] || { echo "Ogiltigt val: $n" >&2; exit 2; }
@@ -124,18 +124,17 @@ DESKTOP
 for p in "${SELECTED[@]}"; do
   echo
   echo "== $(meta "$p" namn) =="
-  if [[ "$(meta "$p" aktivt-val)" == ja ]]; then
-    echo "$(meta "$p" beskrivning)"
-    echo "Molntjänsterna tar emot det du skriver. Lägg inte in personuppgifter"
-    echo "eller sekretessbelagt material."
-    if [[ $YES -eq 1 && $DRY -eq 0 ]]; then
-      read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm
-    else
+  case "$(meta "$p" aktivt-val)" in
+    licens)
+      echo "$(meta "$p" beskrivning)"
+      if [[ $DRY -eq 0 ]] && ! ask "Installera? Du godkänner programmets licensvillkor."; then echo "Hoppar över."; continue; fi ;;
+    moln)
+      echo "$(meta "$p" beskrivning)"
+      echo "Lägg inte in personuppgifter eller sekretessbelagt material."
       confirm="jag väljer"
       [[ $DRY -eq 1 ]] || read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm
-    fi
-    [[ "$confirm" == "jag väljer" ]] || { echo "Hoppar över."; continue; }
-  fi
+      [[ "$confirm" == "jag väljer" ]] || { echo "Hoppar över."; continue; } ;;
+  esac
   while read -r kind id desc; do
     echo "· $desc"
     case "$kind" in

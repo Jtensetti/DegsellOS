@@ -25,8 +25,12 @@ for p in "$DIR"/*.profil; do
 done
 
 # 2. Proprietärt och moln finns bara i en profil som kräver aktivt val.
-grep -l 'md.obsidian.Obsidian\|^webb' "$DIR"/*.profil | while read -r p; do
-  grep -q '^# aktivt-val: ja' "$p" || fail "$p innehåller proprietärt/moln utan aktivt val"
+grep -l 'md.obsidian.Obsidian' "$DIR"/*.profil | while read -r p; do
+  grep -q '^# aktivt-val: licens' "$p" || fail "$p: Obsidian kräver licensval"
+  ! grep -q '^webb' "$p" || fail "$p: Obsidian ska inte ligga i samma profil som molntjänster"
+done
+grep -l '^webb' "$DIR"/*.profil | while read -r p; do
+  grep -q '^# aktivt-val: moln' "$p" || fail "$p: molntjänster kräver aktivt val"
 done
 
 # 3. Grundprofilen installeras automatiskt: bara Flatpak, bara öppet.
@@ -42,17 +46,19 @@ grep -q '+ skapa startare forskaros-jupyterlab.desktop' <<<"$out" || fail "start
 # 5. 'alla' i interaktivt läge tar inte med det som kräver aktivt val.
 out=$(echo alla | bash "$SETUP" --torrkörning)
 grep -q 'org.libreoffice.LibreOffice' <<<"$out" || fail "'alla' ska ta med grundprofilen"
-! grep -q 'md.obsidian.Obsidian\|perplexity' <<<"$out" || fail "'alla' får inte ta med proprietärt/moln"
+! grep -q 'md.obsidian.Obsidian\|perplexity' <<<"$out" || fail "'alla' får inte ta med profiler som kräver aktivt val"
 
 # 6. Okänd profil avvisas.
 ! bash "$SETUP" --profil finnsinte --torrkörning >/dev/null 2>&1 || fail "okänd profil accepterades"
 
-# 7. Molngenvägar skapas bara som genvägar, med tydlig märkning.
-out=$(bash "$SETUP" --profil proprietart --torrkörning)
+# 7. Molngenvägar skapas bara som genvägar.
+out=$(bash "$SETUP" --profil obsidian --torrkörning)
+grep -q "flathub md.obsidian.Obsidian" <<<"$out" || fail "Obsidian-profilen installerar inte Obsidian"
+out=$(bash "$SETUP" --profil moln --torrkörning)
 grep -q 'skapa genväg .*forskaros-webb-perplexity.desktop → https://www.perplexity.ai' <<<"$out" || fail "Perplexity-genväg saknas"
 
 # 8. Det rekommenderade urvalet har tio verktyg.
-[[ $(grep -cvE '^\s*(#|$)' "$DIR"/02-rekommenderat.profil) -eq 10 ]] || fail "det rekommenderade urvalet ska ha tio verktyg"
+[[ $(grep -cvE '^\s*(#|$)' "$DIR"/*-rekommenderat.profil) -eq 10 ]] || fail "det rekommenderade urvalet ska ha tio verktyg"
 
 # 9. Programmenyn har en mapp per fas och genererade filer är i synk med katalogen.
 grep -q "name='3 · Välj'" system_files/etc/dconf/db/local.d/02-forskaros-meny || fail "mappen Välj saknas"
