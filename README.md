@@ -6,11 +6,11 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
-Status: avbildningen byggs i CI för amd64 och arm64. Den har inte startats på riktig hårdvara eller i en virtuell maskin än.
+Status: avbildningen byggs i CI för amd64 och arm64. **2027.1-beta1 för amd64 har startats och testats i QEMU**: inloggning, lösenordsbyte, GNOME-skrivbord och ForskarOS Core i riktig Obsidian fungerar i det genomförda testet. Obsidian installerades manuellt eftersom testmiljön inte kunde nå Flathub. ARM/UTM, ISO-installation och fysisk hårdvara är ännu inte verifierade i detta test. Se [testprotokollet](docs/VM-TEST-2026-11-17.md).
 
-<p align="center"><img src="docs/bilder/panel.png" alt="ForskarOS Core-panelen med en forskningsfråga i fasen Pröva" width="360"></p>
+<p align="center"><img src="docs/bilder/forskaros-vm-amd64.png" alt="ForskarOS 2027.1-beta1 i en körande QEMU-VM: Obsidian med startsidan och Core-panelens aktiva forskningsfråga" width="1100"></p>
 
-<sub>Panelen renderad från tilläggets kod med ett exempelvalv (`node scripts/skarmdumpar.js`). Inte en skärmdump av ett körande system.</sub>
+<sub>Verklig skärmdump från amd64-VM:n den 17 november 2026, med Obsidian 1.15.1 och ForskarOS Core 0.3.0. Exempelfrågan har aktiverats; vänster sidofält har fällts ihop och Core-panelen breddats. Bilden är fångad från VM:ns bildskärm, inte renderad från en modell av gränssnittet.</sub>
 
 ## Ladda ner
 
