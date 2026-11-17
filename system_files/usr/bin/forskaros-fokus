@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Fokusläge: stänger av notiser under ett fokuspass och loggar passet i vaulten.
+#   forskaros-fokus 50     fokus i 50 minuter (standard)
+#   forskaros-fokus av     avsluta fokus
+# Fasen Välj: vision, koncentration, kompetens.
+set -euo pipefail
+VAULT="${FORSKAROS_VAULT:-$HOME/ForskarOS}"
+LOGG="$VAULT/08 REFLEKTION/Fokuslogg.md"
+STATE="${XDG_RUNTIME_DIR:-/tmp}/forskaros-fokus.start"
+ARG="${1:-50}"
+
+notify() { command -v notify-send >/dev/null 2>&1 && notify-send -a ForskarOS -i forskaros "$1" "$2" || echo "$1: $2"; }
+
+if [[ "$ARG" == av ]]; then
+  gsettings set org.gnome.desktop.notifications show-banners true
+  if [[ -f "$STATE" ]]; then
+    read -r start minuter < "$STATE"
+    rm -f "$STATE"
+    slut=$(date +%H:%M)
+    faktiska=$(( ( $(date +%s) - $(date -d "$start" +%s) ) / 60 ))
+    if [[ -d "$VAULT" ]]; then
+      mkdir -p "$(dirname "$LOGG")"
+      [[ -f "$LOGG" ]] || printf -- '---\ntyp: fokuslogg\n---\n# Fokuslogg\n\n> Envishet och arbete: djupt, ostört arbete över tid. Vad lärde du dig?\n\n' > "$LOGG"
+      printf -- '- %s %s–%s (%d av %d min): \n' "$(date +%F)" "$(date -d "$start" +%H:%M)" "$slut" "$faktiska" "$minuter" >> "$LOGG"
+    fi
+  fi
+  notify "Fokuspasset är slut" "Vad förstår du nu som du inte förstod för en stund sedan? Skriv det i fokusloggen eller ett forskarpass."
+  exit 0
+fi
+
+[[ "$ARG" =~ ^[0-9]+$ && "$ARG" -ge 5 && "$ARG" -le 240 ]] || { echo "Ange minuter (5–240) eller 'av'." >&2; exit 2; }
+gsettings set org.gnome.desktop.notifications show-banners false
+echo "$(date -Iseconds) $ARG" > "$STATE"
+if command -v systemd-run >/dev/null 2>&1; then
+  systemd-run --user --quiet --collect --unit "forskaros-fokus-$$" --on-active="${ARG}m" /usr/bin/forskaros-fokus av >/dev/null
+fi
+notify "Fokusläge i $ARG minuter" "Notiserna är avstängda. En fråga, ett problem. Bekvämt att vara obekväm."

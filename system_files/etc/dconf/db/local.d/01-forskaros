@@ -1,6 +1,15 @@
 # ForskarOS: en lugn arbetsyta för forskning.
 [org/gnome/shell]
-favorite-apps=['org.mozilla.firefox.desktop', 'md.obsidian.Obsidian.desktop', 'org.zotero.Zotero.desktop', 'org.libreoffice.LibreOffice.writer.desktop', 'org.jaspstats.JASP.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'forskaros-setup.desktop']
+favorite-apps=['org.mozilla.firefox.desktop', 'md.obsidian.Obsidian.desktop', 'org.zotero.Zotero.desktop', 'org.libreoffice.LibreOffice.writer.desktop', 'org.jaspstats.JASP.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'forskaros-fokus.desktop', 'forskaros-setup.desktop']
 
 [org/gnome/desktop/interface]
 show-battery-percentage=true
+
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/forskaros/identitet/forskaros-bakgrund-ljus.svg'
+picture-uri-dark='file:///usr/share/forskaros/identitet/forskaros-bakgrund-mork.svg'
+picture-options='zoom'
+primary-color='#0F1B2A'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file:///usr/share/forskaros/identitet/forskaros-bakgrund-mork.svg'

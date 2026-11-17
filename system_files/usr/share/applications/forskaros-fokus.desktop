@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Name=Fokusläge
+Comment=Stäng av notiser i 50 minuter och logga fokuspasset
+Exec=/usr/bin/forskaros-fokus 50
+Icon=forskaros
+Categories=Education;Science;
+Actions=kort;lang;av;
+
+[Desktop Action kort]
+Name=Fokus i 25 minuter
+Exec=/usr/bin/forskaros-fokus 25
+
+[Desktop Action lang]
+Name=Fokus i 90 minuter
+Exec=/usr/bin/forskaros-fokus 90
+
+[Desktop Action av]
+Name=Avsluta fokus
+Exec=/usr/bin/forskaros-fokus av

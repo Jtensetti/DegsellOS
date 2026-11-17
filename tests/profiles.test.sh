@@ -62,7 +62,7 @@ python3 -I scripts/generera.py --kontroll >/dev/null || fail "kör python3 scrip
 grep -q 'ExecStart=/usr/libexec/forskaros-grund' system_files/usr/lib/systemd/system/forskaros-grund.service || fail "tjänsten pekar fel"
 for app in $(grep -o "'[^']*\.desktop'" system_files/etc/dconf/db/local.d/01-forskaros | tr -d "'" | sed 's/\.desktop$//'); do
   case "$app" in
-    org.gnome.*|forskaros-setup) continue ;;
+    org.gnome.*|forskaros-*) continue ;;
     org.libreoffice.LibreOffice.writer) app=org.libreoffice.LibreOffice ;;
   esac
   grep -q "^flatpak *$app " "$DIR"/*.profil || fail "dockan visar $app som inte finns i någon profil"

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="3840" height="2160">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0" stop-color="#1B2A3A"/>
+      <stop offset="1" stop-color="#0F1B2A"/>
+    </radialGradient>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#bg)"/>
+  <path d="M 1941.98 612.67 A 360 360 0 0 1 2187.23 730.78" fill="none" stroke="#2E86AB" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Utforska</title></path>
+  <path d="M 2214.64 765.15 A 360 360 0 0 1 2275.21 1030.53" fill="none" stroke="#3FA7A0" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Kombinera</title></path>
+  <path d="M 2265.43 1073.38 A 360 360 0 0 1 2095.71 1286.21" fill="none" stroke="#7BB662" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Välj</title></path>
+  <path d="M 2056.11 1305.28 A 360 360 0 0 1 1783.89 1305.28" fill="none" stroke="#E0A458" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Pröva</title></path>
+  <path d="M 1744.29 1286.21 A 360 360 0 0 1 1574.57 1073.38" fill="none" stroke="#D9724A" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Utveckla</title></path>
+  <path d="M 1564.79 1030.53 A 360 360 0 0 1 1625.36 765.15" fill="none" stroke="#A45DA8" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Ompröva</title></path>
+  <path d="M 1652.77 730.78 A 360 360 0 0 1 1898.02 612.67" fill="none" stroke="#5B6CC4" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Dela</title></path>
+  <circle cx="1920.0" cy="972.0" r="63.0" fill="#F4F1EA" opacity="0.92"/>
+  <text x="1920.0" y="1592.0" text-anchor="middle" fill="#C9D3DD"
+        font-family="Cantarell, Inter, sans-serif" font-size="64" letter-spacing="4" opacity="0.8">Framtiden är den viktigaste tiden.</text>
+</svg>

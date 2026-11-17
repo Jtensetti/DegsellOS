@@ -28,5 +28,8 @@ dnf clean all
 # Grundverktygen installeras vid första start med nätverk.
 systemctl enable forskaros-grund.service forskaros-forskare.service forskaros-delad-mapp.service
 
+# Identitet: logotypen som programikon.
+install -Dm644 /usr/share/forskaros/identitet/forskaros-logotyp.svg /usr/share/icons/hicolor/scalable/apps/forskaros.svg
+
 # Arbetsytans standardinställningar (dockan m.m.).
 if command -v dconf >/dev/null 2>&1; then dconf update; fi

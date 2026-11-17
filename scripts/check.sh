@@ -15,6 +15,7 @@ echo "OK: skalskriptens syntax"
 bash tests/init.test.sh
 bash tests/profiles.test.sh
 python3 -I tests/utm.test.py
+bash tests/identitet.test.sh
 
 python3 - <<'PY'
 import json

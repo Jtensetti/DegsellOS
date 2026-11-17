@@ -4,5 +4,5 @@ Name=ForskarOS – verktygslåda
 Comment=Välj forskningsverktyg: kontor, statistik, skrivande, kvalitativ analys, lokal AI
 Exec=/usr/bin/forskaros-setup
 Terminal=true
-Icon=applications-science
+Icon=forskaros
 Categories=Education;Science;
