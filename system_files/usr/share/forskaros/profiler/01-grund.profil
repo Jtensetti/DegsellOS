@@ -1,9 +1,9 @@
+# Genererad från katalog/verktyg.json. Ändra inte för hand.
 # namn: Grund
-# beskrivning: Installeras automatiskt vid första start. Kontor, källor, statistik, PDF och säkerhetskopior.
-# fas: alla
-flatpak org.mozilla.firefox            Firefox – webbläsare
-flatpak org.libreoffice.LibreOffice    LibreOffice – ordbehandling, kalkyl, presentation
-flatpak org.zotero.Zotero              Zotero – källhantering och citat
-flatpak org.jaspstats.JASP             JASP – statistik med klick, klassisk och bayesiansk
-flatpak com.github.xournalpp.xournalpp Xournal++ – anteckna direkt i PDF:er
-flatpak org.gnome.DejaDup              Déjà Dup – säkerhetskopiering
+# beskrivning: Installeras automatiskt vid första start. Webb, kontor, källor, statistik, PDF och säkerhetskopior.
+flatpak org.mozilla.firefox                     Firefox – Webbläsare
+flatpak org.libreoffice.LibreOffice             LibreOffice – Ordbehandling, kalkyl och presentation
+flatpak org.zotero.Zotero                       Zotero – Källhantering och citat
+flatpak org.jaspstats.JASP                      JASP – Statistik med klick, klassisk och bayesiansk
+flatpak com.github.xournalpp.xournalpp          Xournal++ – Anteckna direkt i PDF:er
+flatpak org.gnome.DejaDup                       Déjà Dup – Säkerhetskopiering

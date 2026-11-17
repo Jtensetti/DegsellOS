@@ -1,8 +1,0 @@
-# namn: Proprietärt och moln (aktivt val)
-# beskrivning: Inte öppen källkod, eller skickar data till en molntjänst. Installeras bara om du uttryckligen väljer det.
-# fas: alla
-# aktivt-val: ja
-flatpak md.obsidian.Obsidian            Obsidian – gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)
-webb    perplexity|https://www.perplexity.ai          Perplexity – AI-sök i molnet. Din fråga lämnar datorn.
-webb    elicit|https://elicit.com                     Elicit – AI-stöd för litteraturöversikter i molnet
-webb    consensus|https://consensus.app               Consensus – AI-sök i forskningsartiklar i molnet

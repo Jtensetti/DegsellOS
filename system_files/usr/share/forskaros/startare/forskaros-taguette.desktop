@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Taguette
+Comment=Kodning av intervjuer och dokument
+Exec=@HOME@/.local/bin/taguette
+Terminal=true
+Icon=applications-science
+Categories=Education;Science;

@@ -2,6 +2,7 @@
 
 > Verktyg är medel, inte metod. Välj det som hjälper dig i den fas du är i.
 > Installera program med **ForskarOS – verktygslåda** i programmenyn.
+> Programmenyn har en mapp per fas. Alla verktyg med beskrivning: [[00 START/Verktyg/Översikt|Verktygen per fas]].
 > 🔓 = öppen källkod eller öppen tjänst · ☁️ = molntjänst, din fråga lämnar datorn
 
 ## 1. Utforska – hitta det som redan är känt

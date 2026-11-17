@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=JupyterLab
+Comment=Anteckningsböcker för Python
+Exec=@HOME@/.local/bin/jupyter-lab
+Terminal=true
+Icon=applications-science
+Categories=Education;Science;

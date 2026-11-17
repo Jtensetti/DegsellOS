@@ -1,6 +1,0 @@
-# namn: Idéer och modeller
-# beskrivning: Begreppskartor, modeller och skisser när du kombinerar perspektiv.
-# fas: kombinera
-flatpak com.jgraph.drawio.desktop       draw.io – diagram, modeller, flöden
-flatpak org.freeplane.App               Freeplane – tankekartor
-flatpak com.github.flxzt.rnote          Rnote – handskrivna skisser

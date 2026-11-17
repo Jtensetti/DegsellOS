@@ -36,4 +36,10 @@ rm -rf "$HOME/ForskarOS/$PLUGIN"
 "$INIT" >/dev/null
 test ! -e "$HOME/ForskarOS/$PLUGIN"
 
+# 5. Systemets verktygskort uppdateras, forskarens egna anteckningar rörs inte.
+echo "gammalt" > "$HOME/ForskarOS/00 START/Verktyg/JASP.md"
+"$INIT" | grep -q "uppdaterade 00 START/Verktyg/JASP.md"
+cmp -s "vault/00 START/Verktyg/JASP.md" "$HOME/ForskarOS/00 START/Verktyg/JASP.md"
+grep -q "min hypotes" "$HOME/ForskarOS/02 HYPOTESER/Min.md"
+
 echo "OK: forskaros-init skapar, bevarar och uppdaterar korrekt"

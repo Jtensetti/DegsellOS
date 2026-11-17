@@ -1,0 +1,13 @@
+# Genererad från katalog/verktyg.json. Ändra inte för hand.
+# namn: Topp 10 för forskare
+# beskrivning: De tio verktyg de flesta forskare har nytta av, oavsett fält.
+flatpak org.mozilla.firefox                     Firefox – Webbläsare
+flatpak org.libreoffice.LibreOffice             LibreOffice – Ordbehandling, kalkyl och presentation
+flatpak org.zotero.Zotero                       Zotero – Källhantering och citat
+flatpak org.jaspstats.JASP                      JASP – Statistik med klick, klassisk och bayesiansk
+flatpak com.github.xournalpp.xournalpp          Xournal++ – Anteckna direkt i PDF:er
+flatpak com.zettlr.Zettlr                       Zettlr – Akademiskt skrivande i Markdown
+brew    pandoc                                  Pandoc – Konvertera mellan Markdown, Word, LaTeX och PDF
+flatpak net.mkiol.SpeechNote                    Speech Note – Transkribering helt på din dator
+flatpak com.jgraph.drawio.desktop               draw.io – Diagram, modeller och flöden
+flatpak com.jeffser.Alpaca                      Alpaca – Chatt med lokala modeller

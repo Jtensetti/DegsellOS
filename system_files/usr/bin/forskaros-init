@@ -35,3 +35,18 @@ if [[ -d "$TARGET/$PLUGIN_REL" ]]; then
     fi
   done
 fi
+
+# Systemets egna sidor (verktygskort, Forskarhandboken) hålls uppdaterade.
+# Forskaren skriver egna anteckningar någon annanstans; dessa mappar ägs av systemet.
+for dir in "00 START/Verktyg" "00 START/Forskarhandboken"; do
+  [[ -d "$SEED/$dir" ]] || continue
+  mkdir -p "$TARGET/$dir"
+  for src in "$SEED/$dir"/*; do
+    [[ -f "$src" ]] || continue
+    dst="$TARGET/$dir/$(basename "$src")"
+    if ! cmp -s "$src" "$dst"; then
+      cp -- "$src" "$dst"
+      echo "forskaros-init: uppdaterade $dir/$(basename "$src")"
+    fi
+  done
+done

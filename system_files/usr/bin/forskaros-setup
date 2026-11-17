@@ -12,6 +12,7 @@
 set -euo pipefail
 
 PROFILDIR="${FORSKAROS_PROFILDIR:-/usr/share/forskaros/profiler}"
+STARTDIR="${FORSKAROS_STARTDIR:-/usr/share/forskaros/startare}"
 DRY=0
 YES=0
 LIST=0
@@ -142,7 +143,14 @@ for p in "${SELECTED[@]}"; do
       brew)
         if command -v brew >/dev/null 2>&1 || [[ $DRY -eq 1 ]]; then run brew install "$id"
         else echo "  Homebrew saknas, hoppar över $id."; fi ;;
-      uv) ensure_uv && run uv tool install "$id" ;;
+      uv)
+        ensure_uv && run uv tool install "$id"
+        tmpl="$STARTDIR/forskaros-$id.desktop"
+        if [[ -f "$tmpl" ]]; then
+          if [[ $DRY -eq 1 ]]; then echo "+ skapa startare forskaros-$id.desktop"
+          else mkdir -p "$HOME/.local/share/applications"
+               sed "s#@HOME@#$HOME#g" "$tmpl" > "$HOME/.local/share/applications/forskaros-$id.desktop"; fi
+        fi ;;
       webb) web_launcher "${id%%|*}" "${id#*|}" "$desc" ;;
       *) echo "  Okänd typ: $kind" >&2 ;;
     esac

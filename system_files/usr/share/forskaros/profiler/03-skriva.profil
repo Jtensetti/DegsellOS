@@ -1,0 +1,8 @@
+# Genererad från katalog/verktyg.json. Ändra inte för hand.
+# namn: Skriva och publicera
+# beskrivning: Akademiskt skrivande i Markdown och LaTeX, konvertering till Word och PDF.
+flatpak com.zettlr.Zettlr                       Zettlr – Akademiskt skrivande i Markdown
+flatpak org.onlyoffice.desktopeditors           ONLYOFFICE – Öppen och mycket Word-kompatibel
+flatpak org.texstudio.TeXstudio                 TeXstudio – LaTeX-redigerare
+brew    pandoc                                  Pandoc – Konvertera mellan Markdown, Word, LaTeX och PDF
+brew    typst                                   Typst – Modern sättning, enklare än LaTeX

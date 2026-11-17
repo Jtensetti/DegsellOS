@@ -1,8 +1,0 @@
-# namn: Skriva och publicera
-# beskrivning: Akademiskt skrivande i Markdown och LaTeX, konvertering till Word och PDF.
-# fas: dela
-flatpak com.zettlr.Zettlr               Zettlr – akademiskt skrivande med citat från Zotero
-flatpak org.onlyoffice.desktopeditors   ONLYOFFICE – öppen, mycket Word-kompatibel
-flatpak org.texstudio.TeXstudio         TeXstudio – LaTeX
-brew    pandoc                          Pandoc – konvertera mellan Markdown, Word, LaTeX och PDF
-brew    typst                           Typst – modern sättning, enklare än LaTeX

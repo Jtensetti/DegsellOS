@@ -1,0 +1,8 @@
+# Genererad från katalog/verktyg.json. Ändra inte för hand.
+# namn: Programmering och reproducerbarhet
+# beskrivning: Kod, versionshantering av data och reproducerbara analyser.
+flatpak com.vscodium.codium                     VSCodium – Kodredigerare utan telemetri
+brew    uv                                      uv – Python-miljöer per projekt
+brew    git-annex                               git-annex – Versionshantera stora datafiler
+brew    datalad                                 DataLad – Reproducerbar hantering av forskningsdata
+brew    ripgrep                                 ripgrep – Sök snabbt i anteckningar och data

@@ -1,0 +1,5 @@
+# Genererad från katalog/verktyg.json. Ändra inte för hand.
+# namn: Lokal AI
+# beskrivning: Språkmodeller som körs helt på din dator. Inget lämnar maskinen.
+brew    ollama                                  Ollama – Kör språkmodeller lokalt
+flatpak com.jeffser.Alpaca                      Alpaca – Chatt med lokala modeller
