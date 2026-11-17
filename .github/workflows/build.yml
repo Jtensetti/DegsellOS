@@ -76,6 +76,7 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - uses: actions/checkout@v4
       - uses: sigstore/cosign-installer@v3
 
       - name: Skapa och publicera flerarkitekturs-manifest
@@ -90,6 +91,11 @@ jobs:
             forskaros-manifest "docker://$IMAGE:latest"
           podman manifest push --all \
             forskaros-manifest "docker://$IMAGE:$(date -u +%Y%m%d)"
+          # Kvartalsversion (t.ex. 2027.1) när VERSION inte slutar på -dev.
+          VERSION=$(cat VERSION)
+          if [[ "$VERSION" != *-dev ]]; then
+            podman manifest push --all forskaros-manifest "docker://$IMAGE:$VERSION"
+          fi
           echo "IMAGE_REF=$IMAGE@$(cat /tmp/digest)" >> "$GITHUB_ENV"
 
       - name: Signera (sigstore, nyckellöst)

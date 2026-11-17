@@ -1,6 +1,19 @@
 # ForskarOS
 
-**Ett forskningsorienterat operativsystem som tränar dig i att tänka bättre, inte tänker åt dig.**
+**Som Kali Linux, fast för forskare.** Ett operativsystem där menyn är metoden, systemet säger emot och självständighet mäts, inte produktion.
+
+| Kali Linux | ForskarOS |
+|---|---|
+| Menyn följer pentestens faser | Menyn följer forskningscykeln: *1 · Utforska* … *7 · Dela* |
+| Metapaket | Nio verktygsprofiler, bland dem *Topp 10 för forskare* |
+| tools.kali.org | Verktygskort i vaulten för varje verktyg |
+| VM-avbildningar med kali/kali | VM-avbildningar med `forskare`/`forskare` (byts vid första inloggningen) |
+| Docker-avbildning | ForskarOS-labbet: reproducerbar analysmiljö som körs överallt |
+| Kali Undercover | Fokusläge |
+| Kali Linux Revealed | Forskarhandboken, med övningar utan AI |
+| Kvartalsversioner | `2027.1`, `2027.2` … |
+
+Det Kali saknar är metoden: ForskarOS Core med forskningscykeln, Revisorn och tänk först.
 
 ForskarOS bygger vi inte från grunden. Vi tar **[Bluefin LTS](https://projectbluefin.io/)** från Universal Blue, en färdig och välskött GNOME-distribution med atomära uppdateringar som kan backas, och lägger ett forskningslager ovanpå:
 
@@ -80,6 +93,16 @@ bash scripts/install-vault.sh   # skapar ~/ForskarOS, skriver aldrig över
 ```
 
 Öppna sedan `~/ForskarOS` som vault i Obsidian och aktivera **ForskarOS Core** under *Settings → Community plugins*.
+
+## ForskarOS-labbet
+
+```bash
+forskaros-labb Rscript analys.R   # kör en analys i den låsta miljön
+forskaros-labb rstudio            # RStudio i webbläsaren, bara lokalt
+forskaros-labb version            # miljöns exakta version, för experimentet
+```
+
+Avbildningen `ghcr.io/jtensetti/researchos-labb` bygger på `rocker/tidyverse` och fungerar med Podman eller Docker på vilken dator som helst.
 
 ## Kontroller
 

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Forskarhandboken
+Comment=Den öppna handboken om att forska med ForskarOS
+Exec=/usr/bin/forskaros-handbok
+Icon=forskaros
+Categories=Education;Science;

@@ -11,6 +11,7 @@ FROM scratch AS ctx
 COPY build_files /build_files
 COPY system_files /system_files
 COPY vault /vault
+COPY VERSION /VERSION
 
 FROM ${BASE_IMAGE}
 

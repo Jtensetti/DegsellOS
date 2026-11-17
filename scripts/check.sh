@@ -17,6 +17,7 @@ bash tests/profiles.test.sh
 python3 -I tests/utm.test.py
 bash tests/identitet.test.sh
 bash tests/labb.test.sh
+python3 -I tests/vault.test.py
 
 python3 - <<'PY'
 import json

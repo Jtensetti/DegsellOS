@@ -43,10 +43,23 @@
 - [ ] Öppen självhostad AI-sök som alternativ till Perplexity (t.ex. Perplexica)
 - [ ] Färdig `.utm`-paketering med inställningar för RAM, CPU och skärm
 
-## 0.4 – Profil och identitet
+## 2027.1 – Kali för forskare
 
-- [ ] GNOME-standardinställningar (fokusläge, favoriter, bakgrund)
-- [ ] Egen os-release, logotyp och namn i uppstartsmenyn
+- [x] Menyn är metoden: appmappar per fas, verktygskatalog, verktygskort, Topp 10
+- [x] VM: forskare/forskare med lösenordsbyte, delad mapp, UTM-paketering från mall
+- [x] Identitet: logotyp (forskningscykeln), bakgrund, dagens princip i terminalen
+- [x] Fokusläge med fokuslogg
+- [x] ForskarOS-labbet (R, tidyverse, RStudio, Python) för amd64 och arm64
+- [x] Forskarhandboken, tolv kapitel med övningar utan AI
+- [x] Kvartalsversioner, CHANGELOG och släppprocess
+- [ ] UTM-mall från en riktig UTM (`vm/utm/config.plist`)
+- [ ] Testa på MacBook Neo: start, inloggning, verktygslåda, delad mapp, labbet
+- [ ] Släpp 2027.1
+
+
+
+- [x] GNOME-standardinställningar (fokusläge, favoriter, bakgrund)
+- [ ] Egen os-release och namn i uppstartsmenyn (logotypen finns)
 - [ ] Verifiering av signaturer på klienten (bootc/containers-policy)
 - [ ] Automatisk, krypterad säkerhetskopiering av vaulten
 

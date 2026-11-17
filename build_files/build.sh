@@ -19,6 +19,7 @@ sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' \
   /usr/share/forskaros/vault/.obsidian/plugins/forskaros-core/manifest.json \
   > /usr/share/forskaros/VERSION
 test -s /usr/share/forskaros/VERSION
+cp /ctx/VERSION /usr/share/forskaros/RELEASE
 
 # Virtuell maskin: delat urklipp, automatisk skärmstorlek och ren avstängning
 # i UTM/QEMU. Tjänsterna startar bara när motsvarande virtuella enhet finns.

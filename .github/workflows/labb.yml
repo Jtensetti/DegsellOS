@@ -61,7 +61,8 @@ jobs:
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           podman manifest create labb "docker://$IMAGE:latest-amd64" "docker://$IMAGE:latest-arm64"
           podman manifest push --all --digestfile /tmp/digest labb "docker://$IMAGE:latest"
-          for tag in "$VERSION" "$(date -u +%Y%m%d)"; do podman manifest push --all labb "docker://$IMAGE:$tag"; done
+          podman manifest push --all labb "docker://$IMAGE:$(date -u +%Y%m%d)"
+          if [[ "$VERSION" != *-dev ]]; then podman manifest push --all labb "docker://$IMAGE:$VERSION"; fi
           echo "IMAGE_REF=$IMAGE@$(cat /tmp/digest)" >> "$GITHUB_ENV"
       - name: Signera
         env:

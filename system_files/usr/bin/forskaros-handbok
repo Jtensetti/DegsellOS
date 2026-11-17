@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Öppnar Forskarhandboken: i Obsidian om det finns, annars som vanlig text.
+set -euo pipefail
+FIL="${FORSKAROS_VAULT:-$HOME/ForskarOS}/00 START/Forskarhandboken/00 Innehåll.md"
+[[ -f "$FIL" ]] || forskaros-init
+if flatpak info md.obsidian.Obsidian >/dev/null 2>&1 || flatpak info --user md.obsidian.Obsidian >/dev/null 2>&1; then
+  url="obsidian://open?path=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$FIL")"
+  exec xdg-open "$url"
+fi
+exec xdg-open "$FIL"
