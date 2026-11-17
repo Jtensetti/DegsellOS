@@ -29,7 +29,7 @@ disk_config/           inställningar för ISO och virtuella diskar
 .github/workflows/     bygg, publicera, signera, skapa installationsmedia
 ```
 
-1. **Varje push bygger och testar avbildningen. Push till `main`, och varje vecka,** GitHub Actions bygger avbildningen för amd64 och arm64, publicerar den som `ghcr.io/jtensetti/researchos:latest` och signerar den med sigstore/cosign.
+1. **Bygge:** varje push bygger och testar avbildningen för amd64 och arm64 i GitHub Actions. Vid push till `main`, och varje vecka, publiceras den som `ghcr.io/jtensetti/researchos:latest` och signeras med sigstore/cosign.
 2. **Installationsmedia:** kör arbetsflödet *Bygg installationsmedia* manuellt. Det ger en ISO för PC och qcow2-diskar för virtuella maskiner som nedladdningsbara artefakter.
 3. **Uppdateringar:** installerade system hämtar nya versioner automatiskt via bootc. Det går att backa med `sudo bootc rollback`.
 
