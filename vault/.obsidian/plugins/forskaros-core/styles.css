@@ -12,3 +12,36 @@
 .forskaros-principle b {display:block;font-size:0.88rem;}
 .forskaros-principle small {color:var(--text-muted);}
 .forskaros-warning { padding:0.8rem; border-left:3px solid var(--interactive-accent); background:var(--background-secondary); color:var(--text-normal); font-size:0.86rem; }
+
+/* Forskningsfrågor och cykeln */
+.forskaros-question { border:1px solid var(--background-modifier-border); border-radius:0.7rem; padding:0.75rem; margin:0.6rem 0 1rem; }
+.forskaros-question-title { font-weight:600; cursor:pointer; margin-bottom:0.5rem; }
+.forskaros-steps { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px; margin-bottom:0.5rem; }
+.forskaros-step { font-size:0.6rem; text-align:center; padding:0.25rem 0; border-radius:0.25rem; background:var(--background-secondary); color:var(--text-faint); overflow:hidden; text-overflow:ellipsis; }
+.forskaros-step.is-done { color:var(--text-muted); }
+.forskaros-step.is-current { background:var(--interactive-accent); color:var(--text-on-accent); font-weight:600; }
+.forskaros-phase-question { font-size:0.9rem; margin:0.4rem 0; }
+.forskaros-checklist { list-style:none; padding-left:0; margin:0.4rem 0; font-size:0.82rem; }
+.forskaros-checklist li { padding:0.15rem 0; }
+.forskaros-checklist li.is-ok { color:var(--text-success); }
+.forskaros-checklist li.is-missing { color:var(--text-muted); }
+.forskaros-row { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.5rem; }
+.forskaros-muted { color:var(--text-muted); font-size:0.8rem; }
+
+/* Revisorn */
+.forskaros-finding { padding:0.5rem 0.6rem; margin:0.35rem 0; border-radius:0.4rem; background:var(--background-secondary); font-size:0.82rem; cursor:default; }
+.forskaros-finding b { display:block; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); }
+.forskaros-finding.is-varning { border-left:3px solid var(--text-warning); }
+.forskaros-finding.is-påminnelse { border-left:3px solid var(--text-faint); }
+
+/* Dialoger */
+.forskaros-modal .forskaros-label { display:block; font-size:0.8rem; color:var(--text-muted); margin:0.7rem 0 0.25rem; }
+.forskaros-modal .forskaros-input { width:100%; }
+.forskaros-modal textarea.forskaros-input { min-height:5rem; }
+.forskaros-modal .forskaros-preview { min-height:14rem; font-family:var(--font-monospace); font-size:0.75rem; }
+.forskaros-ok { padding:0.6rem; border-left:3px solid var(--text-success); background:var(--background-secondary); font-size:0.86rem; }
+
+/* Epistemisk märkning: vad är belagt, vad är tolkning, vad är spekulation? */
+.callout[data-callout="belagt"] { --callout-color: 46, 160, 67; --callout-icon: lucide-check-circle; }
+.callout[data-callout="tolkning"] { --callout-color: 210, 153, 34; --callout-icon: lucide-lightbulb; }
+.callout[data-callout="spekulation"] { --callout-color: 163, 113, 247; --callout-icon: lucide-cloud; }

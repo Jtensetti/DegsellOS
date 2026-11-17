@@ -1,24 +1,61 @@
 'use strict';
+// Testar tillägget mot ett simulerat Obsidian-API.
 const assert = require('node:assert/strict');
 const Module = require('node:module');
 const path = require('node:path');
+const fs = require('node:fs');
 
+/* ---------- Simulerad vault ---------- */
 const files = new Map();
 const folders = new Set();
 const commands = [];
 let activeFile = null;
+
+function parseFrontmatter(content) {
+  const m = /^---\n([\s\S]*?)\n---/.exec(content);
+  if (!m) return undefined;
+  const out = {};
+  for (const line of m[1].split('\n')) {
+    const i = line.indexOf(':');
+    if (i < 0) continue;
+    let v = line.slice(i + 1).trim();
+    if (v.startsWith('"')) v = JSON.parse(v);
+    out[line.slice(0, i).trim()] = v === '' ? null : v;
+  }
+  return out;
+}
+function writeFrontmatter(content, front) {
+  const yaml = Object.entries(front).map(([k, v]) => `${k}: ${v === null ? '' : typeof v === 'string' && /[:#[\]]/.test(v) ? JSON.stringify(v) : v}`).join('\n');
+  return content.replace(/^---\n[\s\S]*?\n---/, `---\n${yaml}\n---`);
+}
+const mkfile = (p, content) => ({ path: p, basename: path.basename(p, '.md'), content, stat: { ctime: Date.now() } });
+
 const app = {
   vault: {
     adapter: { exists: async p => folders.has(p) || files.has(p) },
     createFolder: async p => { folders.add(p); },
     create: async (p, content) => {
-      assert(!files.has(p), 'Should never overwrite an existing note');
-      const file = { path: p, basename: path.basename(p, '.md'), content };
-      files.set(p, file);
-      return file;
+      assert(!files.has(p), 'En befintlig anteckning får aldrig skrivas över');
+      const f = mkfile(p, content);
+      files.set(p, f);
+      return f;
     },
+    read: async f => files.get(f.path).content,
+    cachedRead: async f => files.get(f.path).content,
+    modify: async (f, content) => { files.get(f.path).content = content; },
     getMarkdownFiles: () => [...files.values()],
     getAbstractFileByPath: p => files.get(p) || null
+  },
+  metadataCache: {
+    getFileCache: f => ({ frontmatter: parseFrontmatter(files.get(f.path).content) }),
+    on: () => ({})
+  },
+  fileManager: {
+    processFrontMatter: async (f, fn) => {
+      const front = parseFrontmatter(f.content) || {};
+      fn(front);
+      f.content = writeFrontmatter(f.content, front);
+    }
   },
   workspace: {
     getActiveFile: () => activeFile,
@@ -28,46 +65,98 @@ const app = {
     revealLeaf: async () => {}
   }
 };
+
 class Plugin {
   constructor() { this.app = app; }
   registerView(type, creator) { this.registeredView = { type, creator }; }
+  registerEvent() {}
   addRibbonIcon() {}
   addCommand(command) { commands.push(command); }
 }
 class ItemView {}
+class Modal { constructor(a) { this.app = a; } open() { Modal.opened.push(this); } close() {} }
+Modal.opened = [];
 class Notice { constructor() {} }
+
 const origLoad = Module._load;
-Module._load = function (request, parent, isMain) {
-  if (request === 'obsidian') return { Plugin, ItemView, Notice };
-  return origLoad(request, parent, isMain);
+Module._load = function (request, ...rest) {
+  if (request === 'obsidian') return { Plugin, ItemView, Notice, Modal };
+  return origLoad.call(this, request, ...rest);
 };
 const ForskarOSPlugin = require('../vault/.obsidian/plugins/forskaros-core/main.js');
 Module._load = origLoad;
+const { engine } = ForskarOSPlugin;
 
 (async () => {
   const p = new ForskarOSPlugin();
   await p.onload();
-  assert.equal(commands.length, 8, 'Dashboard plus 7 note commands');
+  const ids = commands.map(c => c.id);
+  for (const id of ['open-dashboard', 'new-question', 'park-idea', 'consult-ai', 'advance-phase', 'mark-belagt', 'mark-tolkning', 'mark-spekulation']) {
+    assert(ids.includes(id), `kommandot ${id} saknas`);
+  }
+  assert.equal(new Set(ids).size, ids.length, 'kommando-id ska vara unika');
   assert.equal(p.registeredView.type, 'forskaros-dashboard');
 
-  for (const type of ['pass', 'hypothesis', 'friction', 'diversity', 'change', 'meeting', 'correction']) {
-    await p.createNote(type);
+  // En forskningsfråga skapas, nya anteckningar kopplas till den.
+  const qFile = await app.vault.create('01 RIKTNING/När stärker AI tänkandet.md',
+    engine.questionNote({ date: engine.today(), titel: 'När stärker AI tänkandet?', varför: 'Det avgör hur en generation lär sig tänka.' }));
+  activeFile = qFile;
+  for (const type of Object.keys(engine.TYPES)) {
+    activeFile = qFile;
+    const f = await p.createNote(type);
+    assert(f, `${type} skapades inte`);
   }
-  assert.equal(files.size, 7);
-  assert([...files.values()].some(f => f.content.includes('Min egen förklaring – utan AI')));
-  assert([...files.values()].some(f => f.content.includes('Falsifiering')));
-  assert([...files.values()].some(f => f.content.includes('Vad trodde jag tidigare?')));
-  assert([...files.values()].some(f => f.content.includes('Vad skulle övertyga mig')));
-  assert([...files.values()].every(f => !f.path.includes('undefined')));
+  const typed = [...files.values()].filter(f => f !== qFile);
+  assert.equal(typed.length, Object.keys(engine.TYPES).length);
+  const linked = typed.filter(f => /fråga: "\[\[01 RIKTNING\/När stärker AI tänkandet\]\]"/.test(f.content));
+  assert(linked.length >= 7, `anteckningar ska kopplas till frågan (${linked.length})`);
+  assert(typed.every(f => !f.path.includes('undefined')));
 
-  // Repeating a command must create a new document, never overwrite.
+  // Samma kommando två gånger skapar två dokument, skriver aldrig över.
+  activeFile = qFile;
   await p.createNote('pass');
-  assert.equal(files.size, 8);
-  assert.equal([...files.keys()].length, new Set(files.keys()).size);
+  await p.createNote('pass');
+  assert.equal(files.size, typed.length + 3);
 
-  // The plugin must be self-contained: no fetch(), HTTP or LLM API calls.
-  const source = require('node:fs').readFileSync(require.resolve('../vault/.obsidian/plugins/forskaros-core/main.js'), 'utf8');
+  // Fasbyte: frontmatter uppdateras och beslutet loggas öppet, med motivering.
+  const notes = await p.collectNotes();
+  const q = notes.find(n => n.fm.typ === 'forskningsfråga');
+  const reqs = engine.phaseRequirements(q, notes);
+  assert(reqs.every(r => r.ok), 'Utforska-kraven ska vara uppfyllda (varför + perspektivkarta)');
+  await p.advancePhase(q, '', []);
+  assert.match(qFile.content, /fas: kombinera/);
+  assert.match(qFile.content, /Utforska → Kombinera/);
+  const q2 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
+  await p.advancePhase(q2, 'Handledaren vill se en skiss först.', ['Hypotesen redovisar den etablerade kunskap den vilar på']);
+  assert.match(qFile.content, /fas: välj/);
+  assert.match(qFile.content, /Motivering: Handledaren vill se en skiss först\./);
+
+  // Vila (inkubation).
+  const q3 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
+  await p.restQuestion(q3);
+  assert.match(qFile.content, /status: vilar/);
+  assert.match(qFile.content, /vila_till: \d{4}-\d{2}-\d{2}/);
+
+  // Idéparkering.
+  await p.saveIdea('AI som handledare i språkundervisning\nKanske en senare fråga.');
+  assert(files.has('01 RIKTNING/Idébank/AI som handledare i språkundervisning.md'));
+
+  // AI-konsultation loggas med tänk-först-status och det som skickades.
+  const hyp = [...files.values()].find(f => f.path.startsWith('02 HYPOTESER/'));
+  await p.logConsultation(hyp, 'motståndaren', 'prövning', false, 'TEXT SOM SKICKADES');
+  const log = [...files.values()].find(f => f.path.startsWith('08 REFLEKTION/AI/'));
+  assert(log, 'AI-loggen skapades inte');
+  assert.match(log.content, /egen_tanke_först: nej/);
+  assert.match(log.content, /TEXT SOM SKICKADES/);
+  assert.match(log.content, /Vad tar jag med mig – med egna ord/);
+
+  // Hela vaulten granskas av Revisorn utan fel.
+  const findings = engine.audit(await p.collectNotes(), engine.today());
+  assert(Array.isArray(findings));
+
+  // Tillägget ska vara fristående: inga nätverksanrop.
+  const source = fs.readFileSync(require.resolve('../vault/.obsidian/plugins/forskaros-core/main.js'), 'utf8');
   assert(!/\bfetch\s*\(/.test(source));
-  assert(!/https?:\/\//.test(source));
-  process.stdout.write('OK: plugin commands, local notes, no overwrite, no network calls\n');
+  assert(!/XMLHttpRequest|requestUrl|https?:\/\//.test(source));
+  process.stdout.write('OK: tillägget: kommandon, koppling till fråga, fasbyten, vila, idéer, AI-logg, inget nätverk\n');
 })().catch(e => { console.error(e); process.exitCode = 1; });

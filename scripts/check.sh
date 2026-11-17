@@ -4,6 +4,7 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 node --check vault/.obsidian/plugins/forskaros-core/main.js
+node tests/engine.test.js
 node tests/plugin.test.js
 
 for f in build_files/build.sh scripts/*.sh system_files/usr/bin/*; do

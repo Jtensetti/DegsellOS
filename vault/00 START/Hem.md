@@ -9,11 +9,13 @@ Det här är inte en produktivitetsapp. Det är en forskningsmiljö som ska stä
 
 ## Börja här
 
-1. Läs [[00 START/Principer|principerna]] och [[00 START/Arbetsmetod|arbetsmetoden]].
-2. Öppna ForskarOS-panelen via hjärnikonen till vänster eller kommandopaletten.
-3. Skapa ett **Forskarpass**. Skriv din egen förklaring innan du ber om kritik.
-4. Skapa en **Hypotes** och ett **Motprov**. Leta efter data som kan visa att du har fel.
-5. Skriv en **Omprövning** när du faktiskt ändrat uppfattning.
+1. Läs [[00 START/Forskningsfilosofi|forskningsfilosofin]] och [[00 START/Arbetsmetod|arbetsmetoden]].
+2. Öppna ForskarOS-panelen via hjärnikonen eller kommandopaletten.
+3. **Välj en forskningsfråga.** Anta förslaget *När stärker AI människans förmåga att tänka?* eller formulera en egen. Skriv varför den är värd tio år av ditt liv.
+4. Följ cykeln: **Utforska → Kombinera → Välj → Pröva → Utveckla → Ompröva → Dela.** Panelen visar vad varje fas kräver.
+5. **Tänk först.** Skriv din egen uppfattning innan du använder *Be AI om hjälp*.
+6. Lyssna på **Revisorn** i panelen. Den säger till när arbetet glider ifrån metoden.
+7. Gör en **förmågegranskning** varje månad.
 
 ## Etik och tillit
 

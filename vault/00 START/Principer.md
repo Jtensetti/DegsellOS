@@ -23,5 +23,8 @@
 | Friktion | Sträva efter produktiv oenighet | Formulera starkaste invändningen |
 | Bekväm med att vara obekväm | Utforska osäkerhet utan prestige | Skriv ned vad du inte förstår |
 | Framtiden | Kunskap ska öppna möjligheter | Beskriv vilken framtid en upptäckt gör möjlig |
+| Engagemang | Drivkraften kommer från människan | Skriv varför frågan är värd tio år av ditt liv |
+| Intellektuell ödmjukhet | Vilja upptäcka att favoritidén är fel | Formulera vad som skulle få dig att ändra dig |
+| Återhämtning | Låt problem vila för att se nya lösningar | Lägg en fråga att vila och återvänd med nya ögon |
 
 Det finns ingen poäng med intellektuell friktion utan respekt för människor. Ingen belöning för att bara producera fler dokument.

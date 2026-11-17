@@ -5,10 +5,15 @@
 ForskarOS bygger vi inte från grunden. Vi tar **[Bluefin LTS](https://projectbluefin.io/)** från Universal Blue, en färdig och välskött GNOME-distribution med atomära uppdateringar som kan backas, och lägger ett forskningslager ovanpå:
 
 - **ForskarOS-vaulten:** en Obsidian-kompatibel kunskapsbas i ren Markdown med mappar för riktning, hypoteser, evidens, experiment, friktion, förändring, samverkan och reflektion.
-- **ForskarOS Core:** ett tillägg med sju arbetsprov (forskarpass, hypotes, motprov, perspektivkarta, omprövning, forskningsmöte, felrättning). Det arbetar helt lokalt och gör inga nätverksanrop.
+- **ForskarOS Core:** metoden i praktiken, helt lokalt och utan nätverksanrop:
+  - **Den kreativa forskningscykeln:** Utforska → Kombinera → Välj → Pröva → Utveckla → Ompröva → Dela, med krav för varje fas och öppen logg när du går vidare ändå.
+  - **Tänk först:** AI-hjälp förbereds först när du skrivit din egen uppfattning. Du ser exakt vad som delas och väljer själv AI. Roller: Upptäckaren, Motståndaren, Handledaren, Laboratorieassistenten, Revisorn. Lägen: utveckling, prövning, prestation.
+  - **Revisorn:** säger till när du utforskar utan att välja, fördjupar utan kritik, har för många frågor, saknar mänsklig återkoppling eller låter AI tänka åt dig.
+  - **Självständighet som mått:** tänkte du först, övningar utan AI, månatlig förmågegranskning. Inte antal anteckningar.
+  - **Epistemisk märkning** av vad som är belagt, tolkning och spekulation, plus idéparkering och vila (inkubation).
 - **Systemintegration:** vaulten skapas vid första inloggning, tillägget uppdateras när OS:et uppdateras och verktygen installeras efter ett aktivt val.
 
-Bakgrund och principer: [`vault/00 START/Principer.md`](vault/00%20START/Principer.md) och [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Bakgrund och principer: [`Forskningsfilosofi`](vault/00%20START/Forskningsfilosofi.md), [`Arbetsmetod`](vault/00%20START/Arbetsmetod.md) och [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Hårdvara
 
