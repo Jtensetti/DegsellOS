@@ -6,7 +6,7 @@ set -euxo pipefail
 
 # Systemfiler (kommandon, tjänster, autostart, programmeny, verktygsprofiler).
 cp -a /ctx/system_files/. /
-chmod 0755 /usr/bin/forskaros-init /usr/bin/forskaros-setup /usr/libexec/forskaros-grund
+chmod 0755 /usr/bin/forskaros-* /usr/libexec/forskaros-*
 
 # Seed-vaulten. Kopieras till användarens hemkatalog vid första inloggning.
 install -d /usr/share/forskaros
@@ -26,7 +26,7 @@ dnf -y install spice-vdagent qemu-guest-agent
 dnf clean all
 
 # Grundverktygen installeras vid första start med nätverk.
-systemctl enable forskaros-grund.service
+systemctl enable forskaros-grund.service forskaros-forskare.service forskaros-delad-mapp.service
 
 # Arbetsytans standardinställningar (dockan m.m.).
 if command -v dconf >/dev/null 2>&1; then dconf update; fi

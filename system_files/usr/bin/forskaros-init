@@ -36,6 +36,11 @@ if [[ -d "$TARGET/$PLUGIN_REL" ]]; then
   done
 fi
 
+# Delad mapp från värddatorn (virtuell maskin) som genväg i hemkatalogen.
+if mountpoint -q /var/mnt/delad 2>/dev/null && [[ ! -e "$HOME/Delad" ]]; then
+  ln -s /var/mnt/delad "$HOME/Delad"
+fi
+
 # Systemets egna sidor (verktygskort, Forskarhandboken) hålls uppdaterade.
 # Forskaren skriver egna anteckningar någon annanstans; dessa mappar ägs av systemet.
 for dir in "00 START/Verktyg" "00 START/Forskarhandboken"; do

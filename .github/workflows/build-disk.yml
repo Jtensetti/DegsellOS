@@ -58,6 +58,19 @@ jobs:
           sudo chown -R "$USER" output
           find output -type f -exec ls -lh {} \;
 
+      - name: Komprimera och paketera för UTM
+        if: matrix.type == 'qcow2'
+        run: |
+          sudo apt-get update && sudo apt-get install -y qemu-utils
+          qemu-img convert -p -c -O qcow2 output/qcow2/disk.qcow2 "output/ForskarOS-${{ matrix.arch }}.qcow2"
+          rm -rf output/qcow2
+          if [[ "${{ matrix.arch }}" == arm64 && -f vm/utm/config.plist ]]; then
+            python3 scripts/paketera_utm.py vm/utm/config.plist \
+              "output/ForskarOS-${{ matrix.arch }}.qcow2" "output/ForskarOS-${{ matrix.arch }}.utm.zip"
+            rm "output/ForskarOS-${{ matrix.arch }}.qcow2"
+          fi
+          ls -lh output
+
       - uses: actions/upload-artifact@v4
         with:
           name: forskaros-${{ matrix.arch }}-${{ matrix.type }}

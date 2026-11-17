@@ -1,6 +1,15 @@
 # bootc-image-builder: diskavbildning (qcow2/raw) för virtuella maskiner,
-# t.ex. UTM på en Mac. Ingen användare skapas här. GNOME:s
-# välkomstguide ska skapa kontot vid första start (ej verifierat än).
+# t.ex. UTM på en Mac.
+#
+# Som Kalis VM-avbildningar har den ett känt konto: forskare / forskare.
+# Lösenordet MÅSTE bytas vid första inloggningen (forskaros-forskare.service
+# markerar det som utgånget vid första start). ISO-installationer har inget
+# förinställt konto.
+[[customizations.user]]
+name = "forskare"
+password = "forskare"
+groups = ["wheel"]
+
 [[customizations.filesystem]]
 mountpoint = "/"
 minsize = "40 GiB"

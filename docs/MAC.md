@@ -16,16 +16,31 @@ alla Apple Silicon-Macar.
    som en befintlig disk (*Import*). Ta bort den tomma disken UTM skapade.
 4. Ge maskinen minst **4 GB RAM** (8 GB rekommenderas om du ska köra lokal AI)
    och 4 CPU-kärnor.
-5. Starta. GNOME:s välkomstguide skapar ditt konto. Vid första inloggningen
-   öppnas *ForskarOS – verktygslåda* där du väljer forskningsverktyg.
+5. Starta och logga in som **forskare** med lösenordet **forskare**. Du måste
+   byta lösenord direkt, precis som med Kalis färdiga maskiner. Vid första
+   inloggningen öppnas *ForskarOS – verktygslåda* där du väljer verktyg.
+
+När UTM-mallen finns (se `vm/utm/README.md`) blir steg 2–4 ett enda steg:
+packa upp `ForskarOS.utm.zip` och dubbelklicka.
+
+## Dela filer mellan Mac och ForskarOS
+
+- **Apple Virtualization-läget** i UTM delar mappar via virtiofs. ForskarOS
+  monterar den delade mappen automatiskt, och den syns som `~/Delad`.
+- **QEMU-läget** delar via 9p, som basens kärna troligen saknar. Använd då
+  nätverksdelning: på Macen, *Systeminställningar → Allmänt → Delning →
+  Fildelning*. I ForskarOS: *Filer → Andra platser → Anslut till server* och
+  skriv `smb://192.168.64.1` (Macens adress i UTM:s delade nätverk).
+- Zotero, e-post och molnlagring fungerar som vanligt via nätverket.
 
 Vid första start installeras grundverktygen automatiskt i bakgrunden (kräver
 nätverk, tar en stund). Vid första inloggningen öppnas verktygslådan där du
 väljer fler verktyg. Delat urklipp och automatisk skärmstorlek fungerar i
 UTM:s QEMU-läge tack vare `spice-vdagent`.
 
-> **Ej verifierat än:** att disken startar i UTM och att välkomstguiden
-> skapar kontot. Det är det första vi testar tillsammans på din MacBook Neo.
+> **Ej verifierat än:** att disken startar i UTM, inloggningen med
+> lösenordsbyte och den delade mappen. Det är det första vi testar på din
+> MacBook Neo.
 
 ## Varför inte direkt uppstart?
 

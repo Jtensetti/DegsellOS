@@ -87,6 +87,12 @@ jobs:
             FILE="$BASE.iso"
           fi
           rm -rf output
+          # Apple Silicon: färdigt UTM-paket om mallen finns (vm/utm/config.plist).
+          if [[ "${{ matrix.arch }}" == arm64 && -f vm/utm/config.plist ]]; then
+            python3 scripts/paketera_utm.py vm/utm/config.plist "dist/$FILE" "dist/$BASE.utm.zip"
+            rm "dist/$FILE"
+            FILE="$BASE.utm.zip"
+          fi
           (cd dist && sha256sum "$FILE" > "$FILE.sha256")
           echo "FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh dist
