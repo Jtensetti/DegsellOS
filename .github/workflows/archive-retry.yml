@@ -41,27 +41,9 @@ jobs:
             # Loggen kan innehålla kontouppgifter. Skriv bara ut klassificeringen.
             log="$RUNNER_TEMP/archive-$task.log"
             if curl -fsS --max-time 30 -H "$auth" "$api?task_log=$task" -o "$log"; then
-              # Matcha en fast ordlista. Konton, sökvägar och loggtext publiceras aldrig.
-              python3 - "$log" <<'PYTHON'
-          import pathlib, re, sys
-          lines = pathlib.Path(sys.argv[1]).read_text(errors="replace").splitlines()
-          terms = set("""error fatal failed failure exception panic abort aborted skip retry cannot unable
-          missing invalid unknown found exists denied forbidden permission access authorization authentication
-          timeout network connection refused reset unavailable storage space disk quota readonly lock locked
-          server database timeout validation metadata field value key invalid parameter unsupported format
-          mediatype collection software texts opensource identifier empty files file directory object
-          job task archive derive image checksum sha256 xml json copy move delete write read open close
-          book_op add_to_collection add_to_user_collection user collection creator ownership owner public
-          private not is no at for has expired needs manual review policy blocked restricted abuse spam
-          spamcheck flag flagged virus malware quarantine dark disabled banned suspended rate limit
-          catalog library request response exit code return status exception http php warning s3
-          memory overflow error_exception upstream proxy gateway temporary service unavailable
-          item account email catalogd bookreader derive.php book_op.php archive.php""".split())
-          for line in lines[-35:]:
-              words = [w for w in re.findall(r"[a-z_]+(?:\.php)?|\b[1-5][0-9]{2}\b", line.lower()) if w in terms or w.isdigit()]
-              if words:
-                  print("IA:", " ".join(words))
-          PYTHON
+              if grep -Eiq 'fatal error.*quota|quota.*exceeded|over quota' "$log"; then
+                echo "$item: fel i Archives kvotkontroll, jobb $task."
+              fi
               if grep -Eiq 'held for review|flagged for (spam|abuse|review)|blocked by policy|copyright claim|account suspended' "$log"; then
                 echo "$item: manuell granskning hos Archive, jobb $task."
                 failed=1

@@ -6,15 +6,17 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
-Status: avbildningen byggs i CI för amd64 och arm64. **2027.1-beta1 för amd64 har startats och testats i QEMU**: inloggning, lösenordsbyte, GNOME-skrivbord och ForskarOS Core i riktig Obsidian fungerar i det genomförda testet. Obsidian installerades manuellt eftersom testmiljön inte kunde nå Flathub. ARM/UTM, ISO-installation och fysisk hårdvara är ännu inte verifierade i detta test. Se [testprotokollet](docs/VM-TEST-2026-11-17.md).
+**2027.1-beta2 är byggd för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
 
-<p align="center"><img src="docs/bilder/forskaros-vm-amd64.png" alt="ForskarOS 2027.1-beta1 i en körande QEMU-VM: Obsidian med startsidan och Core-panelens aktiva forskningsfråga" width="1100"></p>
+<p align="center"><img src="docs/bilder/forskaros-core-031-qemu.png" alt="ForskarOS Core 0.3.1 i Obsidian med den aktiva forskningsfrågan och alla sju faserna i sidopanelen" width="1100"></p>
 
-<sub>Verklig skärmdump från amd64-VM:n den 17 november 2026, med Obsidian 1.15.1 och ForskarOS Core 0.3.0. Exempelfrågan har aktiverats; vänster sidofält har fällts ihop och Core-panelen breddats. Bilden är fångad från VM:ns bildskärm, inte renderad från en modell av gränssnittet.</sub>
+<sub>Core 0.3.1 i riktig Obsidian 1.15.1. Skärmdumpen kommer från den befintliga amd64-testmaskinen med beta1 som systembas och tillägget från beta2.</sub>
 
 ## Ladda ner
 
-Förhandsversion **2027.1-beta1**, inte testad på hårdvara. Varje sida har direktlänk, torrent och SHA-256.
+**Senast verifierade nedladdning från Internet Archive är 2027.1-beta1.** Archive tog emot beta2 den 17 november, men behandlingen stannade i tjänstens kvotkontroll. Tabellen länkar till de fungerande beta1-filerna. Varje arkivpost innehåller även en kontrollsumma och en torrent.
+
+Den som redan kör ForskarOS kan hämta beta2 från den publicerade containeravbildningen med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta2` och sedan starta om.
 
 | Fil | För |
 |---|---|
@@ -29,7 +31,7 @@ Ett Obsidian-tillägg. Allt sker lokalt; tillägget gör inga nätverksanrop.
 - **Faser:** varje forskningsfråga går igenom Utforska, Kombinera, Välj, Pröva, Utveckla, Ompröva och Dela. Varje fas har krav (till exempel ett besvarat motprov och ett möte med någon utanför projektet innan Pröva är klar). Kraven går att hoppa över, men motiveringen loggas i frågan.
 - **Avslut:** en fråga avslutas med ett utfall: besvarad, hypotesen förkastad eller övergiven.
 - **Att åtgärda:** en lista som bygger på vaultens innehåll, till exempel hypoteser utan motprov, frågor som stått still i 30 dagar, fler påbörjade än avslutade frågor och för många öppna frågor (vilande räknas).
-- **AI-konsultationer:** tillägget skapar en text att kopiera till valfri AI och loggar konsultationen. Utvecklings- och prövningsläget kräver att anteckningen har minst 50 egna ord.
+- **AI-konsultationer:** tillägget skapar en text att kopiera till valfri AI och loggar konsultationen. Utvecklings- och prövningsläget kräver minst 50 egna ord. Med ett kortare utkast väljer du själv om du vill fortsätta i prestationsläge.
 - **Mallar** för forskningsfrågor, hypoteser, motprov, perspektivkartor, experiment, omprövningar, forskningsmöten, felrättningar, övningar och en månatlig förmågegranskning.
 
 Arbetsmetoden beskrivs i [`vault/00 START/Arbetsmetod.md`](vault/00%20START/Arbetsmetod.md) och bakgrunden i [`Bakgrund.md`](vault/00%20START/Bakgrund.md).
