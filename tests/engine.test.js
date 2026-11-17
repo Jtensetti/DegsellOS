@@ -49,32 +49,63 @@ test('section hittar text under rubrik och ignorerar mallrader', () => {
   assert.equal(e.section(body, 'Prediktioner'), '2. Fler fel med AI');
 });
 
-test('faskrav: Utforska kräver engagemang och perspektivmångfald', () => {
-  const q = note(Q, { typ: 'forskningsfråga', fas: 'utforska' }, e.questionNote({ date: DAY, titel: 'Q', varför: '' }));
-  assert.deepEqual(e.phaseRequirements(q, [q]).map(r => r.ok), [false, false]);
-  const q2 = note(Q, q.fm, e.questionNote({ date: DAY, titel: 'Q', varför: 'För att det avgör hur vi lär oss.' }));
-  const karta = note('k.md', { typ: 'perspektivkarta', fråga: link });
-  assert.deepEqual(e.phaseRequirements(q2, [q2, karta]).map(r => r.ok), [true, true]);
+const MOTIVERING = 'Frågan avgör om skolor ska använda AI som stöd för skrivande eller inte, och hur. Det berör hundratusentals elever och lärare varje år, och dagens beslut fattas nästan helt utan forskning om långsiktiga effekter.';
+const fyllKarta = (rader) => e.TYPES.diversity.render({ date: DAY })
+  .replace('| Kognitionsvetenskap | | | |', rader >= 1 ? '| Kognitionsvetenskap | Avlastning | Motivation | Risko |' : '| Kognitionsvetenskap | | | |')
+  .replace('| Teknik / datavetenskap | | | |', rader >= 2 ? '| Teknik / datavetenskap | Verktyg | Lärande | ACM |' : '| Teknik / datavetenskap | | | |')
+  .replace('| Oväntat fält | | | |', rader >= 3 ? '| Oväntat fält | Idrottens träningslära | Kontext | Ericsson |' : '| Oväntat fält | | | |')
+  .replace('## Där perspektiven motsäger varandra\n', '## Där perspektiven motsäger varandra\nAvlastning hjälper i stunden men inte på sikt.\n');
+
+test('faskrav: Utforska kräver motivering och en riktig perspektivkarta', () => {
+  const q = note(Q, { typ: 'forskningsfråga', fas: 'utforska' }, e.questionNote({ date: DAY, titel: 'Q', varför: 'Kort.' }));
+  assert.deepEqual(e.phaseRequirements(q, [q]).map(r => r.ok), [false, false, false, false]);
+  const q2 = note(Q, q.fm, e.questionNote({ date: DAY, titel: 'Q', varför: MOTIVERING }));
+  const tom = note('k.md', { typ: 'perspektivkarta', fråga: link }, e.TYPES.diversity.render({ date: DAY }));
+  assert.deepEqual(e.phaseRequirements(q2, [q2, tom]).map(r => r.ok), [true, false, false, false], 'en tom karta räknas inte');
+  const två = note('k.md', { typ: 'perspektivkarta', fråga: link }, fyllKarta(2));
+  assert.deepEqual(e.phaseRequirements(q2, [q2, två]).map(r => r.ok), [true, false, false, true]);
+  const full = note('k.md', { typ: 'perspektivkarta', fråga: link }, fyllKarta(3));
+  assert.deepEqual(e.phaseRequirements(q2, [q2, full]).map(r => r.ok), [true, true, true, true]);
 });
 
-test('faskrav: Kombinera kräver hypotes med etablerad grund och ovanlig kombination', () => {
+test('faskrav: Kombinera kräver grund, det nya och ett utmanat antagande', () => {
   const q = note(Q, { typ: 'forskningsfråga', fas: 'kombinera' });
   const tom = note('h.md', { typ: 'hypotes', fråga: link }, e.TYPES.hypothesis.render({ date: DAY }));
-  assert.deepEqual(e.phaseRequirements(q, [tom]).map(r => r.ok), [true, false, false]);
+  assert.deepEqual(e.phaseRequirements(q, [tom]).map(r => r.ok), [true, false, false, false]);
   const full = note('h.md', { typ: 'hypotes', fråga: link }, tom.body
-    .replace('## Etablerad kunskap jag bygger på\n',
-      '## Etablerad kunskap jag bygger på\nForskning om kognitiv avlastning.\n')
+    .replace('## Etablerad kunskap jag bygger på\n', '## Etablerad kunskap jag bygger på\nForskning om kognitiv avlastning.\n')
     .replace('## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\n',
-      '## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\nSpråkdidaktik möter förvaltningsforskning.\n'));
-  assert.deepEqual(e.phaseRequirements(q, [full]).map(r => r.ok), [true, true, true]);
+      '## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\nSpråkdidaktik möter förvaltningsforskning.\n')
+    .replace('## Vilket etablerat antagande utmanar hypotesen?\n', '## Vilket etablerat antagande utmanar hypotesen?\nAtt mer stöd alltid ger mer lärande.\n'));
+  assert.deepEqual(e.phaseRequirements(q, [full]).map(r => r.ok), [true, true, true, true]);
 });
 
-test('faskrav: Pröva kräver besvarat motprov OCH en människa', () => {
+test('faskrav: Välj kräver konfidens och vad som förändras', () => {
+  const body = e.questionNote({ date: DAY, titel: 'Q', varför: MOTIVERING })
+    .replace('## Om frågan besvaras\n> Vad vet vi då som vi inte vet i dag, och vem har nytta av det?\n', '## Om frågan besvaras\n> Vad vet vi då som vi inte vet i dag, och vem har nytta av det?\nSkolor kan välja AI-stöd som bygger förmåga.\n')
+    .replace('## Det jag väljer bort\n', '## Det jag väljer bort\nYngre barn.\n');
+  const q = note(Q, { typ: 'forskningsfråga', fas: 'välj' }, body);
+  const h = konfidens => note('h.md', { typ: 'hypotes', fråga: link, konfidens }, '## Falsifiering\nIngen skillnad.\n## Prediktioner\n1. Sämre utan AI.\n');
+  assert.deepEqual(e.phaseRequirements(q, [h('okänd')]).map(r => r.ok), [true, true, false, true, true]);
+  assert.deepEqual(e.phaseRequirements(q, [h('medel')]).map(r => r.ok), [true, true, true, true, true]);
+});
+
+test('faskrav: Pröva kräver besvarat motprov OCH en invändning från en människa', () => {
   const q = note(Q, { typ: 'forskningsfråga', fas: 'pröva' });
   const motprov = note('m.md', { typ: 'motprov', fråga: link }, '## Mitt svar efter att ha övervägt invändningarna\nInvändningen håller delvis.');
   assert.deepEqual(e.phaseRequirements(q, [motprov]).map(r => r.ok), [true, false], 'AI-kritik räcker inte');
-  const möte = note('mö.md', { typ: 'forskningsmöte', fråga: link });
+  const tomtMöte = note('mö.md', { typ: 'forskningsmöte', fråga: link }, e.TYPES.meeting.render({ date: DAY }));
+  assert.deepEqual(e.phaseRequirements(q, [motprov, tomtMöte]).map(r => r.ok), [true, false], 'ett möte utan invändning räknas inte');
+  const möte = note('mö.md', { typ: 'forskningsmöte', fråga: link }, '## Viktigaste invändningen jag fick\nUrvalet är för litet.\n');
   assert.deepEqual(e.phaseRequirements(q, [motprov, möte]).map(r => r.ok), [true, true]);
+});
+
+test('faskrav: Dela kräver en sammanfattning på 50–200 ord', () => {
+  const ord = n => Array.from({ length: n }, (_, i) => `ord${i}`).join(' ');
+  const q = n => note(Q, { typ: 'forskningsfråga', fas: 'dela' }, `## Sammanfattning för någon utanför fältet\n${ord(n)}\n## Delat med\nSeminariet.\n`);
+  assert.deepEqual(e.phaseRequirements(q(20), []).map(r => r.ok), [false, true]);
+  assert.deepEqual(e.phaseRequirements(q(120), []).map(r => r.ok), [true, true]);
+  assert.deepEqual(e.phaseRequirements(q(400), []).map(r => r.ok), [false, true]);
 });
 
 test('faskrav: anteckningar till en annan fråga räknas inte', () => {
@@ -258,6 +289,69 @@ test('mått: forskningsmöten, fokuspass och utfall', () => {
 
 test('hypotesmallen frågar efter utmanat antagande', () => {
   assert.match(e.TYPES.hypothesis.render({ date: DAY }), /## Vilket etablerat antagande utmanar hypotesen\?/);
+});
+
+test('granskning: möten följs upp, varieras och täcker ämne, metod och annat fält', () => {
+  const aq = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'pröva', fas_ändrad: DAY, datum: DAY });
+  const möte = (i, fm, body = '') => note(`mö${i}.md`, Object.assign({ typ: 'forskningsmöte', ny_kontakt: 'ja' }, fm), body);
+  const ouppföljt = möte(1, { datum: '2026-10-20', deltagare: 'Anna', kompetens: 'ämne' }, '## Uppföljning\n- [ ] Skicka utkast\n');
+  assert.equal(princip(e.audit([aq, ouppföljt], DAY), 'Uppföljning efter möte').length, 1);
+  const klart = möte(1, { datum: '2026-10-20', deltagare: 'Anna', kompetens: 'ämne' }, '## Uppföljning\n- [x] Skicka utkast\n');
+  assert.equal(princip(e.audit([aq, klart], DAY), 'Uppföljning efter möte').length, 0);
+  const samma = [1, 2, 3].map(i => möte(i, { datum: `2026-1${i % 2}-0${i}`, deltagare: 'Anna', kompetens: 'ämne' }));
+  assert.equal(princip(e.audit([aq, ...samma], DAY), 'Samma person').length, 1);
+  assert.match(princip(e.audit([aq, ...samma], DAY), 'Saknad kompetens')[0].text, /metod, annat fält/);
+  const bredd = [möte(1, { datum: '2026-11-01', deltagare: 'Anna', kompetens: 'ämne' }), möte(2, { datum: '2026-11-02', deltagare: 'Bo', kompetens: 'metod' }), möte(3, { datum: '2026-11-03', deltagare: 'Cy', kompetens: 'annat fält' })];
+  const f = e.audit([aq, ...bredd], DAY);
+  assert.equal(princip(f, 'Samma person').length + princip(f, 'Saknad kompetens').length, 0);
+});
+
+test('granskning: aktiv fråga men inget arbete på 14 dagar', () => {
+  const aq = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'utveckla', fas_ändrad: DAY, datum: DAY });
+  assert.equal(princip(e.audit([aq], DAY), 'Inget arbete loggat').length, 1);
+  const gammalt = note('p.md', { typ: 'forskarpass', datum: '2026-10-01' });
+  assert.match(princip(e.audit([aq, gammalt], DAY), 'Inget arbete loggat')[0].text, /47 dagar/);
+  const fokus = note('f.md', { typ: 'fokuslogg' }, '- 2026-11-15 09:00–09:50 (50 av 50 min): ');
+  assert.equal(princip(e.audit([aq, gammalt, fokus], DAY), 'Inget arbete loggat').length, 0, 'fokuspass räknas som arbete');
+});
+
+test('granskning: inga nya idéer på 60 dagar', () => {
+  const aq = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'utveckla', fas_ändrad: DAY, datum: '2026-08-01' });
+  assert.equal(princip(e.audit([aq], DAY), 'Inga nya idéer').length, 1);
+  const idé = note('i.md', { typ: 'idé', datum: '2026-11-01' });
+  assert.equal(princip(e.audit([aq, idé], DAY), 'Inga nya idéer').length, 0);
+  const ny = note(Q, Object.assign({}, aq.fm, { datum: '2026-11-01' }));
+  assert.equal(princip(e.audit([ny], DAY), 'Inga nya idéer').length, 0, 'inte för nya frågor');
+});
+
+test('granskning: forskarpass utan något oklart', () => {
+  const pass = (i, body) => note(`p${i}.md`, { typ: 'forskarpass', datum: DAY }, body);
+  const tomma = [1, 2, 3].map(i => pass(i, e.TYPES.pass.render({ date: DAY })));
+  assert.equal(princip(e.audit(tomma, DAY), 'Inget oklart').length, 1);
+  const ärlig = pass(4, '## 6. Det jag inte förstår\nHur effekten ska mätas.\n');
+  assert.equal(princip(e.audit([...tomma, ärlig], DAY), 'Inget oklart').length, 0);
+});
+
+test('granskning: förmågegranskning kräver belägg och övning för den svagaste förmågan', () => {
+  const g = (body) => note('g.md', { typ: 'förmågegranskning', datum: DAY, problemformulering: 4, metodkompetens: 2 }, body);
+  const utan = g(e.TYPES.review.render({ date: DAY }));
+  assert.equal(princip(e.audit([utan], DAY), 'Skattning utan belägg').length, 1);
+  const med = g('## Problemformulering\n- Arbetsprov: [[Pass 1]]\n## Metodkompetens\n- Arbetsprov: [[Övning 1]]\n');
+  assert.equal(princip(e.audit([med], DAY), 'Skattning utan belägg').length, 0);
+  assert.match(princip(e.audit([med], DAY), 'Svagaste förmågan')[0].text, /Metodkompetens/);
+  const övning = note('ö.md', { typ: 'övning', förmåga: 'metodkompetens', utan_ai: 'ja', datum: DAY });
+  assert.equal(princip(e.audit([med, övning], DAY), 'Svagaste förmågan').length, 0);
+});
+
+test('granskning: ökande AI-beroende jämfört med förra månaden', () => {
+  const ai = (i, datum, ja) => note(`a${i}.md`, { typ: 'ai-konsultation', datum, egen_tanke_först: ja ? 'ja' : 'nej' }, '## Vad tar jag med mig?\nx');
+  const förra = [1, 2, 3, 4].map(i => ai(i, '2026-10-05', true));
+  const nu = [5, 6, 7, 8].map(i => ai(i, DAY, i === 5));
+  assert.match(princip(e.audit([...förra, ...nu], DAY), 'Ökande AI-beroende')[0].text, /från 100 % till 25 %/);
+  const stabilt = [5, 6, 7, 8].map(i => ai(i, DAY, true));
+  assert.equal(princip(e.audit([...förra, ...stabilt], DAY), 'Ökande AI-beroende').length, 0);
+  const m = e.metrics([...förra, ...nu], DAY);
+  assert.deepEqual([m.tänktFörst, m.aiKonsultationer, m.tänktFörstFörra, m.aiFörra], [1, 4, 4, 4]);
 });
 
 test('datumhjälp', () => {

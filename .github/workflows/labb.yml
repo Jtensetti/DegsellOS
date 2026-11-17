@@ -33,7 +33,7 @@ jobs:
       - name: Röktest
         run: podman run --rm -v "$PWD/labb:/test:ro" localhost/forskaros-labb:${{ matrix.arch }} bash /test/rok.sh
       - name: Publicera arkitekturspecifik tagg
-        if: github.ref_name == github.event.repository.default_branch && github.event_name != 'pull_request'
+        if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -42,7 +42,7 @@ jobs:
           podman push localhost/forskaros-labb:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
 
   publish:
-    if: github.ref_name == github.event.repository.default_branch && github.event_name != 'pull_request'
+    if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-24.04
     permissions:

@@ -2,6 +2,15 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
+## 2027.1-beta1
+
+Förhandsversion av 2027.1. Avbildningen byggs och testas i CI men har inte startats på hårdvara eller i en virtuell maskin.
+
+- Faskraven och granskningen täcker alla begrepp i arbetsmetoden; varje begrepp har ett test som visar att systemet reagerar när det brister (`tests/begrepp.test.js`)
+- Avslut med utfall, gräns för öppna frågor, varning när fler frågor påbörjas än avslutas
+- Forskningsmöten följs upp (deltagare, kompetens, uppföljningar), trend för AI-användning
+- Obsidian i egen profil
+
 ## 2027.1 (ej släppt)
 
 - Avbildning byggd på Bluefin LTS för amd64 och arm64

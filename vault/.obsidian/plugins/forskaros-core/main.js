@@ -212,6 +212,17 @@ function countWords(text) {
   return (String(text).match(/[\p{L}\p{N}]+/gu) || []).length;
 }
 
+/** Ifyllda rader i en tabell under en rubrik (mallens tomma rader räknas inte). */
+function filledRows(body, prefix) {
+  return section(body, prefix).split('\n').filter(l => l.startsWith('|')).length;
+}
+
+/** Har tabellraden som börjar med etiketten fått innehåll? */
+function rowFilled(body, label) {
+  const row = stripFrontmatter(body).split('\n').find(l => l.trim().startsWith(`| ${label}`));
+  return Boolean(row) && row.split('|').slice(2).some(c => c.trim());
+}
+
 /** Antal ord forskaren själv skrivit i en anteckning. */
 function ownWords(body) {
   return countWords(contentLines(stripFrontmatter(body).split('\n')).join('\n'));
@@ -236,28 +247,36 @@ function phaseRequirements(question, notes) {
   const linked = notes.filter(n => refersTo(n, question));
   const of = typ => linked.filter(n => n.fm.typ === typ);
   const hyps = of('hypotes');
+  const kartor = of('perspektivkarta');
+  const möten = of('forskningsmöte');
+  const sammanfattning = countWords(section(question.body, 'Sammanfattning för någon utanför'));
   switch (question.fm.fas || 'utforska') {
     case 'utforska':
       return [
-        req(section(question.body, 'Varför'), 'Frågan har en motivering: varför den är viktig'),
-        req(of('perspektivkarta').length > 0, 'Minst en perspektivkarta')
+        req(countWords(section(question.body, 'Varför')) >= 30, 'Motiveringen till frågan är minst 30 ord'),
+        req(kartor.some(k => filledRows(k.body, 'Utgångsfråga') >= 3), 'En perspektivkarta med minst tre ifyllda perspektiv'),
+        req(kartor.some(k => rowFilled(k.body, 'Oväntat fält')), 'Perspektivkartan har ett perspektiv från ett oväntat fält'),
+        req(kartor.some(k => section(k.body, 'Där perspektiven motsäger varandra')), 'Perspektivkartan anger var perspektiven motsäger varandra')
       ];
     case 'kombinera':
       return [
         req(hyps.length > 0, 'Minst en hypotes'),
         req(hyps.some(h => section(h.body, 'Etablerad kunskap')), 'Hypotesen anger vilken etablerad kunskap den bygger på'),
-        req(hyps.some(h => section(h.body, 'Den ovanliga kombinationen')), 'Hypotesen anger vad som är nytt')
+        req(hyps.some(h => section(h.body, 'Den ovanliga kombinationen')), 'Hypotesen anger vad som är nytt'),
+        req(hyps.some(h => section(h.body, 'Vilket etablerat antagande')), 'Hypotesen anger vilket etablerat antagande den utmanar')
       ];
     case 'välj':
       return [
         req(hyps.some(h => section(h.body, 'Falsifiering')), 'En hypotes har ett falsifieringskriterium'),
         req(hyps.some(h => section(h.body, 'Prediktioner')), 'En hypotes har konkreta prediktioner'),
+        req(hyps.some(h => h.fm.konfidens && h.fm.konfidens !== 'okänd'), 'Hypotesens konfidens är angiven (låg, medel eller hög)'),
+        req(section(question.body, 'Om frågan besvaras'), 'Frågan anger vad som förändras om den besvaras'),
         req(section(question.body, 'Det jag väljer bort'), 'Avgränsningen anger vad som väljs bort')
       ];
     case 'pröva':
       return [
         req(of('motprov').some(m => section(m.body, 'Mitt svar')), 'Minst ett besvarat motprov'),
-        req(of('forskningsmöte').length > 0, 'Minst ett forskningsmöte med någon utanför projektet')
+        req(möten.some(m => section(m.body, 'Viktigaste invändningen')), 'Ett forskningsmöte där någon utanför projektet framfört en invändning')
       ];
     case 'utveckla':
       return [
@@ -270,6 +289,7 @@ function phaseRequirements(question, notes) {
       ];
     case 'dela':
       return [
+        req(sammanfattning >= 50 && sammanfattning <= 200, `En sammanfattning för någon utanför fältet, 50–200 ord (nu ${sammanfattning})`),
         req(section(question.body, 'Delat med'), 'Resultatet har delats med någon som kan granska det')
       ];
     default:
@@ -378,6 +398,79 @@ function audit(notes, date) {
       `${möten180.length} forskningsmöten senaste halvåret, inget med en ny kontakt.`));
   }
 
+  // Möten: uppföljningar som inte gjorts, samma person, saknade kompetenser.
+  for (const m of möten180) {
+    const öppna = (section(m.body, 'Uppföljning').match(/^- \[ \]\s*\S/gm) || []).length;
+    if (öppna > 0 && daysBetween(noteDate(m), date) > 14) {
+      out.push(finding('påminnelse', 'Uppföljning efter möte',
+        `"${basename(m.path)}" har ${öppna} uppföljning(ar) som inte är gjorda.`, m.path));
+    }
+  }
+  const personer = new Set(möten180.map(m => String(m.fm.deltagare || '').trim().toLowerCase()).filter(Boolean));
+  if (möten180.length >= 3 && personer.size === 1) {
+    out.push(finding('påminnelse', 'Samma person',
+      `${möten180.length} forskningsmöten senaste halvåret, alla med samma person.`));
+  }
+  if (active.length > 0 && möten180.length >= 2) {
+    const kompetenser = new Set(möten180.map(m => m.fm.kompetens));
+    const saknas = ['ämne', 'metod', 'annat fält'].filter(k => !kompetenser.has(k));
+    if (saknas.length) {
+      out.push(finding('påminnelse', 'Saknad kompetens',
+        `Inga forskningsmöten senaste halvåret med kompetens: ${saknas.join(', ')}.`));
+    }
+  }
+
+  // Arbete: aktiva frågor men inget loggat arbete på 14 dagar.
+  if (active.length > 0) {
+    const arbete = notes.filter(n => ['forskarpass', 'experiment', 'övning', 'motprov', 'hypotes'].includes(n.fm.typ))
+      .map(noteDate).filter(Boolean);
+    for (const logg of of('fokuslogg')) {
+      for (const m of String(logg.body || '').matchAll(/^- (\d{4}-\d{2}-\d{2}) /gm)) arbete.push(m[1]);
+    }
+    const senast = arbete.sort().pop();
+    if (!senast || daysBetween(senast, date) > 14) {
+      out.push(finding('varning', 'Inget arbete loggat',
+        senast ? `Senaste forskarpass, fokuspass eller experiment var för ${daysBetween(senast, date)} dagar sedan.` : 'Inga forskarpass, fokuspass eller experiment loggade än.'));
+    }
+  }
+
+  // Lekfullhet: inga nya idéer eller perspektiv på 60 dagar.
+  if (active.length > 0) {
+    const nytt = notes.filter(n => ['idé', 'perspektivkarta'].includes(n.fm.typ) && noteDate(n) && daysBetween(noteDate(n), date) <= 60);
+    const äldsta = active.map(noteDate).filter(Boolean).sort()[0];
+    if (!nytt.length && äldsta && daysBetween(äldsta, date) > 60) {
+      out.push(finding('påminnelse', 'Inga nya idéer',
+        'Ingen ny idé eller perspektivkarta på 60 dagar. Parkera idéer när de dyker upp.'));
+    }
+  }
+
+  // Att inte förstå: forskarpass där avsnittet om det man inte förstår är tomt.
+  const pass30 = of('forskarpass').filter(n => noteDate(n) && daysBetween(noteDate(n), date) <= 30);
+  if (pass30.length >= 3 && !pass30.some(n => section(n.body, 'Det jag inte förstår'))) {
+    out.push(finding('påminnelse', 'Inget oklart',
+      `${pass30.length} forskarpass senaste månaden, inget med något under "Det jag inte förstår".`));
+  }
+
+  // Kompetens: skattningar utan arbetsprov, och ingen övning för den svagaste förmågan.
+  const sistaGranskning = of('förmågegranskning').sort((a, b) => noteDate(a).localeCompare(noteDate(b))).pop();
+  if (sistaGranskning) {
+    const utanBelägg = CAPABILITIES.filter(([k, namn]) => Number(sistaGranskning.fm[k]) >= 1 &&
+      !/\[\[[^\]]+\]\]/.test((section(sistaGranskning.body, namn).match(/Arbetsprov:.*$/m) || [''])[0]));
+    if (utanBelägg.length) {
+      out.push(finding('påminnelse', 'Skattning utan belägg',
+        `${utanBelägg.length} förmågor i senaste granskningen saknar länk till ett arbetsprov.`, sistaGranskning.path));
+    }
+    const skattade = CAPABILITIES.filter(([k]) => Number(sistaGranskning.fm[k]) >= 1);
+    if (skattade.length) {
+      const [svagast, svagastNamn] = skattade.reduce((a, b) => Number(sistaGranskning.fm[b[0]]) < Number(sistaGranskning.fm[a[0]]) ? b : a);
+      const övad = of('övning').some(ö => ö.fm.förmåga === svagast && noteDate(ö) && daysBetween(noteDate(ö), date) <= 30);
+      if (!övad) {
+        out.push(finding('påminnelse', 'Svagaste förmågan',
+          `Lägst skattad: ${svagastNamn}. Ingen övning för den senaste 30 dagarna.`));
+      }
+    }
+  }
+
   // Tillit: öppna felrättningar.
   for (const k of of('felrättning').filter(k => (k.fm.status || 'öppen') === 'öppen')) {
     const ålder = daysBetween(noteDate(k) || date, date);
@@ -401,6 +494,17 @@ function audit(notes, date) {
   if (ai30.length >= 3 && utanTanke / ai30.length > 0.5) {
     out.push(finding('varning', 'AI-användning',
       `${utanTanke} av ${ai30.length} AI-konsultationer senaste månaden gjordes innan du skrivit något eget.`));
+  }
+
+  // Beroende över tid: andelen konsultationer med eget utkast ska inte sjunka.
+  const förra30 = of('ai-konsultation').filter(a => { const d = daysBetween(noteDate(a) || date, date); return d > 30 && d <= 60; });
+  if (ai30.length >= 3 && förra30.length >= 3) {
+    const nu = ai30.filter(a => a.fm.egen_tanke_först === 'ja').length / ai30.length;
+    const då = förra30.filter(a => a.fm.egen_tanke_först === 'ja').length / förra30.length;
+    if (då - nu >= 0.25) {
+      out.push(finding('varning', 'Ökande AI-beroende',
+        `Andelen AI-konsultationer med eget utkast har sjunkit från ${Math.round(då * 100)} % till ${Math.round(nu * 100)} %.`));
+    }
   }
 
   // Återkoppling: månatlig förmågegranskning.
@@ -427,6 +531,7 @@ function metrics(notes, date) {
   const of = typ => notes.filter(n => n.fm.typ === typ);
   const inom = (n, d) => daysBetween(noteDate(n) || date, date) <= d;
   const ai = of('ai-konsultation').filter(n => inom(n, 30));
+  const förraAI = of('ai-konsultation').filter(n => { const d = daysBetween(noteDate(n) || date, date); return d > 30 && d <= 60; });
   const övningar = of('övning').filter(n => inom(n, 30) && n.fm.utan_ai === 'ja');
   const granskningar = of('förmågegranskning').sort((a, b) => noteDate(a).localeCompare(noteDate(b)));
   const score = g => {
@@ -455,6 +560,9 @@ function metrics(notes, date) {
   return {
     aiKonsultationer: ai.length,
     tänktFörst: ai.filter(a => a.fm.egen_tanke_först === 'ja').length,
+    aiFörra: förraAI.length,
+    tänktFörstFörra: förraAI.filter(a => a.fm.egen_tanke_först === 'ja').length,
+    idéer: of('idé').filter(n => inom(n, 60)).length,
     övningarUtanAI: övningar.length,
     motprov: of('motprov').length,
     omprövningar: of('omprövning').length,
@@ -697,8 +805,9 @@ ${source || ''}
   },
   meeting: {
     label: 'Forskningsmöte', folder: '07 SAMVERKAN', prefix: 'Möte',
-    render: ({ date, fråga }) => fm({ typ: 'forskningsmöte', datum: date, krets: 'nätverk', ny_kontakt: 'ja', fråga }) + `# Forskningsmöte
+    render: ({ date, fråga }) => fm({ typ: 'forskningsmöte', datum: date, deltagare: '', kompetens: 'ämne', krets: 'nätverk', ny_kontakt: 'ja', fråga }) + `# Forskningsmöte
 
+> deltagare: namn. kompetens: ämne, metod eller annat fält.
 > krets: kärna (handledare, nära forskningspartner) eller nätverk.
 
 ## Deltagare och expertområden
@@ -784,10 +893,18 @@ ${varför || ''}
 ## Avgränsning
 
 
+## Om frågan besvaras
+> Vad vet vi då som vi inte vet i dag, och vem har nytta av det?
+
+
 ## Det jag väljer bort
 
 
 ## Lärdomar
+
+
+## Sammanfattning för någon utanför fältet
+> 50–200 ord, utan facktermer.
 
 
 ## Delat med
@@ -1029,7 +1146,12 @@ class ForskarOSView extends ItemView {
     for (const q of vilande) {
       const rad = root.createDiv({ cls: 'forskaros-resting' });
       rad.createEl('span', { cls: 'forskaros-muted', text: `Vilar: ${basename(q.path)} (till ${q.fm.vila_till || '?'})` });
-      rad.createEl('button', { text: 'Återuppta' }).addEventListener('click', () => void this.plugin.resumeQuestion(q));
+      rad.createEl('button', { text: 'Återuppta' }).addEventListener('click', () => new FormModal(this.app, {
+        title: `Återuppta: ${basename(q.path)}`,
+        fields: [{ key: 'varför', label: 'Varför är frågan fortfarande viktig?', multiline: true, required: true }],
+        submit: [{ text: 'Återuppta', cta: true }],
+        onSubmit: (_, v) => void this.plugin.resumeQuestion(q, v.varför)
+      }).open());
     }
 
     // Granskning.
@@ -1052,7 +1174,8 @@ class ForskarOSView extends ItemView {
       c.createEl('strong', { text: value });
       c.createEl('span', { text: label });
     };
-    card(m.aiKonsultationer ? `${m.tänktFörst}/${m.aiKonsultationer}` : '–', 'AI-frågor efter eget utkast');
+    card(m.aiKonsultationer ? `${m.tänktFörst}/${m.aiKonsultationer}` : '–',
+      m.aiFörra ? `AI-frågor efter eget utkast (förra 30 d: ${m.tänktFörstFörra}/${m.aiFörra})` : 'AI-frågor efter eget utkast');
     card(String(m.övningarUtanAI), 'Övningar utan AI');
     card(m.förmåga ? m.förmåga.toFixed(1) : '–', m.förmågaFörra ? `Förmåga (förra: ${m.förmågaFörra.toFixed(1)})` : 'Förmåga (1–5)');
     card(String(m.motprov), 'Motprov');
@@ -1313,12 +1436,12 @@ module.exports = class ForskarOSPlugin extends Plugin {
     this.refreshDashboard();
   }
 
-  async resumeQuestion(q) {
+  async resumeQuestion(q, varför = '') {
     const file = this.app.vault.getAbstractFileByPath(q.path);
     if (!file) return;
     await this.app.fileManager.processFrontMatter(file, f => { f.status = 'aktiv'; f.fas_ändrad = today(); delete f.vila_till; });
     const body = await this.app.vault.read(file);
-    await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Återupptagen.`));
+    await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Återupptagen.${varför ? ` ${varför}` : ''}`));
     const notes = await this.collectNotes();
     const aktiva = notes.filter(n => n.fm.typ === 'forskningsfråga' && (n.fm.status || 'aktiv') === 'aktiv').length;
     new Notice(aktiva > MAX_AKTIVA_FRÅGOR ? `${aktiva} aktiva frågor nu.` : `"${basename(q.path)}" är aktiv igen.`);

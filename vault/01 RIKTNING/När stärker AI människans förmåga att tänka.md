@@ -16,6 +16,10 @@ cykel: 1
 > Vilka människor, vilka uppgifter, vilket AI-stöd, vilket mått?
 
 
+## Om frågan besvaras
+> Vad vet vi då som vi inte vet i dag, och vem har nytta av det?
+
+
 ## Det jag väljer bort
 
 
@@ -26,6 +30,10 @@ cykel: 1
 4. Skissa ett experiment som kan visa att hypotesen är fel.
 
 ## Lärdomar
+
+
+## Sammanfattning för någon utanför fältet
+> 50–200 ord, utan facktermer.
 
 
 ## Delat med

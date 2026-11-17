@@ -99,7 +99,7 @@ const { engine } = ForskarOSPlugin;
 
   // En forskningsfråga skapas, nya anteckningar kopplas till den.
   const qFile = await app.vault.create('01 RIKTNING/När stärker AI tänkandet.md',
-    engine.questionNote({ date: engine.today(), titel: 'När stärker AI tänkandet?', varför: 'Det avgör hur en generation lär sig tänka.' }));
+    engine.questionNote({ date: engine.today(), titel: 'När stärker AI tänkandet?', varför: 'Frågan avgör om skolor ska använda AI som stöd för skrivande eller inte, och hur. Det berör hundratusentals elever och lärare varje år, och dagens beslut fattas nästan helt utan forskning om långsiktiga effekter.' }));
   activeFile = qFile;
   for (const type of Object.keys(engine.TYPES)) {
     activeFile = qFile;
@@ -118,11 +118,19 @@ const { engine } = ForskarOSPlugin;
   await p.createNote('pass');
   assert.equal(files.size, typed.length + 3);
 
+  // Forskaren fyller i perspektivkartan.
+  const karta = [...files.values()].find(f => f.path.startsWith('03 EVIDENS/'));
+  karta.content = karta.content
+    .replace('| Kognitionsvetenskap | | | |', '| Kognitionsvetenskap | Avlastning | Motivation | Risko |')
+    .replace('| Teknik / datavetenskap | | | |', '| Teknik / datavetenskap | Verktyg | Lärande | ACM |')
+    .replace('| Oväntat fält | | | |', '| Oväntat fält | Träningslära | Kontext | Ericsson |')
+    .replace('## Där perspektiven motsäger varandra\n', '## Där perspektiven motsäger varandra\nKort- mot långsiktigt.\n');
+
   // Fasbyte: frontmatter uppdateras och beslutet loggas öppet, med motivering.
   const notes = await p.collectNotes();
   const q = notes.find(n => n.fm.typ === 'forskningsfråga');
   const reqs = engine.phaseRequirements(q, notes);
-  assert(reqs.every(r => r.ok), 'Utforska-kraven ska vara uppfyllda (varför + perspektivkarta)');
+  assert(reqs.every(r => r.ok), 'Utforska-kraven ska vara uppfyllda: ' + JSON.stringify(reqs));
   await p.advancePhase(q, '', []);
   assert.match(qFile.content, /fas: kombinera/);
   assert.match(qFile.content, /Utforska → Kombinera/);
@@ -140,10 +148,10 @@ const { engine } = ForskarOSPlugin;
   // Vila räknas, återupptagning och avslut med utfall loggas.
   assert.match(qFile.content, /vilat: 1/);
   const q4 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
-  await p.resumeQuestion(q4);
+  await p.resumeQuestion(q4, 'Ny data från SCB gör frågan aktuell igen.');
   assert.match(qFile.content, /status: aktiv/);
   assert.doesNotMatch(qFile.content, /vila_till/);
-  assert.match(qFile.content, /Återupptagen\./);
+  assert.match(qFile.content, /Återupptagen\. Ny data från SCB gör frågan aktuell igen\./);
   const q5 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
   await p.closeQuestion(q5, 'förkastad', 'Ingen skillnad mellan grupperna.');
   assert.match(qFile.content, /status: avslutad/);

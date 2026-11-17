@@ -89,7 +89,7 @@ labb/                  labbets Containerfile
 disk_config/           inställningar för ISO och diskavbildningar
 ```
 
-- **Avbildning:** varje push bygger för amd64 och arm64. Pushar till standardgrenen publiceras som `ghcr.io/jtensetti/researchos:latest` och signeras med cosign.
+- **Avbildning:** varje push bygger för amd64 och arm64. Pushar till `main` publiceras som `ghcr.io/jtensetti/researchos:latest` och signeras med cosign.
 - **Diskar:** arbetsflödet *Bygg installationsmedia* gör ISO och qcow2 som nedladdningsbara artefakter.
 - **Byta en befintlig Bluefin LTS-installation:** `sudo bootc switch ghcr.io/jtensetti/researchos:latest`
 - **Versioner:** kvartalsvis (`2027.1`, `2027.2` …), se [`docs/RELEASE.md`](docs/RELEASE.md) och [`CHANGELOG.md`](CHANGELOG.md).

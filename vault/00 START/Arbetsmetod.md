@@ -6,13 +6,13 @@ Varje forskningsfråga går igenom sju faser. Panelen visar kraven för att gå 
 
 | Fas | Krav för att gå vidare |
 |---|---|
-| 1. Utforska | Motivering till frågan, minst en perspektivkarta |
-| 2. Kombinera | En hypotes som anger både etablerad kunskap den bygger på och vad som är nytt |
-| 3. Välj | Falsifieringskriterium, prediktioner, avgränsning |
-| 4. Pröva | Ett besvarat motprov och ett forskningsmöte med någon utanför projektet |
+| 1. Utforska | Motivering på minst 30 ord; en perspektivkarta med minst tre perspektiv, varav ett från ett oväntat fält, och var de motsäger varandra |
+| 2. Kombinera | En hypotes som anger etablerad kunskap den bygger på, vad som är nytt och vilket antagande den utmanar |
+| 3. Välj | Falsifieringskriterium, prediktioner, angiven konfidens, vad som förändras om frågan besvaras, vad som väljs bort |
+| 4. Pröva | Ett besvarat motprov och ett forskningsmöte där någon utanför projektet framfört en invändning |
 | 5. Utveckla | Ett experiment eller arbetsprov med resultat |
 | 6. Ompröva | En omprövning och nedskrivna lärdomar |
-| 7. Dela | Resultatet har delats med någon som kan granska det |
+| 7. Dela | En sammanfattning för någon utanför fältet (50–200 ord) och att resultatet har delats med någon som kan granska det |
 
 Efter Dela börjar en ny cykel. En fråga avslutas med *Avsluta* och ett utfall: besvarad, hypotesen förkastad eller övergiven. En förkastad hypotes räknas som ett resultat.
 
@@ -23,7 +23,7 @@ Efter Dela börjar en ny cykel. En fråga avslutas med *Avsluta* och ett utfall:
 - **Varje hypotes ska ha ett motprov**, och minst en person utanför projektet ska ha sett idén.
 - **Märk påståenden** som belagt (med källa), tolkning eller spekulation.
 - **Rätta fel öppet** med en felrättning.
-- **Vila.** En fråga kan läggas att vila i två veckor och återupptas från panelen.
+- **Vila.** En fråga kan läggas att vila i två veckor. Den återupptas från panelen med en mening om varför den fortfarande är viktig.
 
 ## AI-konsultationer
 
@@ -43,7 +43,15 @@ Med profilen *Lokal AI* körs modellerna på datorn. Molntjänster installeras b
 
 ## Granskning
 
-Panelens lista *Att åtgärda* bygger på reglerna ovan: för många aktiva eller öppna frågor, tre eller fler påbörjade frågor de senaste 90 dagarna utan att någon avslutats, en fråga som lagts att vila tre gånger, en fråga som stått still i över 30 dagar, hypoteser utan motprov, inget forskningsmöte på 30 dagar, AI-konsultationer utan eget utkast eller utan sammanfattning, öppna felrättningar, utebliven förmågegranskning vilande frågor som är redo att tas upp igen och forskningsmöten utan nya kontakter under ett halvår.
+Panelens lista *Att åtgärda* bygger på reglerna ovan:
+
+- **Frågor:** fler än två aktiva eller fyra öppna; tre påbörjade på 90 dagar utan att någon avslutats; en fråga som vilat tre gånger; en fråga som stått still i över 30 dagar; vilande frågor som är redo att tas upp igen.
+- **Kritik:** hypoteser utan motprov; fördjupning utan motprov.
+- **Människor:** inget forskningsmöte på 30 dagar; möten med uppföljningar som inte gjorts; alla möten med samma person; ingen återkoppling från någon med ämnes-, metod- eller annan fältkompetens under ett halvår; inga nya kontakter under ett halvår.
+- **Arbete:** inga forskarpass, fokuspass eller experiment på 14 dagar; inga nya idéer eller perspektiv på 60 dagar; forskarpass där inget skrivits under *Det jag inte förstår*.
+- **AI:** konsultationer utan eget utkast eller utan sammanfattning; sjunkande andel konsultationer med eget utkast jämfört med förra månaden.
+- **Förmåga:** utebliven förmågegranskning; skattningar utan länkat arbetsprov; ingen övning för den lägst skattade förmågan på 30 dagar.
+- **Felrättningar** som varit öppna i över två veckor.
 
 ## Mått
 

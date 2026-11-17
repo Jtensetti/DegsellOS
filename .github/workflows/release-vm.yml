@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Versionsnummer, t.ex. 0.2.0
+        description: Version, t.ex. 2027.1 eller 2027.1-beta1
         required: true
       tag:
         description: Avbildningstagg i ghcr.io att bygga från
@@ -38,7 +38,7 @@ jobs:
 
       - name: Kontrollera versionsnummer
         run: |
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Ogiltig version: $VERSION"; exit 1; }
+          [[ "$VERSION" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ ]] || { echo "Ogiltig version: $VERSION (t.ex. 2027.1 eller 2027.1-beta1)"; exit 1; }
 
       - name: Frigör diskutrymme
         run: |
@@ -103,6 +103,8 @@ jobs:
           IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
         run: |
           [[ -n "$IA_ACCESS_KEY" && -n "$IA_SECRET_KEY" ]] || { echo "IA-hemligheterna saknas"; exit 1; }
+          DESC="ForskarOS: Linuxdistribution för forskningsarbete, byggd på Bluefin LTS. Inloggning i diskavbildningen: forskare / forskare (lösenordet måste bytas). Källkod: https://github.com/Jtensetti/researchOS"
+          if [[ "$VERSION" == *-* ]]; then DESC="Förhandsversion, inte testad på hårdvara. $DESC"; fi
           umask 077
           mkdir -p ~/.config/internetarchive
           printf '[s3]\naccess = %s\nsecret = %s\n' "$IA_ACCESS_KEY" "$IA_SECRET_KEY" \
@@ -110,7 +112,7 @@ jobs:
           ia upload "$ITEM" dist/* --retries 20 \
             --metadata="mediatype:software" \
             --metadata="title:ForskarOS $VERSION – ${{ matrix.what }}" \
-            --metadata="description:ForskarOS är ett forskningsorienterat operativsystem byggt på Bluefin LTS. Källkod: https://github.com/Jtensetti/researchOS" \
+            --metadata="description:$DESC" \
             --metadata="creator:ForskarOS" \
             --metadata="subject:linux;research;obsidian;bootc;forskaros" \
             --metadata="licenseurl:https://opensource.org/licenses/MIT" \

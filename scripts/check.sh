@@ -6,6 +6,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 node --check vault/.obsidian/plugins/forskaros-core/main.js
 node tests/engine.test.js
 node tests/plugin.test.js
+node tests/begrepp.test.js
 
 for f in build_files/build.sh scripts/*.sh tests/*.sh system_files/usr/bin/* system_files/usr/libexec/*; do
   bash -n "$f"
