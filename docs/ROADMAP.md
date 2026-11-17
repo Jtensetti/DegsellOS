@@ -13,7 +13,7 @@
 - [x] `forskaros-init`: skapar vault och uppdaterar tillägget säkert, med tester
 - [x] `forskaros-setup`: Obsidian, Zotero, Pandoc, ripgrep, Ollama efter aktivt val
 - [x] CI: bygg, publicera till ghcr.io, signera; manuellt bygge av ISO och qcow2
-- [ ] Första lyckade bygget i GitHub Actions
+- [x] Första lyckade bygget i GitHub Actions (amd64 + arm64, publicerat till ghcr.io)
 - [ ] Starta arm64-disken i UTM på MacBook Neo
 - [ ] Installera amd64-ISO:n i en virtuell maskin
 - [ ] Verifiera att GNOME:s välkomstguide skapar konto i qcow2-disken
