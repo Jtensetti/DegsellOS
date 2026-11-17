@@ -12,6 +12,16 @@ Status: avbildningen byggs i CI för amd64 och arm64. Den har inte startats på 
 
 <sub>Panelen renderad från tilläggets kod med ett exempelvalv (`node scripts/skarmdumpar.js`). Inte en skärmdump av ett körande system.</sub>
 
+## Ladda ner
+
+Förhandsversion **2027.1-beta1**, inte testad på hårdvara. Varje sida har direktlänk, torrent och SHA-256.
+
+| Fil | För |
+|---|---|
+| [ForskarOS-2027.1-beta1-arm64.qcow2](https://archive.org/details/forskaros-2027.1-beta1-arm64-vm) | Apple Silicon-Mac i UTM, se [`docs/MAC.md`](docs/MAC.md) |
+| [ForskarOS-2027.1-beta1-amd64.qcow2](https://archive.org/details/forskaros-2027.1-beta1-amd64-vm) | PC i QEMU eller virt-manager |
+| [ForskarOS-2027.1-beta1-amd64.iso](https://archive.org/details/forskaros-2027.1-beta1-amd64-iso) | Installation på PC och Intel-Mac |
+
 ## ForskarOS Core
 
 Ett Obsidian-tillägg. Allt sker lokalt; tillägget gör inga nätverksanrop.
