@@ -15,20 +15,35 @@ on:
       tag:
         description: Avbildningstagg i ghcr.io att bygga från
         default: latest
+      endast:
+        description: Bygg och ladda upp bara en sort (för att köra om en som misslyckades)
+        type: choice
+        options: [alla, vm, iso]
+        default: alla
 
 permissions:
   contents: read
   packages: read
 
 jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - id: m
+        run: |
+          ALLA='[
+            {"arch":"arm64","runner":"ubuntu-24.04-arm","type":"qcow2","config":"disk.toml","kind":"vm","what":"Virtuell disk för Apple Silicon-Mac (UTM)"},
+            {"arch":"amd64","runner":"ubuntu-24.04","type":"qcow2","config":"disk.toml","kind":"vm","what":"Virtuell disk för PC (QEMU, virt-manager, UTM)"},
+            {"arch":"amd64","runner":"ubuntu-24.04","type":"anaconda-iso","config":"iso.toml","kind":"iso","what":"Installations-ISO för PC och Intel-Mac"}]'
+          echo "matrix=$(jq -c --arg e '${{ inputs.endast }}' '{include: [.[] | select($e == "alla" or .kind == $e)]}' <<<"$ALLA")" >> "$GITHUB_OUTPUT"
+
   release:
+    needs: plan
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - { arch: arm64, runner: ubuntu-24.04-arm, type: qcow2,        config: disk.toml, kind: vm,  what: "Virtuell disk för Apple Silicon-Mac (UTM)" }
-          - { arch: amd64, runner: ubuntu-24.04,     type: qcow2,        config: disk.toml, kind: vm,  what: "Virtuell disk för PC (QEMU, virt-manager, UTM)" }
-          - { arch: amd64, runner: ubuntu-24.04,     type: anaconda-iso, config: iso.toml,  kind: iso, what: "Installations-ISO för PC och Intel-Mac" }
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     runs-on: ${{ matrix.runner }}
     env:
       VERSION: ${{ inputs.version }}
@@ -48,8 +63,7 @@ jobs:
       - name: Installera verktyg
         run: |
           sudo apt-get update
-          sudo apt-get install -y podman qemu-utils pipx
-          pipx install internetarchive
+          sudo apt-get install -y podman qemu-utils
 
       - name: Hämta avbildningen
         env:
@@ -101,23 +115,41 @@ jobs:
         env:
           IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
           IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
+          WHAT: ${{ matrix.what }}
         run: |
           [[ -n "$IA_ACCESS_KEY" && -n "$IA_SECRET_KEY" ]] || { echo "IA-hemligheterna saknas"; exit 1; }
           DESC="ForskarOS: Linuxdistribution för forskningsarbete, byggd på Bluefin LTS. Inloggning i diskavbildningen: forskare / forskare (lösenordet måste bytas). Källkod: https://github.com/Jtensetti/researchOS"
           if [[ "$VERSION" == *-* ]]; then DESC="Förhandsversion, inte testad på hårdvara. $DESC"; fi
-          umask 077
-          mkdir -p ~/.config/internetarchive
-          printf '[s3]\naccess = %s\nsecret = %s\n' "$IA_ACCESS_KEY" "$IA_SECRET_KEY" \
-            > ~/.config/internetarchive/ia.ini
-          ia upload "$ITEM" dist/* --retries 20 \
-            --metadata="mediatype:software" \
-            --metadata="title:ForskarOS $VERSION – ${{ matrix.what }}" \
-            --metadata="description:$DESC" \
-            --metadata="creator:ForskarOS" \
-            --metadata="subject:linux;research;obsidian;bootc;forskaros" \
-            --metadata="licenseurl:https://opensource.org/licenses/MIT" \
-            --metadata="source:https://github.com/Jtensetti/researchOS"
-          rm -f ~/.config/internetarchive/ia.ini
+          uri() { printf 'uri(%s)' "$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$1")"; }
+          # Internet Archives S3-gränssnitt. Stora filer kan ta lång tid att
+          # bekräfta efter uppladdningen, därav lång tidsgräns och omförsök.
+          put() {
+            curl --fail-with-body -sS --retry 5 --retry-delay 60 --retry-all-errors --max-time 10800 \
+              -H "authorization: LOW $IA_ACCESS_KEY:$IA_SECRET_KEY" \
+              -H "x-amz-auto-make-bucket:1" \
+              -H "x-archive-size-hint:$(stat -c%s "$1")" \
+              "${@:2}" -T "$1" "https://s3.us.archive.org/$ITEM/$(basename "$1")"
+          }
+          # Kontrollsumman först: den skapar objektet med metadata.
+          put "dist/$FILE.sha256" \
+            -H "x-archive-meta-mediatype:software" \
+            -H "x-archive-meta-title:$(uri "ForskarOS $VERSION – $WHAT")" \
+            -H "x-archive-meta-description:$(uri "$DESC")" \
+            -H "x-archive-meta-creator:ForskarOS" \
+            -H "x-archive-meta01-subject:linux" -H "x-archive-meta02-subject:research" -H "x-archive-meta03-subject:bootc" \
+            -H "x-archive-meta-licenseurl:https://opensource.org/licenses/MIT" \
+            -H "x-archive-meta-source:https://github.com/Jtensetti/researchOS"
+          put "dist/$FILE"
+
+      - name: Kontrollera att filen finns på Internet Archive
+        run: |
+          SIZE=$(stat -c%s "dist/$FILE")
+          for i in $(seq 1 60); do
+            got=$(curl -fsS "https://archive.org/metadata/$ITEM" | jq -r --arg f "$FILE" '.files[]? | select(.name == $f) | .size' || true)
+            if [[ "$got" == "$SIZE" ]]; then echo "OK: $FILE finns ($SIZE byte)"; exit 0; fi
+            echo "Väntar på $FILE (har: ${got:-inget}, väntat: $SIZE)"; sleep 60
+          done
+          echo "Filen syns inte på Internet Archive efter en timme"; exit 1
 
       - name: Sammanfattning
         run: |
