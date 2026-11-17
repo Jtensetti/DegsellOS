@@ -8,10 +8,12 @@ Asahi Linux. Därför kör vi ForskarOS i en **virtuell maskin**, vilket fungera
 alla Apple Silicon-Macar.
 
 1. Installera [UTM](https://mac.getutm.app/).
-2. Hämta artefakten `forskaros-arm64-qcow2` från arbetsflödet
-   *Bygg installationsmedia* i GitHub Actions och packa upp den.
+2. Ladda ner `ForskarOS-<version>-arm64.qcow2` från Internet Archive
+   (länkar under *Ladda ner* i README). Välj direktlänken, eller torrenten
+   om du har en torrentklient. Kontrollera gärna filen mot `.sha256`.
 3. I UTM: **Create a New Virtual Machine → Virtualize → Linux**.
-   Välj *Import VHD/QCOW2 drive* (eller lägg till disken under *Drives*).
+   Hoppa över ISO-steget, och lägg sedan till qcow2-filen under *Drives*
+   som en befintlig disk (*Import*). Ta bort den tomma disken UTM skapade.
 4. Ge maskinen minst **4 GB RAM** (8 GB rekommenderas om du ska köra lokal AI)
    och 4 CPU-kärnor.
 5. Starta. GNOME:s välkomstguide skapar ditt konto. Kör sedan

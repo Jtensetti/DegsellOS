@@ -18,6 +18,18 @@ Bakgrund och principer: [`vault/00 START/Principer.md`](vault/00%20START/Princip
 | Intel-Mac | Installations-ISO. T2-modeller (2018–2020) kan kräva extra drivrutiner |
 | Apple Silicon, inklusive MacBook Neo | **Virtuell maskin i UTM** med arm64-disken, se [`docs/MAC.md`](docs/MAC.md) |
 
+## Ladda ner
+
+Färdiga diskar och ISO:er publiceras på Internet Archive, med direktlänk och torrent:
+
+| Fil | För | Var |
+|---|---|---|
+| `ForskarOS-<version>-arm64.qcow2` | Apple Silicon-Mac i UTM | `archive.org/details/forskaros-<version>-arm64-vm` |
+| `ForskarOS-<version>-amd64.qcow2` | PC i QEMU/virt-manager | `archive.org/details/forskaros-<version>-amd64-vm` |
+| `ForskarOS-<version>-amd64.iso` | Installation på PC och Intel-Mac | `archive.org/details/forskaros-<version>-amd64-iso` |
+
+Nya versioner släpps med arbetsflödet *Släpp färdig VM* i GitHub Actions.
+
 ## Hur det byggs och distribueras
 
 ```
