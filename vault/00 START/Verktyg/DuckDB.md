@@ -10,9 +10,9 @@ profil: statistik
 **Fas:** 5 · Utveckla  
 **Profil:** Statistik och data
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: utforska stora öppna datamängder (SCB, Eurostat) utan databasserver.
+SQL direkt på CSV- och Parquet-filer, utan databasserver.
 
 ## Installera
 

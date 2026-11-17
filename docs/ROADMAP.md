@@ -1,13 +1,13 @@
 # ForskarOS – färdplan
 
-## 0.1 – Prototyp (från samtalet med ChatGPT)
+## 0.1 – Prototyp
 
 - [x] Vault, principer, arbetsmetod och tillitskontrakt
 - [x] ForskarOS Core med sju arbetsprov
 - [x] Test av tillägget mot simulerat Obsidian-API
 - [x] ~~NixOS-ISO~~ ersatt av Bluefin-baserad avbildning i 0.2
 
-## 0.2 – Eget OS på färdig grund (pågår)
+## 0.2 – Avbildning på Bluefin LTS
 
 - [x] Containerfile ovanpå Bluefin LTS (amd64 + arm64)
 - [x] `forskaros-init`: skapar vault och uppdaterar tillägget säkert, med tester
@@ -18,18 +18,18 @@
 - [ ] Installera amd64-ISO:n i en virtuell maskin
 - [ ] Verifiera att GNOME:s välkomstguide skapar konto i qcow2-disken
 
-## 0.3 – Metoden i systemet (prioritet)
+## 0.3 – Arbetsmetoden i tillägget
 
 - [x] Den kreativa forskningscykeln i sju faser med faskrav och öppen fasbeslutslogg
-- [x] Revisorn: regelbaserad granskning mot metoden
-- [x] Tänk först, AI-roller och AI-lägen, loggade konsultationer
+- [x] Regelbaserad granskning (*Att åtgärda*)
+- [x] AI-konsultationer med uppgifter, lägen och logg
 - [x] Självständighetsmått och månatlig förmågegranskning
 - [x] Epistemisk märkning, idéparkering, vila
-- [x] Forskningsfilosofin och första uppdraget i vaulten
+- [x] Bakgrund och exempelfråga i vaulten
 - [ ] Prova metoden på riktigt i fyra veckor och justera reglerna efter erfarenheten
-- [ ] Pröva måtten: mäter de det vi tror? (en forskningsfråga i sig)
+- [ ] Undersöka om måtten mäter det de ska
 
-## 0.3.1 – Forskarens arbetsplats
+## 0.3.1 – Verktyg och VM
 
 - [x] Verktygsprofiler: grund, skriva, statistik, programmering, kvalitativ, idéer, lokal AI, proprietärt/moln
 - [x] Grundverktygen installeras automatiskt vid första start (systemtjänst, försöker igen utan nätverk)
@@ -43,11 +43,11 @@
 - [ ] Öppen självhostad AI-sök som alternativ till Perplexity (t.ex. Perplexica)
 - [ ] Färdig `.utm`-paketering med inställningar för RAM, CPU och skärm
 
-## 2027.1 – Kali för forskare
+## 2027.1
 
-- [x] Menyn är metoden: appmappar per fas, verktygskatalog, verktygskort, Topp 10
+- [x] Appmappar per fas, verktygskatalog, verktygssidor, rekommenderat urval
 - [x] VM: forskare/forskare med lösenordsbyte, delad mapp, UTM-paketering från mall
-- [x] Identitet: logotyp (forskningscykeln), bakgrund, dagens princip i terminalen
+- [x] Logotyp och bakgrund
 - [x] Fokusläge med fokuslogg
 - [x] ForskarOS-labbet (R, tidyverse, RStudio, Python) för amd64 och arm64
 - [x] Forskarhandboken, tolv kapitel med övningar utan AI
@@ -71,7 +71,7 @@
 
 ## 0.6 – Lokal AI och forskningsmotorer
 
-- [ ] Rollerna kör direkt mot lokal Ollama (samma prompter, samma logg, samma tänk-först-spärr)
+- [ ] AI-konsultationer direkt mot lokal Ollama, med samma logg och krav
 - [ ] Zotero/BibTeX-koppling, källspårning
 - [ ] Månatlig förmågegranskning: det du kan förklara utan AI
 

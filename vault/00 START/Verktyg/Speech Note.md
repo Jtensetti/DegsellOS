@@ -9,11 +9,11 @@ profil: kvalitativ
 
 **Fas:** 5 · Utveckla  
 **Profil:** Kvalitativ forskning  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: transkribera intervjuer utan att ljudet lämnar datorn, vilket ofta krävs vid etikprövning.
+Transkribering och diktering lokalt, utan att ljudet lämnar datorn.
 
 ## Installera
 

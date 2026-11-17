@@ -10,9 +10,9 @@ profil: skriva
 **Fas:** 7 · Dela  
 **Profil:** Skriva och publicera
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Dela: snygga PDF:er med en bråkdel av LaTeX inlärningskurva.
+Sättningssystem för PDF, enklare än LaTeX.
 
 ## Installera
 

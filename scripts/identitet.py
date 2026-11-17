@@ -47,7 +47,6 @@ def logo():
 def wallpaper(dark: bool):
     w, h = 3840, 2160
     bg0, bg1 = ("#0F1B2A", "#1B2A3A") if dark else ("#F4F1EA", "#E6E1D6")
-    text = "#C9D3DD" if dark else "#3A4654"
     center = "#F4F1EA" if dark else "#1B2A3A"
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
   <defs>
@@ -57,9 +56,7 @@ def wallpaper(dark: bool):
     </radialGradient>
   </defs>
   <rect width="{w}" height="{h}" fill="url(#bg)"/>
-  {ring(w / 2, h * 0.45, 360, 70, opacity=0.92, center=center)}
-  <text x="{w / 2}" y="{h * 0.45 + 620}" text-anchor="middle" fill="{text}"
-        font-family="Cantarell, Inter, sans-serif" font-size="64" letter-spacing="4" opacity="0.8">Framtiden är den viktigaste tiden.</text>
+  {ring(w / 2, h / 2, 360, 70, opacity=0.92, center=center)}
 </svg>
 """
 

@@ -9,11 +9,11 @@ profil: grund
 
 **Fas:** 5 · Utveckla  
 **Profil:** Grund  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: pröva hypoteser statistiskt utan att först behöva lära dig programmera. Bayesiansk analys visar hur mycket evidensen talar för eller emot.
+Vanliga statistiska analyser utan programmering, både frekventistiskt och bayesianskt.
 
 ## Installera
 

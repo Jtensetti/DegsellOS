@@ -10,9 +10,9 @@ profil: programmering
 **Fas:** 5 · Utveckla  
 **Profil:** Programmering och reproducerbarhet
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: skriv analysskript och experimentkod.
+Kodredigerare (VS Code utan Microsofts telemetri).
 
 ## Installera
 

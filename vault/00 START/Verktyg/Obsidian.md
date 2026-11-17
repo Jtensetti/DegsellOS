@@ -10,9 +10,9 @@ profil: proprietart
 **Fas:** 1 · Utforska  
 **Profil:** Proprietärt och moln (aktivt val)
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Alla faser: här bor ForskarOS Core med cykeln, Revisorn och tänk först. På sikt ersätts det av en öppen editor.
+Gränssnittet för vaulten och ForskarOS Core. Gratis men inte öppen källkod.
 
 ## Installera
 

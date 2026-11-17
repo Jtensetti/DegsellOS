@@ -5,14 +5,14 @@ profil: proprietart
 ---
 # Perplexity
 
-> AI-sök i molnet. Din fråga lämnar datorn.
+> AI-sök i molnet
 
 **Fas:** 1 · Utforska  
 **Profil:** Proprietärt och moln (aktivt val)
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utforska: snabb överblick med källor. Kontrollera alltid källorna själv och tänk först. Det här är en molntjänst: det du skriver lämnar datorn.
+AI-sök med källhänvisningar. Molntjänst. Det du skriver skickas till tjänsten.
 
 ## Installera
 

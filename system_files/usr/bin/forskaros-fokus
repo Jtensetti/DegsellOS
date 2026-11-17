@@ -2,7 +2,6 @@
 # Fokusläge: stänger av notiser under ett fokuspass och loggar passet i vaulten.
 #   forskaros-fokus 50     fokus i 50 minuter (standard)
 #   forskaros-fokus av     avsluta fokus
-# Fasen Välj: vision, koncentration, kompetens.
 set -euo pipefail
 VAULT="${FORSKAROS_VAULT:-$HOME/ForskarOS}"
 LOGG="$VAULT/08 REFLEKTION/Fokuslogg.md"
@@ -20,11 +19,11 @@ if [[ "$ARG" == av ]]; then
     faktiska=$(( ( $(date +%s) - $(date -d "$start" +%s) ) / 60 ))
     if [[ -d "$VAULT" ]]; then
       mkdir -p "$(dirname "$LOGG")"
-      [[ -f "$LOGG" ]] || printf -- '---\ntyp: fokuslogg\n---\n# Fokuslogg\n\n> Envishet och arbete: djupt, ostört arbete över tid. Vad lärde du dig?\n\n' > "$LOGG"
+      [[ -f "$LOGG" ]] || printf -- '---\ntyp: fokuslogg\n---\n# Fokuslogg\n\nEtt pass per rad. Skriv gärna en kort notering efter kolon.\n\n' > "$LOGG"
       printf -- '- %s %s–%s (%d av %d min): \n' "$(date +%F)" "$(date -d "$start" +%H:%M)" "$slut" "$faktiska" "$minuter" >> "$LOGG"
     fi
   fi
-  notify "Fokuspasset är slut" "Vad förstår du nu som du inte förstod för en stund sedan? Skriv det i fokusloggen eller ett forskarpass."
+  notify "Fokuspasset är slut" "Passet är loggat i 08 REFLEKTION/Fokuslogg."
   exit 0
 fi
 
@@ -34,4 +33,4 @@ echo "$(date -Iseconds) $ARG" > "$STATE"
 if command -v systemd-run >/dev/null 2>&1; then
   systemd-run --user --quiet --collect --unit "forskaros-fokus-$$" --on-active="${ARG}m" /usr/bin/forskaros-fokus av >/dev/null
 fi
-notify "Fokusläge i $ARG minuter" "Notiserna är avstängda. En fråga, ett problem. Bekvämt att vara obekväm."
+notify "Fokusläge i $ARG minuter" "Notiser är avstängda."

@@ -6,30 +6,24 @@ cykel: 1
 ---
 # När stärker AI människans förmåga att tänka, och när försvagar den?
 
-> **Första uppdraget.** Ett förslag på en fråga som förenar AI, språk,
-> pedagogik och mänskligt tänkande. Den är för bred för att bli en studie
-> som den är. Att avgränsa den är en del av arbetet.
->
-> Gör den till din med knappen *Anta förslaget* i ForskarOS-panelen, eller
-> formulera en egen fråga.
+> Ett exempel på forskningsfråga. Den är för bred som den är; avgränsningen är
+> en del av arbetet. Använd den via panelen, eller skriv en egen.
 
-## Varför är frågan värd tio år av mitt liv?
+## Varför är frågan viktig?
 
 
 ## Avgränsning
-> Vilka människor, vilka uppgifter, vilken sorts AI-stöd, vilket mått på tänkande?
+> Vilka människor, vilka uppgifter, vilket AI-stöd, vilket mått?
 
 
 ## Det jag väljer bort
 
 
-## Så börjar vi
-1. Skriv **din egen hypotes** i ett forskarpass, utan AI.
-2. Be Motståndaren (prövningsläge) hitta **tre allvarliga svagheter**.
-3. Be Upptäckaren om **alternativa forskningsperspektiv** och gör en perspektivkarta.
-4. Konstruera ett **experiment som kan visa att du har fel**.
-
-Det blir samtidigt det första testet av både friktion och tillit.
+## Förslag på första steg
+1. Skriv en egen hypotes i ett forskarpass.
+2. AI-konsultation med *Kritisk granskning*: tre allvarliga svagheter.
+3. Perspektivkarta med minst tre teoretiska utgångspunkter.
+4. Skissa ett experiment som kan visa att hypotesen är fel.
 
 ## Lärdomar
 

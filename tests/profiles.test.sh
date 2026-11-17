@@ -51,8 +51,8 @@ grep -q 'org.libreoffice.LibreOffice' <<<"$out" || fail "'alla' ska ta med grund
 out=$(bash "$SETUP" --profil proprietart --torrkörning)
 grep -q 'skapa genväg .*forskaros-webb-perplexity.desktop → https://www.perplexity.ai' <<<"$out" || fail "Perplexity-genväg saknas"
 
-# 8. Topp 10 är exakt tio verktyg och inget kräver aktivt val.
-[[ $(grep -cvE '^\s*(#|$)' "$DIR"/02-topp10.profil) -eq 10 ]] || fail "topp 10 ska ha tio verktyg"
+# 8. Det rekommenderade urvalet har tio verktyg.
+[[ $(grep -cvE '^\s*(#|$)' "$DIR"/02-rekommenderat.profil) -eq 10 ]] || fail "det rekommenderade urvalet ska ha tio verktyg"
 
 # 9. Programmenyn har en mapp per fas och genererade filer är i synk med katalogen.
 grep -q "name='3 · Välj'" system_files/etc/dconf/db/local.d/02-forskaros-meny || fail "mappen Välj saknas"

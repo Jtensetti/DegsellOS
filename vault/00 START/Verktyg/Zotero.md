@@ -9,11 +9,11 @@ profil: grund
 
 **Fas:** 1 · Utforska  
 **Profil:** Grund  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utforska: samla källor med metadata så att varje påstående kan spåras till sitt belägg (tillit).
+Samlar källor med metadata och infogar citat och referenslistor.
 
 ## Installera
 

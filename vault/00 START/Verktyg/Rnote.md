@@ -10,9 +10,9 @@ profil: ideer
 **Fas:** 2 · Kombinera  
 **Profil:** Idéer och modeller
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Kombinera: lekfullhet. Skissa fritt innan du formaliserar.
+Handskrivna anteckningar och skisser.
 
 ## Installera
 

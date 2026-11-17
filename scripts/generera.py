@@ -80,15 +80,15 @@ def generate(out: Path):
         assert t["fas"] in fas_index, f'{t["id"]}: okänd fas {t["fas"]}'
         assert t["typ"] in ("flatpak", "brew", "uv", "webb"), f'{t["id"]}: okänd typ'
         if profiler[t["profil"]].get("aktivt_val"):
-            assert not t.get("topp10"), f'{t["id"]}: aktivt val kan inte ingå i topp 10'
+            assert not t.get("rekommenderat"), f'{t["id"]}: aktivt val kan inte ingå i det rekommenderade urvalet'
         if t["profil"] == "grund":
             assert t["typ"] == "flatpak", "grundprofilen installeras som Flatpak"
-    assert sum(1 for t in verktyg if t.get("topp10")) == 10, "topp 10 ska ha exakt tio verktyg"
+    assert sum(1 for t in verktyg if t.get("rekommenderat")) == 10, "det rekommenderade urvalet ska ha tio verktyg"
 
     # 1. Profiler.
     (out / PROFILDIR).mkdir(parents=True)
     for n, p in enumerate(kat["profiler"], start=1):
-        members = [t for t in verktyg if (t.get("topp10") if p["id"] == "topp10" else t["profil"] == p["id"])]
+        members = [t for t in verktyg if (t.get("rekommenderat") if p["id"] == "rekommenderat" else t["profil"] == p["id"])]
         lines = [
             "# Genererad från katalog/verktyg.json. Ändra inte för hand.",
             f'# namn: {p["namn"]}',
@@ -117,7 +117,7 @@ def generate(out: Path):
         assert apps, f'fasen {f["id"]} har inga program i menyn'
 
         folders.append((f"forskaros-{i}", f["mapp"], apps))
-    meny = ["# Genererad från katalog/verktyg.json. Programmenyn följer forskningscykeln.",
+    meny = ["# Genererad från katalog/verktyg.json.",
             "[org/gnome/desktop/app-folders]",
             "folder-children=[" + ", ".join(f"'{fid}'" for fid, _, _ in folders) + "]", ""]
     for fid, name, apps in folders:
@@ -133,14 +133,14 @@ def generate(out: Path):
     for t in verktyg:
         p = profiler[t["profil"]]
         fas = FASNAMN[t["fas"]]
-        moln = " Det här är en molntjänst: det du skriver lämnar datorn." if t["typ"] == "webb" else ""
+        moln = " Det du skriver skickas till tjänsten." if t["typ"] == "webb" else ""
         card = [
             "---", "typ: verktygskort", f'fas: {t["fas"]}', f'profil: {t["profil"]}', "---",
             f'# {t["namn"]}', "",
             f'> {t["kort"]}', "",
             f'**Fas:** {fas_index[t["fas"]] + 1} · {fas}  ',
-            f'**Profil:** {p["namn"]}' + ("  \n**Topp 10 för forskare**" if t.get("topp10") else ""), "",
-            "## Hur det tjänar metoden", "", t["metod"] + moln, "",
+            f'**Profil:** {p["namn"]}' + ("  \n**Ingår i det rekommenderade urvalet**" if t.get("rekommenderat") else ""), "",
+            "## Vad det används till", "", t["metod"] + moln, "",
             "## Installera", "",
             f'Öppna *ForskarOS – verktygslåda* och välj **{p["namn"]}**, eller kör:', "",
             "```bash", f'forskaros-setup --profil {t["profil"]}', "```", "",
@@ -152,18 +152,17 @@ def generate(out: Path):
         (out / KORTDIR / f'{safe_filename(t["namn"])}.md').write_text("\n".join(card), encoding="utf-8")
 
     overview = ["---", "typ: verktygskort", "---", "# Verktygen per fas", "",
-                "> Programmenyn har en mapp per fas i forskningscykeln, med samma verktyg som här.",
+                "> Programmenyn har en mapp per fas med samma indelning.",
                 "> Genererad från verktygskatalogen.", ""]
     for i, f in enumerate(faser, start=1):
         overview.append(f'## {f["mapp"]}')
         overview.append("")
         for t in verktyg:
             if t["fas"] == f["id"]:
-                star = " ⭐" if t.get("topp10") else ""
-                cloud = " ☁️" if t["typ"] == "webb" else ""
+                star = " (rekommenderad)" if t.get("rekommenderat") else ""
+                cloud = " (molntjänst)" if t["typ"] == "webb" else ""
                 overview.append(f'- [[00 START/Verktyg/{safe_filename(t["namn"])}|{t["namn"]}]]{star}{cloud}: {t["kort"]}')
         overview.append("")
-    overview.append("⭐ = Topp 10 för forskare · ☁️ = molntjänst, aktivt val")
     (out / KORTDIR / "Översikt.md").write_text("\n".join(overview) + "\n", encoding="utf-8")
 
 

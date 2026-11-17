@@ -126,8 +126,8 @@ for p in "${SELECTED[@]}"; do
   echo "== $(meta "$p" namn) =="
   if [[ "$(meta "$p" aktivt-val)" == ja ]]; then
     echo "$(meta "$p" beskrivning)"
-    echo "Moln-AI tar emot det du skriver. Följ tänk-först-principen och lägg aldrig in"
-    echo "personuppgifter eller sekretessbelagt material."
+    echo "Molntjänsterna tar emot det du skriver. Lägg inte in personuppgifter"
+    echo "eller sekretessbelagt material."
     if [[ $YES -eq 1 && $DRY -eq 0 ]]; then
       read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm
     else

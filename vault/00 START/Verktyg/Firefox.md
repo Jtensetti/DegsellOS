@@ -9,11 +9,11 @@ profil: grund
 
 **Fas:** 1 · Utforska  
 **Profil:** Grund  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Ingången till forskningsportalen: OpenAlex, DiVA, SwePub och de öppna databaserna.
+Webbläsare för litteratursök och öppna databaser (se Verktygslåda).
 
 ## Installera
 

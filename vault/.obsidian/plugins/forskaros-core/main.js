@@ -4,8 +4,8 @@
  * ForskarOS Core
  *
  * Ett tillägg som får operativsystemet att hjälpa forskaren arbeta enligt
- * ForskarOS-metoden: den kreativa forskningscykeln, tänk-först-principen,
- * epistemisk märkning, Revisorns granskning och mått på självständighet.
+ * arbetsmetoden: forskningscykeln, krav på eget utkast före AI-hjälp,
+ * epistemisk märkning, granskning av vaulten och mått på självständighet.
  *
  * Allt sker lokalt. Tillägget gör inga nätverksanrop. AI-konsultationer
  * förbereds som text som forskaren själv väljer att kopiera till en AI.
@@ -22,59 +22,59 @@ const { Plugin, ItemView, Notice, Modal } = obsidian;
  * 1. METODEN
  * ====================================================================== */
 
-/** Den kreativa forskningscykeln. Resultaten förändrar nästa cykel. */
+/** Forskningscykeln. Efter Dela börjar nästa cykel. */
 const PHASES = [
-  { id: 'utforska', namn: 'Utforska', symbios: 'Mångfald · lekfullhet · nyfikenhet',
+  { id: 'utforska', namn: 'Utforska',
     fråga: 'Vilka verkligt olika sätt finns det att förstå problemet?' },
-  { id: 'kombinera', namn: 'Kombinera', symbios: 'Oväntade samband · etablerad kunskap',
+  { id: 'kombinera', namn: 'Kombinera',
     fråga: 'Vilken ovanlig kombination vilar på gedigen, etablerad kunskap?' },
-  { id: 'välj', namn: 'Välj', symbios: 'Vision · koncentration · kompetens',
+  { id: 'välj', namn: 'Välj',
     fråga: 'Vilken enda hypotes är värd att fördjupa, och hur kan den visa sig fel?' },
-  { id: 'pröva', namn: 'Pröva', symbios: 'Tillit · friktion · ifrågasättande',
+  { id: 'pröva', namn: 'Pröva',
     fråga: 'Vad är den starkaste invändningen, och vad säger en människa utanför?' },
-  { id: 'utveckla', namn: 'Utveckla', symbios: 'Envishet · arbete · nya metoder',
+  { id: 'utveckla', namn: 'Utveckla',
     fråga: 'Vilket arbete, experiment eller ny metod prövar idén på riktigt?' },
-  { id: 'ompröva', namn: 'Ompröva', symbios: 'Förändring · återkoppling · återhämtning',
+  { id: 'ompröva', namn: 'Ompröva',
     fråga: 'Vad har förändrats i din uppfattning, och vad gör du annorlunda?' },
-  { id: 'dela', namn: 'Dela', symbios: 'Kommunikation · nätverk · verklig påverkan',
+  { id: 'dela', namn: 'Dela',
     fråga: 'Vem ska kunna granska, använda och utmana resultatet?' }
 ];
 
-/** Verktyg per fas (se 00 START/Verktygslåda). Verktyg är medel, inte metod. */
+/** Verktyg per fas (se 00 START/Verktygslåda). */
 const PHASE_TOOLS = {
-  utforska: 'Zotero · OpenAlex · DiVA · Perspektivkarta · Upptäckaren',
-  kombinera: 'draw.io · Freeplane · Hypotes · Upptäckaren',
-  välj: 'OSF-förregistrering · Etikprövning · Falsifiering',
-  pröva: 'Motprov · Forskningsmöte · Lokal AI som Motståndaren',
-  utveckla: 'JASP · jamovi · R · Python · Speech Note · Taguette · Experiment',
-  ompröva: 'Omprövning · Felrättning · Förmågegranskning',
-  dela: 'Zettlr · LibreOffice · Pandoc · Zenodo · ORCID'
+  utforska: 'Zotero, OpenAlex, DiVA, perspektivkarta',
+  kombinera: 'draw.io, Freeplane, hypotes',
+  välj: 'OSF-förregistrering, etikprövning, fokusläge',
+  pröva: 'motprov, forskningsmöte, lokal AI',
+  utveckla: 'JASP, jamovi, labbet (R, Python), Speech Note, Taguette',
+  ompröva: 'omprövning, felrättning, förmågegranskning',
+  dela: 'Zettlr, LibreOffice, Pandoc, Zenodo'
 };
 
 const MAX_AKTIVA_FRÅGOR = 2;
 const MIN_EGNA_ORD = 50;
 
-/** AI-rollerna. Systemet växlar uppgift, inte personlighet. */
+/** Uppgifter som en AI-konsultation kan ha. */
 const ROLES = {
-  upptäckaren: {
-    namn: 'Upptäckaren',
-    uppdrag: 'Tillför alternativa perspektiv och möjliga forskningsluckor. Jämför min idé med minst två andra teoretiska utgångspunkter, gärna från fält jag inte nämnt. Peka ut var perspektiven motsäger varandra.'
+  perspektiv: {
+    namn: 'Alternativa perspektiv',
+    uppdrag: 'Jämför min idé med minst två andra teoretiska utgångspunkter, gärna från fält jag inte nämnt. Peka ut var perspektiven motsäger varandra och vilka forskningsluckor som finns.'
   },
-  motståndaren: {
-    namn: 'Motståndaren',
-    uppdrag: 'Försök motbevisa min hypotes, inte vinna en debatt. Redovisa de starkaste invändningarna, alternativa förklaringar och vilken evidens som skulle avgöra frågan.'
+  kritik: {
+    namn: 'Kritisk granskning',
+    uppdrag: 'Försök motbevisa hypotesen. Redovisa de starkaste invändningarna, alternativa förklaringar och vilken evidens som skulle avgöra frågan.'
   },
-  handledaren: {
-    namn: 'Handledaren',
-    uppdrag: 'Hjälp mig utveckla de metodiska och teoretiska förmågor jag saknar. Börja med att pröva vad jag redan kan. Föreläs inte om sådant jag behärskar.'
+  handledning: {
+    namn: 'Handledning',
+    uppdrag: 'Hjälp mig utveckla metodiska och teoretiska färdigheter jag saknar. Börja med att ta reda på vad jag redan kan.'
   },
-  laboratorieassistenten: {
-    namn: 'Laboratorieassistenten',
-    uppdrag: 'Hjälp mig konstruera experiment, analysera resultat och dokumentera arbetet reproducerbart. Jag äger forskningsbesluten.'
+  metod: {
+    namn: 'Metod och analys',
+    uppdrag: 'Hjälp mig med försöksdesign, analys och reproducerbar dokumentation. Besluten om forskningen fattar jag.'
   },
-  revisorn: {
-    namn: 'Revisorn',
-    uppdrag: 'Granska mina tidigare slutsatser. Leta efter fel, för tvärsäkra påståenden, löften som inte följts upp och tecken på att samarbetet med AI gör mig mindre självständig.'
+  uppfoljning: {
+    namn: 'Uppföljning',
+    uppdrag: 'Granska mina tidigare slutsatser. Leta efter fel, för säkra påståenden och sådant jag sagt att jag skulle göra men inte gjort.'
   }
 };
 
@@ -97,28 +97,13 @@ const MODES = {
   }
 };
 
-/** Tillitskontraktet, som skickas med varje AI-konsultation. */
+/** Regler som skickas med varje AI-konsultation. */
 const EPISTEMIC_CONTRACT = [
   'Märk varje viktigt påstående som [BELAGT] (med källa), [TOLKNING] eller [SPEKULATION].',
   'Förväxla inte rimlighet med sanning. Säg när du inte vet.',
   'Anpassa inte slutsatsen efter hur säker jag verkar. Kritisera svaga idéer och lyft starka.',
   'Om du upptäcker att du tidigare haft fel, säg det öppet.',
-  'Ta inte över tänkandet: jag har skrivit min egen uppfattning först, utgå från den.'
-];
-
-/** Principer som visas i panelen, en per dag. */
-const PRINCIPLES = [
-  'Var envis med frågan, inte med svaret.',
-  'Mångfald ger perspektiv. Friktion skapar prövning. Tillit möjliggör öppenhet.',
-  'Vi ska vara envisa i vår nyfikenhet, men föränderliga i våra övertygelser.',
-  'Vi ska vara trygga med varandra, inte nödvändigtvis trygga i våra övertygelser.',
-  'En ovanlig idé blir mer kraftfull när den vilar på mycket gedigen kunskap.',
-  'Envishet med problemet. Förändringsvilja i metoden. Återhämtning för att se nya lösningar.',
-  'En liten, stabil kärna som arbetar djupt, och ett stort, föränderligt nätverk.',
-  'Intellektuell ödmjukhet: att verkligen vilja upptäcka att ens favoritidé är fel.',
-  'Ett negativt resultat är ett forskningsresultat när metoden är sund.',
-  'Framtiden är den viktigaste tiden.',
-  'Målet är inte ett system som tänker åt dig, utan ett som tränar dig i att tänka bättre än i går.'
+  'Utgå från det jag har skrivit, i stället för att börja om från början.'
 ];
 
 /** De sju förmågorna i den månatliga granskningen. */
@@ -250,51 +235,51 @@ function phaseRequirements(question, notes) {
   switch (question.fm.fas || 'utforska') {
     case 'utforska':
       return [
-        req(section(question.body, 'Varför'), 'Du har skrivit varför frågan är värd din tid (engagemang)'),
-        req(of('perspektivkarta').length > 0, 'Minst en perspektivkarta med verkligt olika förklaringar (mångfald)')
+        req(section(question.body, 'Varför'), 'Frågan har en motivering: varför den är viktig'),
+        req(of('perspektivkarta').length > 0, 'Minst en perspektivkarta')
       ];
     case 'kombinera':
       return [
-        req(hyps.length > 0, 'Minst en hypotes formulerad med egna ord'),
-        req(hyps.some(h => section(h.body, 'Etablerad kunskap')), 'Hypotesen redovisar den etablerade kunskap den vilar på'),
-        req(hyps.some(h => section(h.body, 'Den ovanliga kombinationen')), 'Hypotesen beskriver sin ovanliga kombination (originalitet)')
+        req(hyps.length > 0, 'Minst en hypotes'),
+        req(hyps.some(h => section(h.body, 'Etablerad kunskap')), 'Hypotesen anger vilken etablerad kunskap den bygger på'),
+        req(hyps.some(h => section(h.body, 'Den ovanliga kombinationen')), 'Hypotesen anger vad som är nytt')
       ];
     case 'välj':
       return [
-        req(hyps.some(h => section(h.body, 'Falsifiering')), 'En hypotes har ett falsifieringskriterium: vad skulle visa att du har fel?'),
+        req(hyps.some(h => section(h.body, 'Falsifiering')), 'En hypotes har ett falsifieringskriterium'),
         req(hyps.some(h => section(h.body, 'Prediktioner')), 'En hypotes har konkreta prediktioner'),
-        req(section(question.body, 'Det jag väljer bort'), 'Du har skrivit vad du väljer bort (koncentration)')
+        req(section(question.body, 'Det jag väljer bort'), 'Avgränsningen anger vad som väljs bort')
       ];
     case 'pröva':
       return [
-        req(of('motprov').some(m => section(m.body, 'Mitt svar')), 'Minst ett motprov där du besvarat den starkaste invändningen (friktion)'),
-        req(of('forskningsmöte').length > 0, 'Minst ett forskningsmöte: en människa utanför har prövat idén')
+        req(of('motprov').some(m => section(m.body, 'Mitt svar')), 'Minst ett besvarat motprov'),
+        req(of('forskningsmöte').length > 0, 'Minst ett forskningsmöte med någon utanför projektet')
       ];
     case 'utveckla':
       return [
-        req(of('experiment').some(e => section(e.body, 'Resultat')), 'Minst ett genomfört experiment eller arbetsprov med redovisat resultat')
+        req(of('experiment').some(e => section(e.body, 'Resultat')), 'Minst ett experiment eller arbetsprov med resultat')
       ];
     case 'ompröva':
       return [
-        req(of('omprövning').length > 0, 'En omprövning: vad tror du nu, och varför?'),
-        req(section(question.body, 'Lärdomar'), 'Du har skrivit vad cykeln lärde dig om ditt arbetssätt')
+        req(of('omprövning').length > 0, 'Minst en omprövning'),
+        req(section(question.body, 'Lärdomar'), 'Lärdomar om arbetssättet är nedskrivna')
       ];
     case 'dela':
       return [
-        req(section(question.body, 'Delat med'), 'Resultatet har delats med någon som kan granska eller använda det')
+        req(section(question.body, 'Delat med'), 'Resultatet har delats med någon som kan granska det')
       ];
     default:
       return [];
   }
 }
 
-/* ---------- Revisorn ---------- */
+/* ---------- Granskning av vaulten ---------- */
 
 function finding(nivå, princip, text, path) { return { nivå, princip, text, path: path || null }; }
 
 /**
- * Revisorn granskar hela vaulten mot metoden och säger till när arbetet
- * glider ifrån den. Inget här kräver AI.
+ * Granskar hela vaulten mot arbetsmetoden och listar det som behöver
+ * åtgärdas. Regelbaserat, ingen AI.
  */
 function audit(notes, date) {
   const out = [];
@@ -304,8 +289,8 @@ function audit(notes, date) {
 
   // Envishet: för många öppna frågor samtidigt.
   if (active.length > MAX_AKTIVA_FRÅGOR) {
-    out.push(finding('varning', 'Envishet',
-      `Du har ${active.length} aktiva forskningsfrågor. Metoden tillåter högst ${MAX_AKTIVA_FRÅGOR}. Parkera eller lägg några att vila, så att lovande idéer faktiskt fördjupas.`));
+    out.push(finding('varning', 'För många frågor',
+      `${active.length} aktiva forskningsfrågor. Arbetsmetoden rekommenderar högst ${MAX_AKTIVA_FRÅGOR}. Parkera eller lägg några att vila.`));
   }
 
   for (const q of active) {
@@ -314,14 +299,14 @@ function audit(notes, date) {
     const dagar = sedan ? daysBetween(sedan, date) : 0;
     const titel = basename(q.path);
     if ((fas === 'utforska' || fas === 'kombinera') && dagar > 30) {
-      out.push(finding('varning', 'Utforskning + koncentration',
-        `"${titel}" har varit i fasen ${phaseOf(fas).namn} i ${dagar} dagar. Du utforskar utan att välja. Vilken hypotes är värd att fördjupa?`, q.path));
+      out.push(finding('varning', 'Står still',
+        `"${titel}" har varit i fasen ${phaseOf(fas).namn} i ${dagar} dagar utan att en hypotes valts.`, q.path));
     }
     if (fas === 'utveckla' || fas === 'välj') {
       const linked = notes.filter(n => refersTo(n, q));
       if (!linked.some(n => n.fm.typ === 'motprov')) {
-        out.push(finding('varning', 'Friktion',
-          `"${titel}" fördjupas utan att någon invändning prövats. Skriv ett motprov innan du investerar mer.`, q.path));
+        out.push(finding('varning', 'Ingen kritik',
+          `"${titel}" har inget motprov än.`, q.path));
       }
     }
   }
@@ -329,8 +314,8 @@ function audit(notes, date) {
   // Inkubation: vilande frågor som är redo att återvända till.
   for (const q of questions.filter(q => q.fm.status === 'vilar' && q.fm.vila_till)) {
     if (daysBetween(String(q.fm.vila_till), date) >= 0) {
-      out.push(finding('påminnelse', 'Återhämtning',
-        `"${basename(q.path)}" har vilat klart. Återvänd med nya ögon: vad ser du nu som du inte såg innan?`, q.path));
+      out.push(finding('påminnelse', 'Vila slut',
+        `"${basename(q.path)}" har vilat färdigt.`, q.path));
     }
   }
 
@@ -340,8 +325,8 @@ function audit(notes, date) {
     const harMotprov = of('motprov').some(m => linkTarget(m.fm.gäller) &&
       (linkTarget(m.fm.gäller) === h.path.replace(/\.md$/, '') || linkTarget(m.fm.gäller) === basename(h.path)));
     if (!harMotprov && ålder > 14 && (h.fm.status || 'oprövad') === 'oprövad') {
-      out.push(finding('påminnelse', 'Ifrågasättande',
-        `Hypotesen "${basename(h.path)}" har inte mött någon invändning på ${ålder} dagar.`, h.path));
+      out.push(finding('påminnelse', 'Oprövad hypotes',
+        `Hypotesen "${basename(h.path)}" har inget motprov efter ${ålder} dagar.`, h.path));
     }
   }
 
@@ -349,49 +334,49 @@ function audit(notes, date) {
   const möten = of('forskningsmöte').map(noteDate).filter(Boolean).sort();
   const senasteMöte = möten[möten.length - 1];
   if (active.length > 0 && (!senasteMöte || daysBetween(senasteMöte, date) > 30)) {
-    out.push(finding('varning', 'Mångfald',
+    out.push(finding('varning', 'Ingen extern återkoppling',
       senasteMöte
-        ? `Inget forskningsmöte med en människa på ${daysBetween(senasteMöte, date)} dagar. AI-perspektiv ersätter inte oberoende människor.`
-        : 'Inget forskningsmöte dokumenterat än. Vem utanför ditt huvud och utanför AI kan pröva idén?'));
+        ? `Senaste forskningsmötet var för ${daysBetween(senasteMöte, date)} dagar sedan.`
+        : 'Inget forskningsmöte dokumenterat än.'));
   }
 
   // Tillit: öppna felrättningar.
   for (const k of of('felrättning').filter(k => (k.fm.status || 'öppen') === 'öppen')) {
     const ålder = daysBetween(noteDate(k) || date, date);
     if (ålder > 14) {
-      out.push(finding('påminnelse', 'Tillit',
-        `Felrättningen "${basename(k.path)}" har varit öppen i ${ålder} dagar. Vad ändrar vi i arbetssättet?`, k.path));
+      out.push(finding('påminnelse', 'Öppen felrättning',
+        `Felrättningen "${basename(k.path)}" har varit öppen i ${ålder} dagar.`, k.path));
     }
   }
 
-  // Tänk först: AI-konsultationer utan egna ord efteråt.
+  // AI-konsultationer utan egen sammanfattning efteråt.
   for (const a of of('ai-konsultation')) {
     const ålder = daysBetween(noteDate(a) || date, date);
     if (ålder >= 2 && !section(a.body, 'Vad tar jag med mig')) {
-      out.push(finding('påminnelse', 'Självständighet',
-        `AI-konsultationen "${basename(a.path)}" saknar din sammanfattning med egna ord.`, a.path));
+      out.push(finding('påminnelse', 'AI-användning',
+        `AI-konsultationen "${basename(a.path)}" saknar din egen sammanfattning.`, a.path));
     }
   }
 
   const ai30 = of('ai-konsultation').filter(a => daysBetween(noteDate(a) || date, date) <= 30);
   const utanTanke = ai30.filter(a => a.fm.egen_tanke_först !== 'ja').length;
   if (ai30.length >= 3 && utanTanke / ai30.length > 0.5) {
-    out.push(finding('varning', 'Självständighet',
-      `${utanTanke} av ${ai30.length} AI-konsultationer senaste månaden gjordes innan du skrivit din egen uppfattning.`));
+    out.push(finding('varning', 'AI-användning',
+      `${utanTanke} av ${ai30.length} AI-konsultationer senaste månaden gjordes innan du skrivit något eget.`));
   }
 
   // Återkoppling: månatlig förmågegranskning.
   const granskningar = of('förmågegranskning').map(noteDate).filter(Boolean).sort();
   const senaste = granskningar[granskningar.length - 1];
   if (!senaste || daysBetween(senaste, date) > 35) {
-    out.push(finding('påminnelse', 'Återkoppling',
-      senaste ? 'Det är dags för månadens förmågegranskning.' : 'Gör din första förmågegranskning, så att vi kan se om du faktiskt blir bättre.'));
+    out.push(finding('påminnelse', 'Förmågegranskning',
+      senaste ? 'Över en månad sedan senaste förmågegranskningen.' : 'Ingen förmågegranskning gjord än.'));
   }
 
   // Förslag: första uppdraget.
   if (active.length === 0 && questions.some(q => q.fm.status === 'förslag')) {
-    out.push(finding('påminnelse', 'Riktning',
-      'Du har ingen aktiv forskningsfråga. Det finns ett förslag i 01 RIKTNING. Gör det till ditt eller formulera en egen fråga.'));
+    out.push(finding('påminnelse', 'Ingen aktiv fråga',
+      'Det finns ett frågeförslag i 01 RIKTNING.'));
   }
 
   return out.sort((a, b) => (a.nivå === b.nivå ? 0 : a.nivå === 'varning' ? -1 : 1));
@@ -399,7 +384,7 @@ function audit(notes, date) {
 
 /* ---------- Mått ---------- */
 
-/** Mått på förmåga och självständighet, inte på produktion. */
+/** Mått på AI-användning, övning och förmåga. */
 function metrics(notes, date) {
   const of = typ => notes.filter(n => n.fm.typ === typ);
   const inom = (n, d) => daysBetween(noteDate(n) || date, date) <= d;
@@ -437,16 +422,14 @@ function metrics(notes, date) {
 
 /** Bygger den text som forskaren själv väljer att skicka till en AI. */
 function buildPrompt({ roll, läge, titel, text }) {
-  const r = ROLES[roll] || ROLES.motståndaren;
+  const r = ROLES[roll] || ROLES.kritik;
   const m = MODES[läge] || MODES.utveckling;
   return [
-    `Du arbetar som "${r.namn}" i ForskarOS, ett system som ska göra forskaren mer självständig, inte mer beroende av AI.`,
-    '',
-    `Ditt uppdrag: ${r.uppdrag}`,
+    `Uppgift (${r.namn}): ${r.uppdrag}`,
     '',
     `Läge: ${m.namn}. ${m.instruktion}`,
     '',
-    'Regler (tillitskontraktet):',
+    'Regler:',
     ...EPISTEMIC_CONTRACT.map((c, i) => `${i + 1}. ${c}`),
     '',
     `Här är mitt arbete, "${titel}":`,
@@ -471,8 +454,6 @@ const TYPES = {
     label: 'Forskarpass', folder: '08 REFLEKTION', prefix: 'Pass',
     render: ({ date, source, fråga }) => fm({ typ: 'forskarpass', datum: date, status: 'pågår', fråga }) + `# Forskarpass ${date}
 
-> Tänk själv först. Be sedan en AI eller en människa om kritik.
-
 ## 1. Frågan jag försöker förstå
 ${source || ''}
 
@@ -492,7 +473,7 @@ ${source || ''}
 - Vad källan faktiskt stöder:
 - Osäkerhet:
 
-## 6. Det jag inte förstår (bekvämt att vara obekväm)
+## 6. Det jag inte förstår
 
 
 ## 7. Vad har förändrats i min uppfattning?
@@ -514,7 +495,6 @@ ${source || ''}
 
 
 ## Etablerad kunskap jag bygger på
-> Ovanliga idéer blir starkare när de vilar på gedigen kunskap.
 
 
 ## Den ovanliga kombinationen
@@ -541,7 +521,7 @@ ${source || ''}
 ## Motstridiga källor
 
 
-## Vad skulle upptäckten göra möjligt? (framtiden)
+## Vad skulle resultatet betyda?
 
 
 ## Beslut: pröva / omformulera / förkasta
@@ -624,7 +604,6 @@ ${source || ''}
 
 
 ## Ny metod eller nytt verktyg?
-> Många genombrott har gjorts möjliga av nya sätt att undersöka verkligheten.
 
 
 ## Resultat
@@ -666,7 +645,6 @@ ${source || ''}
     render: ({ date, fråga }) => fm({ typ: 'forskningsmöte', datum: date, krets: 'nätverk', ny_kontakt: 'ja', fråga }) + `# Forskningsmöte
 
 > krets: kärna (handledare, nära forskningspartner) eller nätverk.
-> Nya kontakter tillför oftare nya perspektiv än upprepade samarbeten.
 
 ## Deltagare och expertområden
 
@@ -714,8 +692,7 @@ ${source || ''}
     label: 'Övning utan AI', folder: '08 REFLEKTION', prefix: 'Övning',
     render: ({ date, fråga }) => fm({ typ: 'övning', datum: date, utan_ai: 'ja', förmåga: 'metodkompetens', fråga }) + `# Övning utan AI
 
-> Fördjupning: lös en uppgift helt på egen hand. Bara så kan vi avgöra vad
-> du faktiskt har lärt dig. Sätt utan_ai till "nej" om du tog hjälp.
+> Lös uppgiften utan hjälp. Sätt utan_ai till "nej" om du tog hjälp.
 
 ## Uppgiften
 
@@ -734,10 +711,8 @@ ${source || ''}
     render: ({ date }) => fm(Object.assign({ typ: 'förmågegranskning', datum: date },
       Object.fromEntries(CAPABILITIES.map(([k]) => [k, ''])))) + `# Förmågegranskning ${date}
 
-> Skatta varje förmåga 1–5 i egenskaperna ovan. Varje skattning ska bygga på
-> ett konkret arbetsprov, länka till det. Det är en självskattning tills vi har
-> oberoende bedömning. Det intressanta är inte totalsiffran, utan om du klarar
-> mer krävande uppgifter med mindre hjälp.
+> Skatta varje förmåga 1–5 i egenskaperna ovan och länka till arbetsprovet
+> skattningen bygger på. Det är en självskattning.
 
 ${CAPABILITIES.map(([, namn, fråga]) => `## ${namn}\n> ${fråga}\n- Arbetsprov:\n- Motivering:\n`).join('\n')}
 ## Vad ska jag träna nästa månad?
@@ -748,7 +723,7 @@ ${CAPABILITIES.map(([, namn, fråga]) => `## ${namn}\n> ${fråga}\n- Arbetsprov:
 function questionNote({ date, titel, varför, status = 'aktiv' }) {
   return fm({ typ: 'forskningsfråga', datum: date, status, fas: 'utforska', fas_ändrad: date, cykel: 1 }) + `# ${titel}
 
-## Varför är frågan värd tio år av mitt liv?
+## Varför är frågan viktig?
 ${varför || ''}
 
 ## Avgränsning
@@ -773,8 +748,6 @@ function ideaNote({ date, idé }) {
 
 ${idé || ''}
 
-> Parkerad, inte bortglömd. När en aktiv fråga är avslutad kan idén bli nästa.
-> Varför lockar den, och vad har den gemensamt med det du redan undersöker?
 `;
 }
 
@@ -791,7 +764,7 @@ function appendPhaseLog(body, line) {
 }
 
 const engine = {
-  PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, PRINCIPLES, EPISTEMIC_CONTRACT, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
+  PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, EPISTEMIC_CONTRACT, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
   today, addDays, daysBetween, phaseOf, nextPhase, linkTarget, refersTo, section, ownWords,
   phaseRequirements, audit, metrics, buildPrompt, appendPhaseLog, questionNote, ideaNote, TYPES
 };
@@ -864,7 +837,7 @@ class PhaseModal extends Modal {
     const allOk = this.requirements.every(r => r.ok);
     let reason = null;
     if (!allOk) {
-      el.createEl('p', { text: 'Allt är inte gjort. Du kan gå vidare ändå, men motiveringen sparas öppet i frågan.' });
+      el.createEl('p', { text: 'Alla krav är inte uppfyllda. Motiveringen sparas i frågan.' });
       reason = el.createEl('textarea', { cls: 'forskaros-input' });
       reason.setAttr('placeholder', 'Varför går du vidare ändå?');
     }
@@ -898,14 +871,14 @@ class AIModal extends Modal {
     el.createEl('p', {
       cls: tänktFörst ? 'forskaros-ok' : 'forskaros-warning',
       text: tänktFörst
-        ? `Du har skrivit ${this.words} egna ord i anteckningen. Bra, AI:n får utgå från din uppfattning.`
-        : `Du har bara skrivit ${this.words} egna ord. Tänk-först-principen: skriv din egen uppfattning (minst ${MIN_EGNA_ORD} ord) innan du ber om hjälp. Bara prestationsläget är öppet.`
+        ? `${this.words} egna ord i anteckningen.`
+        : `${this.words} egna ord i anteckningen. Utvecklings- och prövningsläget kräver minst ${MIN_EGNA_ORD}.`
     });
 
     el.createEl('label', { text: 'Roll', cls: 'forskaros-label' });
     const roll = el.createEl('select', { cls: 'forskaros-input' });
     for (const [id, r] of Object.entries(ROLES)) roll.createEl('option', { text: r.namn, value: id });
-    roll.value = 'motståndaren';
+    roll.value = 'kritik';
 
     el.createEl('label', { text: 'Läge', cls: 'forskaros-label' });
     const läge = el.createEl('select', { cls: 'forskaros-input' });
@@ -915,7 +888,7 @@ class AIModal extends Modal {
     }
     läge.value = tänktFörst ? 'utveckling' : 'prestation';
 
-    el.createEl('label', { text: 'Exakt detta delas. Inget skickas automatiskt.', cls: 'forskaros-label' });
+    el.createEl('label', { text: 'Text att kopiera (skickas inte automatiskt)', cls: 'forskaros-label' });
     const preview = el.createEl('textarea', { cls: 'forskaros-input forskaros-preview' });
     preview.readOnly = true;
     const update = () => {
@@ -926,7 +899,7 @@ class AIModal extends Modal {
     update();
 
     const row = el.createDiv({ cls: 'forskaros-row' });
-    const copy = row.createEl('button', { text: 'Kopiera och logga konsultationen', cls: 'mod-cta' });
+    const copy = row.createEl('button', { text: 'Kopiera och logga', cls: 'mod-cta' });
     copy.addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(preview.value); } catch (e) { /* kopiera manuellt */ }
       this.close();
@@ -952,22 +925,19 @@ class ForskarOSView extends ItemView {
     const date = today();
     root.empty();
     root.addClass('forskaros-panel');
-    root.createEl('div', { cls: 'forskaros-kicker', text: 'FORSKAROS' });
-    const dayIndex = daysBetween('2026-01-01', date);
-    root.createEl('h2', { text: PRINCIPLES[((dayIndex % PRINCIPLES.length) + PRINCIPLES.length) % PRINCIPLES.length] });
 
     // Forskningsfrågor och deras fas i cykeln.
     const questions = notes.filter(n => n.fm.typ === 'forskningsfråga');
     const active = questions.filter(q => (q.fm.status || 'aktiv') === 'aktiv');
-    root.createEl('h4', { text: 'Dina forskningsfrågor' });
+    root.createEl('h4', { text: 'Forskningsfrågor' });
     if (!active.length) {
       const förslag = questions.find(q => q.fm.status === 'förslag');
-      root.createEl('p', { text: 'Ingen aktiv fråga. Forskning börjar med ett problem du är beredd att ägna tio år åt att förstå.' });
+      root.createEl('p', { cls: 'forskaros-muted', text: 'Ingen aktiv forskningsfråga.' });
       const row = root.createDiv({ cls: 'forskaros-row' });
-      row.createEl('button', { text: 'Formulera en forskningsfråga', cls: 'mod-cta' })
+      row.createEl('button', { text: 'Ny forskningsfråga', cls: 'mod-cta' })
         .addEventListener('click', () => this.plugin.newQuestion());
       if (förslag) {
-        row.createEl('button', { text: `Anta förslaget: ${basename(förslag.path)}` })
+        row.createEl('button', { text: `Använd förslaget: ${basename(förslag.path)}` })
           .addEventListener('click', () => this.plugin.adoptQuestion(förslag));
       }
     }
@@ -977,10 +947,10 @@ class ForskarOSView extends ItemView {
       root.createEl('p', { cls: 'forskaros-muted', text: `Vilar: ${vilande.map(q => `${basename(q.path)} (till ${q.fm.vila_till || '?'})`).join(', ')}` });
     }
 
-    // Revisorn.
+    // Granskning.
     const findings = audit(notes, date);
-    root.createEl('h4', { text: 'Revisorn' });
-    if (!findings.length) root.createEl('p', { cls: 'forskaros-muted', text: 'Inget att anmärka just nu.' });
+    root.createEl('h4', { text: 'Att åtgärda' });
+    if (!findings.length) root.createEl('p', { cls: 'forskaros-muted', text: 'Inget just nu.' });
     for (const f of findings.slice(0, 8)) {
       const item = root.createDiv({ cls: `forskaros-finding is-${f.nivå}` });
       item.createEl('b', { text: f.princip });
@@ -990,30 +960,29 @@ class ForskarOSView extends ItemView {
 
     // Självständighet.
     const m = metrics(notes, date);
-    root.createEl('h4', { text: 'Självständighet, senaste 30 dagarna' });
+    root.createEl('h4', { text: 'Senaste 30 dagarna' });
     const grid = root.createDiv({ cls: 'forskaros-metrics' });
     const card = (value, label) => {
       const c = grid.createDiv({ cls: 'forskaros-metric' });
       c.createEl('strong', { text: value });
       c.createEl('span', { text: label });
     };
-    card(m.aiKonsultationer ? `${m.tänktFörst}/${m.aiKonsultationer}` : '–', 'AI-frågor där du tänkte först');
+    card(m.aiKonsultationer ? `${m.tänktFörst}/${m.aiKonsultationer}` : '–', 'AI-frågor efter eget utkast');
     card(String(m.övningarUtanAI), 'Övningar utan AI');
     card(m.förmåga ? m.förmåga.toFixed(1) : '–', m.förmågaFörra ? `Förmåga (förra: ${m.förmågaFörra.toFixed(1)})` : 'Förmåga (1–5)');
     card(String(m.motprov), 'Motprov');
     card(String(m.omprövningar), 'Omprövningar');
     card(String(m.felrättningar), 'Felrättningar');
     const e = m.epistemik;
-    root.createEl('p', { cls: 'forskaros-muted', text: `Märkta påståenden: ${e.belagt} belagda · ${e.tolkning} tolkningar · ${e.spekulation} spekulationer` });
+    root.createEl('p', { cls: 'forskaros-muted', text: `Märkta påståenden: ${e.belagt} belagt, ${e.tolkning} tolkning, ${e.spekulation} spekulation` });
 
     // Skapa.
-    root.createEl('h4', { text: 'Arbeta' });
+    root.createEl('h4', { text: 'Ny anteckning' });
     const actions = root.createDiv({ cls: 'forskaros-actions' });
     const btn = (text, fn) => actions.createEl('button', { text }).addEventListener('click', fn);
     btn('Parkera en idé', () => this.plugin.parkIdea());
     btn('Be AI om hjälp', () => void this.plugin.consultAI());
     for (const [type, spec] of Object.entries(TYPES)) btn(spec.label, () => void this.plugin.createNote(type));
-    root.createEl('div', { cls: 'forskaros-warning', text: 'Du ska kunna förklara slutsatsen utan AI. Fler anteckningar är inte samma sak som mer kunskap.' });
     root.createEl('button', { text: 'Läs arbetsmetoden' })
       .addEventListener('click', () => void this.plugin.openPath('00 START/Arbetsmetod.md'));
   }
@@ -1029,7 +998,7 @@ class ForskarOSView extends ItemView {
       steps.createDiv({ cls: `forskaros-step ${cls}`, text: p.namn });
     });
     const p = phaseOf(fas);
-    box.createEl('div', { cls: 'forskaros-muted', text: `Cykel ${q.fm.cykel || 1} · ${p.symbios}` });
+    box.createEl('div', { cls: 'forskaros-muted', text: `Cykel ${q.fm.cykel || 1}` });
     box.createEl('div', { cls: 'forskaros-phase-question', text: p.fråga });
     const tools = box.createEl('div', { cls: 'forskaros-muted forskaros-tools', text: `Verktyg: ${PHASE_TOOLS[fas] || ''}` });
     tools.addEventListener('click', () => void this.plugin.openPath('00 START/Verktygslåda.md'));
@@ -1051,7 +1020,7 @@ module.exports = class ForskarOSPlugin extends Plugin {
     this.addCommand({ id: 'open-dashboard', name: 'Öppna ForskarOS-panelen', callback: () => void this.activateDashboard() });
     this.addCommand({ id: 'new-question', name: 'Ny forskningsfråga', callback: () => this.newQuestion() });
     this.addCommand({ id: 'park-idea', name: 'Parkera en idé', callback: () => this.parkIdea() });
-    this.addCommand({ id: 'consult-ai', name: 'Be AI om hjälp (tänk först)', callback: () => void this.consultAI() });
+    this.addCommand({ id: 'consult-ai', name: 'Be AI om hjälp', callback: () => void this.consultAI() });
     this.addCommand({ id: 'advance-phase', name: 'Gå vidare till nästa fas', callback: () => void this.advanceFromActive() });
     for (const [type, spec] of Object.entries(TYPES)) {
       this.addCommand({ id: `new-${type}`, name: spec.label, callback: () => void this.createNote(type) });
@@ -1154,12 +1123,11 @@ module.exports = class ForskarOSPlugin extends Plugin {
       new FormModal(this.app, {
         title: 'Ny forskningsfråga',
         intro: full
-          ? [`Du har redan ${aktiva.length} aktiva frågor: ${aktiva.map(q => basename(q.path)).join(', ')}.`,
-            'Envis med frågan, inte med svaret. Ska den nya idén parkeras tills en fråga är avslutad?']
-          : ['Formulera frågan själv. Den ska vara värd att ägna tio år åt att förstå.'],
+          ? [`Du har redan ${aktiva.length} aktiva frågor: ${aktiva.map(q => basename(q.path)).join(', ')}. Parkera den nya som idé i stället?`]
+          : null,
         fields: [
           { key: 'titel', label: 'Frågan, i en mening', required: true },
-          { key: 'varför', label: 'Varför är den värd din tid? (engagemanget måste komma från dig)', multiline: true, required: !full }
+          { key: 'varför', label: 'Varför är frågan viktig?', multiline: true, required: !full }
         ],
         submit: full
           ? [{ id: 'park', text: 'Parkera som idé', cta: true, skipRequired: false },
@@ -1167,7 +1135,7 @@ module.exports = class ForskarOSPlugin extends Plugin {
           : [{ id: 'create', text: 'Skapa frågan', cta: true }],
         onSubmit: async (id, v) => {
           if (id === 'park') return this.saveIdea(`${v.titel}\n\n${v.varför || ''}`.trim());
-          if (!v.varför) { new Notice('Skriv varför frågan är värd din tid.'); return; }
+          if (!v.varför) { new Notice('Skriv varför frågan är viktig.'); return; }
           const path = await this.uniquePath('01 RIKTNING', safeName(v.titel));
           const file = await this.app.vault.create(path, questionNote({ date: today(), titel: v.titel, varför: v.varför }));
           await this.app.workspace.getLeaf(true).openFile(file);
@@ -1184,14 +1152,14 @@ module.exports = class ForskarOSPlugin extends Plugin {
       f.status = 'aktiv'; f.fas = 'utforska'; f.fas_ändrad = today(); f.datum = today();
     });
     await this.openPath(q.path);
-    new Notice('Frågan är din nu. Börja med att skriva varför den är värd din tid.');
+    new Notice('Frågan är aktiv.');
     this.refreshDashboard();
   }
 
   parkIdea() {
     new FormModal(this.app, {
       title: 'Parkera en idé',
-      intro: ['Nya idéer är värdefulla. Parkera dem i stället för att byta fråga, så att den du arbetar med hinner fördjupas.'],
+      intro: ['Sparas i 01 RIKTNING/Idébank.'],
       fields: [{ key: 'idé', label: 'Idén', multiline: true, required: true }],
       submit: [{ text: 'Parkera', cta: true }],
       onSubmit: (_, v) => this.saveIdea(v.idé)
@@ -1228,7 +1196,7 @@ module.exports = class ForskarOSPlugin extends Plugin {
     if (saknas.length) line += ` Gick vidare trots att detta saknades: ${saknas.join('; ')}. Motivering: ${motivering}`;
     const body = await this.app.vault.read(file);
     await this.app.vault.modify(file, appendPhaseLog(body, line));
-    new Notice(`Fas: ${nxt.namn}. ${nxt.fråga}`);
+    new Notice(`Fas: ${nxt.namn}`);
     this.refreshDashboard();
   }
 
@@ -1239,7 +1207,7 @@ module.exports = class ForskarOSPlugin extends Plugin {
     await this.app.fileManager.processFrontMatter(file, f => { f.status = 'vilar'; f.vila_till = till; });
     const body = await this.app.vault.read(file);
     await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Lagd att vila till ${till} (inkubation).`));
-    new Notice(`"${basename(q.path)}" vilar till ${till}. Revisorn påminner dig.`);
+    new Notice(`"${basename(q.path)}" vilar till ${till}.`);
     this.refreshDashboard();
   }
 
@@ -1260,19 +1228,18 @@ module.exports = class ForskarOSPlugin extends Plugin {
       fråga: q ? `[[${q.path.replace(/\.md$/, '')}]]` : undefined
     }) + `# AI-konsultation: ${ROLES[roll].namn}
 
-> Texten nedan är kopierad. Klistra in den i den AI du väljer, och klistra
-> sedan in svaret här. Granska det innan du tar med dig något.
+> Texten under "Det som skickades" ligger i urklippet.
 
 ## Svaret (klistra in)
 
 
-## Granskning: vad är belagt, vad är tolkning, vad är spekulation?
+## Vad är belagt, tolkning respektive spekulation?
 
 
 ## Vad håller jag inte med om?
 
 
-## Vad tar jag med mig – med egna ord?
+## Vad tar jag med mig?
 
 
 ## Det som skickades
@@ -1282,7 +1249,7 @@ ${prompt}
 `;
     const created = await this.app.vault.create(path, content);
     await this.app.workspace.getLeaf(true).openFile(created);
-    new Notice('Texten är kopierad. Klistra in svaret i loggen och skriv vad du tar med dig, med egna ord.');
+    new Notice('Texten är kopierad. Klistra in svaret i loggen.');
     this.refreshDashboard();
   }
 

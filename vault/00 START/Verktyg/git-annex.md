@@ -10,9 +10,9 @@ profil: programmering
 **Fas:** 6 · Ompröva  
 **Profil:** Programmering och reproducerbarhet
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Ompröva: se exakt vilken version av data en slutsats byggde på.
+Versionshantering av stora filer med Git.
 
 ## Installera
 

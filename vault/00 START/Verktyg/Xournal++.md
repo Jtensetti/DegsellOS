@@ -9,11 +9,11 @@ profil: grund
 
 **Fas:** 1 · Utforska  
 **Profil:** Grund  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utforska: läs aktivt. Skriv invändningar i marginalen medan du läser.
+Anteckningar och markeringar direkt i PDF:er.
 
 ## Installera
 

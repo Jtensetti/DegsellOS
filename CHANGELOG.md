@@ -1,31 +1,14 @@
-# Versioner
+# Ändringslogg
 
-ForskarOS släpps kvartalsvis med versioner som `2027.1`, `2027.2` …
-Mellan släppen bygger standardgrenen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
+Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
-## 2027.1 (under arbete)
+## 2027.1 (ej släppt)
 
-Första officiella släppet.
-
-**Metoden i systemet**
-- Den kreativa forskningscykeln i sju faser med faskrav och öppen fasbeslutslogg
-- Revisorn granskar vaulten mot metoden
-- Tänk först, AI-roller och AI-lägen, loggade konsultationer
-- Självständighetsmått, förmågegranskning, epistemisk märkning, idéparkering, vila
-
-**Menyn är metoden**
-- Programmenyn har en mapp per fas, från *1 · Utforska* till *7 · Dela*
-- Verktygskatalog med verktygskort, nio profiler inklusive *Topp 10 för forskare*
-- Forskningsportal med öppna och svenska resurser per fas
-
-**Arbetsplatsen**
-- Bluefin LTS som grund (amd64 och arm64), atomära uppdateringar
-- Grundverktygen installeras vid första start, verktygslådan öppnas vid första inloggningen
-- VM: kontot `forskare`/`forskare` med krav på lösenordsbyte, delad mapp, gästagenter för UTM/QEMU, UTM-paketering
-- Identitet: logotyp, bakgrund, dagens princip i terminalen, fokusläge
-
-**Reproducerbarhet**
-- ForskarOS-labbet: låst analysmiljö med R, tidyverse, RStudio Server och Python
-
-**Forskarhandboken**
-- Tolv kapitel med övningar utan AI
+- Avbildning byggd på Bluefin LTS för amd64 och arm64
+- ForskarOS Core: faser med krav och beslutslogg, listan *Att åtgärda*, AI-konsultationer med logg, mallar, förmågegranskning
+- Verktygsprofiler genererade från en katalog, programmeny med en mapp per fas, verktygssidor i vaulten
+- Grundverktyg installeras vid första start
+- Diskavbildningar med kontot `forskare` (lösenordsbyte krävs), delad mapp, gästagenter för UTM/QEMU, UTM-paketering
+- Logotyp och skrivbordsbakgrund, fokusläge med logg
+- ForskarOS-labbet med R, tidyverse, RStudio Server och Python
+- Forskarhandboken, tolv kapitel

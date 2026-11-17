@@ -10,9 +10,9 @@ profil: statistik
 **Fas:** 5 · Utveckla  
 **Profil:** Statistik och data
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: reproducerbar analys som skript. För en låst miljö, använd forskaros-labb.
+R installerat lokalt. För en låst version, använd forskaros-labb.
 
 ## Installera
 

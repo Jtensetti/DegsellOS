@@ -10,9 +10,9 @@ profil: grund
 **Fas:** 6 · Ompröva  
 **Profil:** Grund
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Ompröva: din vault är din forskningshistoria. Säkerhetskopiera den.
+Schemalagd säkerhetskopiering av hemkatalogen, inklusive vaulten.
 
 ## Installera
 

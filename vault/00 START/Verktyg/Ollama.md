@@ -10,9 +10,9 @@ profil: lokal-ai
 **Fas:** 4 · Pröva  
 **Profil:** Lokal AI
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Pröva: låt Motståndaren och Upptäckaren köras utan att forskningsdata lämnar datorn.
+Kör språkmodeller lokalt.
 
 ## Installera
 

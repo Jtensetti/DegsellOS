@@ -10,9 +10,9 @@ profil: programmering
 **Fas:** 2 · Kombinera  
 **Profil:** Programmering och reproducerbarhet
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Kombinera: hitta samband du skrivit ned för länge sedan.
+Snabb textsökning i filer och mappar.
 
 ## Installera
 

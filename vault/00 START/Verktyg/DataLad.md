@@ -10,9 +10,9 @@ profil: programmering
 **Fas:** 6 · Ompröva  
 **Profil:** Programmering och reproducerbarhet
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Ompröva: spåra hur data, kod och resultat hänger ihop, och kör om analysen.
+Versionshantering av data och analyser, bygger på git-annex.
 
 ## Installera
 

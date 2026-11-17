@@ -3,24 +3,30 @@ typ: hem
 ---
 # ForskarOS
 
-> **Framtiden är den viktigaste tiden.**
+Den här vaulten är en arbetsyta för forskningsprojekt. ForskarOS Core-panelen (hjärnikonen) visar dina forskningsfrågor, var i arbetet de är och vad som saknas.
 
-Det här är inte en produktivitetsapp. Det är en forskningsmiljö som ska stärka din förmåga att tänka **utan** att vara beroende av AI.
+## Kom igång
 
-## Börja här
+1. Läs [[00 START/Arbetsmetod|Arbetsmetod]] (fem minuter) eller [[00 START/Forskarhandboken/00 Innehåll|Forskarhandboken]].
+2. Skapa en forskningsfråga i panelen, eller använd förslaget i `01 RIKTNING`.
+3. Arbeta i faser: Utforska, Kombinera, Välj, Pröva, Utveckla, Ompröva, Dela.
+4. Gör en förmågegranskning en gång i månaden.
 
-1. Läs [[00 START/Forskarhandboken/00 Innehåll|Forskarhandboken]], eller börja med [[00 START/Forskningsfilosofi|forskningsfilosofin]] och [[00 START/Arbetsmetod|arbetsmetoden]].
-2. Öppna ForskarOS-panelen via hjärnikonen eller kommandopaletten.
-3. **Välj en forskningsfråga.** Anta förslaget *När stärker AI människans förmåga att tänka?* eller formulera en egen. Skriv varför den är värd tio år av ditt liv.
-4. Följ cykeln: **Utforska → Kombinera → Välj → Pröva → Utveckla → Ompröva → Dela.** Panelen visar vad varje fas kräver.
-5. **Tänk först.** Skriv din egen uppfattning innan du använder *Be AI om hjälp*.
-6. Lyssna på **Revisorn** i panelen. Den säger till när arbetet glider ifrån metoden.
-7. Gör en **förmågegranskning** varje månad.
+## Mappar
 
-## Etik och tillit
+| Mapp | Innehåll |
+|---|---|
+| 01 RIKTNING | Forskningsfrågor och idébank |
+| 02 HYPOTESER | Hypoteser |
+| 03 EVIDENS | Perspektivkartor och källor |
+| 04 EXPERIMENT | Experiment och arbetsprov |
+| 05 FRIKTION | Motprov |
+| 06 FÖRÄNDRING | Omprövningar |
+| 07 SAMVERKAN | Forskningsmöten |
+| 08 REFLEKTION | Forskarpass, AI-loggar, övningar, förmågegranskningar |
 
-Se [[00 START/Tillitskontrakt]]. Lägg aldrig sekretessbelagda arbetsuppgifter eller personuppgifter från verkliga ärenden i en AI-tjänst utan uttryckligt tillstånd, rättslig grund och nödvändig kontroll.
+## Säkerhetskopior
 
-## Verktyg och säkerhetskopior
+Anteckningarna finns bara i `~/ForskarOS`. Versionshantera mappen med Git och använd Déjà Dup.
 
-Öppna **ForskarOS – installera verktyg** i programmenyn för att installera Obsidian, Zotero och kommandoradsverktygen. Systemet uppdaterar sig självt, men dina anteckningar finns bara i `~/ForskarOS`. Versionshantera vaulten med Git och ta regelbundna säkerhetskopior.
+Lägg inte personuppgifter eller sekretessbelagt material i molntjänster.

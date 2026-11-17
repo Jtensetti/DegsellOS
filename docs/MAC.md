@@ -17,7 +17,7 @@ alla Apple Silicon-Macar.
 4. Ge maskinen minst **4 GB RAM** (8 GB rekommenderas om du ska köra lokal AI)
    och 4 CPU-kärnor.
 5. Starta och logga in som **forskare** med lösenordet **forskare**. Du måste
-   byta lösenord direkt, precis som med Kalis färdiga maskiner. Vid första
+   byta lösenord direkt. Vid första
    inloggningen öppnas *ForskarOS – verktygslåda* där du väljer verktyg.
 
 När UTM-mallen finns (se `vm/utm/README.md`) blir steg 2–4 ett enda steg:

@@ -10,9 +10,9 @@ profil: statistik
 **Fas:** 5 · Utveckla  
 **Profil:** Statistik och data
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: visualisera data för att se mönster, och det som talar emot dem.
+Diagram och dataanalys med grafiskt gränssnitt.
 
 ## Installera
 

@@ -10,9 +10,9 @@ profil: skriva
 **Fas:** 7 · Dela  
 **Profil:** Skriva och publicera
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Dela: för fält och tidskrifter som kräver LaTeX.
+Redigerare för LaTeX.
 
 ## Installera
 

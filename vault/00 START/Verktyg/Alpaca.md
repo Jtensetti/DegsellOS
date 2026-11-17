@@ -9,11 +9,11 @@ profil: lokal-ai
 
 **Fas:** 4 · Pröva  
 **Profil:** Lokal AI  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Pröva: klistra in texten från Be AI om hjälp och få kritik lokalt.
+Chattgränssnitt för lokala modeller via Ollama.
 
 ## Installera
 

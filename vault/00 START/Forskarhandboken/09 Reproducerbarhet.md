@@ -3,8 +3,6 @@ typ: handbok
 ---
 # 9. Reproducerbarhet
 
-En analys som bara kan köras på din dator i dag är inte färdig.
-
 **ForskarOS-labbet** är en låst analysmiljö (R, tidyverse, RStudio, Python, Pandoc) som körs likadant överallt:
 
 ```bash
@@ -13,10 +11,10 @@ forskaros-labb Rscript analys.R      # kör analysen
 forskaros-labb version               # miljöns exakta version
 ```
 
-Klistra in raden från `forskaros-labb version` under *Analysmiljö* i experimentet. Den innehåller avbildningens digest, ett fingeravtryck som pekar på exakt samma miljö om tio år. Vem som helst med Podman eller Docker kan köra om analysen.
+Klistra in raden från `forskaros-labb version` under *Analysmiljö* i experimentet. Den innehåller avbildningens digest, som pekar ut exakt samma miljö även efter att nyare versioner släppts. Vem som helst med Podman eller Docker kan köra om analysen.
 
 **Mer:**
-- **Git** för kod och vault: se hur dina uppfattningar ändrats över tid.
+- **Git** för kod och vault.
 - **uv** och **renv** låser Python- och R-paket per projekt.
 - **DataLad** och **git-annex** versionshanterar stora datafiler.
 

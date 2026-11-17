@@ -9,11 +9,11 @@ profil: skriva
 
 **Fas:** 7 · Dela  
 **Profil:** Skriva och publicera  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Dela: gör om anteckningar i vaulten till manus i det format en tidskrift kräver.
+Konverterar mellan Markdown, Word, LaTeX, HTML och PDF.
 
 ## Installera
 

@@ -1,96 +1,422 @@
 {
   "faser": [
-    {"id": "utforska", "mapp": "1 · Utforska"},
-    {"id": "kombinera", "mapp": "2 · Kombinera"},
-    {"id": "välj", "mapp": "3 · Välj"},
-    {"id": "pröva", "mapp": "4 · Pröva"},
-    {"id": "utveckla", "mapp": "5 · Utveckla"},
-    {"id": "ompröva", "mapp": "6 · Ompröva"},
-    {"id": "dela", "mapp": "7 · Dela"}
+    {
+      "id": "utforska",
+      "mapp": "1 · Utforska"
+    },
+    {
+      "id": "kombinera",
+      "mapp": "2 · Kombinera"
+    },
+    {
+      "id": "välj",
+      "mapp": "3 · Välj"
+    },
+    {
+      "id": "pröva",
+      "mapp": "4 · Pröva"
+    },
+    {
+      "id": "utveckla",
+      "mapp": "5 · Utveckla"
+    },
+    {
+      "id": "ompröva",
+      "mapp": "6 · Ompröva"
+    },
+    {
+      "id": "dela",
+      "mapp": "7 · Dela"
+    }
   ],
   "profiler": [
-    {"id": "grund", "namn": "Grund", "beskrivning": "Installeras automatiskt vid första start. Webb, kontor, källor, statistik, PDF och säkerhetskopior."},
-    {"id": "topp10", "namn": "Topp 10 för forskare", "beskrivning": "De tio verktyg de flesta forskare har nytta av, oavsett fält."},
-    {"id": "skriva", "namn": "Skriva och publicera", "beskrivning": "Akademiskt skrivande i Markdown och LaTeX, konvertering till Word och PDF."},
-    {"id": "statistik", "namn": "Statistik och data", "beskrivning": "Kvantitativ analys med och utan kod."},
-    {"id": "programmering", "namn": "Programmering och reproducerbarhet", "beskrivning": "Kod, versionshantering av data och reproducerbara analyser."},
-    {"id": "kvalitativ", "namn": "Kvalitativ forskning", "beskrivning": "Transkribera intervjuer lokalt och koda kvalitativa data."},
-    {"id": "ideer", "namn": "Idéer och modeller", "beskrivning": "Begreppskartor, modeller och skisser när du kombinerar perspektiv."},
-    {"id": "lokal-ai", "namn": "Lokal AI", "beskrivning": "Språkmodeller som körs helt på din dator. Inget lämnar maskinen."},
-    {"id": "proprietart", "namn": "Proprietärt och moln (aktivt val)", "beskrivning": "Inte öppen källkod, eller skickar data till en molntjänst. Installeras bara om du uttryckligen väljer det.", "aktivt_val": true}
+    {
+      "id": "grund",
+      "namn": "Grund",
+      "beskrivning": "Installeras automatiskt vid första start: webbläsare, kontorspaket, referenshantering, statistik, PDF-anteckningar och säkerhetskopiering."
+    },
+    {
+      "id": "rekommenderat",
+      "namn": "Rekommenderat urval",
+      "beskrivning": "Tio verktyg som de flesta forskare har nytta av."
+    },
+    {
+      "id": "skriva",
+      "namn": "Skriva och publicera",
+      "beskrivning": "Akademiskt skrivande i Markdown och LaTeX, konvertering till Word och PDF."
+    },
+    {
+      "id": "statistik",
+      "namn": "Statistik och data",
+      "beskrivning": "Kvantitativ analys med och utan kod."
+    },
+    {
+      "id": "programmering",
+      "namn": "Programmering och reproducerbarhet",
+      "beskrivning": "Kod, versionshantering av data och reproducerbara analyser."
+    },
+    {
+      "id": "kvalitativ",
+      "namn": "Kvalitativ forskning",
+      "beskrivning": "Transkribera intervjuer lokalt och koda kvalitativa data."
+    },
+    {
+      "id": "ideer",
+      "namn": "Idéer och modeller",
+      "beskrivning": "Begreppskartor, modeller och skisser när du kombinerar perspektiv."
+    },
+    {
+      "id": "lokal-ai",
+      "namn": "Lokal AI",
+      "beskrivning": "Språkmodeller som körs helt på din dator. Inget lämnar maskinen."
+    },
+    {
+      "id": "proprietart",
+      "namn": "Proprietärt och moln (aktivt val)",
+      "beskrivning": "Inte öppen källkod, eller skickar data till en molntjänst. Installeras bara om du uttryckligen väljer det.",
+      "aktivt_val": true
+    }
   ],
   "verktyg": [
-    {"id": "org.mozilla.firefox", "typ": "flatpak", "namn": "Firefox", "profil": "grund", "fas": "utforska", "topp10": true,
-     "kort": "Webbläsare", "metod": "Ingången till forskningsportalen: OpenAlex, DiVA, SwePub och de öppna databaserna.", "läs_mer": "https://support.mozilla.org"},
-    {"id": "org.libreoffice.LibreOffice", "typ": "flatpak", "namn": "LibreOffice", "profil": "grund", "fas": "dela", "topp10": true,
-     "desktop": ["org.libreoffice.LibreOffice.writer.desktop", "org.libreoffice.LibreOffice.calc.desktop", "org.libreoffice.LibreOffice.impress.desktop"],
-     "kort": "Ordbehandling, kalkyl och presentation", "metod": "Dela: skriv rapporter och presentera resultat i format som alla kan öppna.", "läs_mer": "https://documentation.libreoffice.org"},
-    {"id": "org.zotero.Zotero", "typ": "flatpak", "namn": "Zotero", "profil": "grund", "fas": "utforska", "topp10": true,
-     "kort": "Källhantering och citat", "metod": "Utforska: samla källor med metadata så att varje påstående kan spåras till sitt belägg (tillit).", "läs_mer": "https://www.zotero.org/support/quick_start_guide"},
-    {"id": "org.jaspstats.JASP", "typ": "flatpak", "namn": "JASP", "profil": "grund", "fas": "utveckla", "topp10": true,
-     "kort": "Statistik med klick, klassisk och bayesiansk", "metod": "Utveckla: pröva hypoteser statistiskt utan att först behöva lära dig programmera. Bayesiansk analys visar hur mycket evidensen talar för eller emot.", "läs_mer": "https://jasp-stats.org/getting-started/"},
-    {"id": "com.github.xournalpp.xournalpp", "typ": "flatpak", "namn": "Xournal++", "profil": "grund", "fas": "utforska", "topp10": true,
-     "kort": "Anteckna direkt i PDF:er", "metod": "Utforska: läs aktivt. Skriv invändningar i marginalen medan du läser.", "läs_mer": "https://xournalpp.github.io"},
-    {"id": "org.gnome.DejaDup", "typ": "flatpak", "namn": "Déjà Dup", "profil": "grund", "fas": "ompröva",
-     "kort": "Säkerhetskopiering", "metod": "Ompröva: din vault är din forskningshistoria. Säkerhetskopiera den.", "läs_mer": "https://apps.gnome.org/DejaDup/"},
-
-    {"id": "com.zettlr.Zettlr", "typ": "flatpak", "namn": "Zettlr", "profil": "skriva", "fas": "dela", "topp10": true,
-     "kort": "Akademiskt skrivande i Markdown", "metod": "Dela: skriv artiklar och avhandlingskapitel med citat direkt från Zotero.", "läs_mer": "https://docs.zettlr.com"},
-    {"id": "org.onlyoffice.desktopeditors", "typ": "flatpak", "namn": "ONLYOFFICE", "profil": "skriva", "fas": "dela",
-     "kort": "Öppen och mycket Word-kompatibel", "metod": "Dela: samarbeta med kollegor som använder Word, utan att formateringen går sönder.", "läs_mer": "https://helpcenter.onlyoffice.com"},
-    {"id": "org.texstudio.TeXstudio", "typ": "flatpak", "namn": "TeXstudio", "profil": "skriva", "fas": "dela",
-     "kort": "LaTeX-redigerare", "metod": "Dela: för fält och tidskrifter som kräver LaTeX.", "läs_mer": "https://www.texstudio.org"},
-    {"id": "pandoc", "typ": "brew", "namn": "Pandoc", "profil": "skriva", "fas": "dela", "topp10": true,
-     "kort": "Konvertera mellan Markdown, Word, LaTeX och PDF", "metod": "Dela: gör om anteckningar i vaulten till manus i det format en tidskrift kräver.", "läs_mer": "https://pandoc.org/getting-started.html"},
-    {"id": "typst", "typ": "brew", "namn": "Typst", "profil": "skriva", "fas": "dela",
-     "kort": "Modern sättning, enklare än LaTeX", "metod": "Dela: snygga PDF:er med en bråkdel av LaTeX inlärningskurva.", "läs_mer": "https://typst.app/docs/"},
-
-    {"id": "org.jamovi.jamovi", "typ": "flatpak", "namn": "jamovi", "profil": "statistik", "fas": "utveckla",
-     "kort": "Statistik med klick, byggt på R", "metod": "Utveckla: analyser du kan klicka fram och sedan se som R-kod, en bro från klick till kod.", "läs_mer": "https://www.jamovi.org/user-manual.html"},
-    {"id": "org.kde.labplot", "typ": "flatpak", "namn": "LabPlot", "profil": "statistik", "fas": "utveckla",
-     "kort": "Diagram och dataanalys", "metod": "Utveckla: visualisera data för att se mönster, och det som talar emot dem.", "läs_mer": "https://labplot.org"},
-    {"id": "r", "typ": "brew", "namn": "R", "profil": "statistik", "fas": "utveckla",
-     "kort": "Statistikspråket", "metod": "Utveckla: reproducerbar analys som skript. För en låst miljö, använd forskaros-labb.", "läs_mer": "https://www.r-project.org"},
-    {"id": "duckdb", "typ": "brew", "namn": "DuckDB", "profil": "statistik", "fas": "utveckla",
-     "kort": "Snabb SQL direkt på CSV- och Parquet-filer", "metod": "Utveckla: utforska stora öppna datamängder (SCB, Eurostat) utan databasserver.", "läs_mer": "https://duckdb.org/docs/"},
-    {"id": "jupyterlab", "typ": "uv", "namn": "JupyterLab", "profil": "statistik", "fas": "utveckla", "starta": "jupyter-lab",
-     "kort": "Anteckningsböcker för Python", "metod": "Utveckla: kod, resultat och resonemang i samma dokument, så att analysen går att följa.", "läs_mer": "https://jupyterlab.readthedocs.io"},
-
-    {"id": "com.vscodium.codium", "typ": "flatpak", "namn": "VSCodium", "profil": "programmering", "fas": "utveckla",
-     "kort": "Kodredigerare utan telemetri", "metod": "Utveckla: skriv analysskript och experimentkod.", "läs_mer": "https://vscodium.com"},
-    {"id": "uv", "typ": "brew", "namn": "uv", "profil": "programmering", "fas": "utveckla",
-     "kort": "Python-miljöer per projekt", "metod": "Utveckla: varje studie får egna, låsta paketversioner som kan återskapas.", "läs_mer": "https://docs.astral.sh/uv/"},
-    {"id": "git-annex", "typ": "brew", "namn": "git-annex", "profil": "programmering", "fas": "ompröva",
-     "kort": "Versionshantera stora datafiler", "metod": "Ompröva: se exakt vilken version av data en slutsats byggde på.", "läs_mer": "https://git-annex.branchable.com"},
-    {"id": "datalad", "typ": "brew", "namn": "DataLad", "profil": "programmering", "fas": "ompröva",
-     "kort": "Reproducerbar hantering av forskningsdata", "metod": "Ompröva: spåra hur data, kod och resultat hänger ihop, och kör om analysen.", "läs_mer": "https://handbook.datalad.org"},
-    {"id": "ripgrep", "typ": "brew", "namn": "ripgrep", "profil": "programmering", "fas": "kombinera",
-     "kort": "Sök snabbt i anteckningar och data", "metod": "Kombinera: hitta samband du skrivit ned för länge sedan.", "läs_mer": "https://github.com/BurntSushi/ripgrep"},
-
-    {"id": "net.mkiol.SpeechNote", "typ": "flatpak", "namn": "Speech Note", "profil": "kvalitativ", "fas": "utveckla", "topp10": true,
-     "kort": "Transkribering helt på din dator", "metod": "Utveckla: transkribera intervjuer utan att ljudet lämnar datorn, vilket ofta krävs vid etikprövning.", "läs_mer": "https://github.com/mkiol/dsnote"},
-    {"id": "taguette", "typ": "uv", "namn": "Taguette", "profil": "kvalitativ", "fas": "utveckla", "starta": "taguette",
-     "kort": "Kodning av intervjuer och dokument", "metod": "Utveckla: koda kvalitativa data och se mönster över intervjuer.", "läs_mer": "https://www.taguette.org"},
-
-    {"id": "com.jgraph.drawio.desktop", "typ": "flatpak", "namn": "draw.io", "profil": "ideer", "fas": "kombinera", "topp10": true,
-     "kort": "Diagram, modeller och flöden", "metod": "Kombinera: rita din teoretiska modell. Det som inte går att rita är ofta inte genomtänkt.", "läs_mer": "https://www.drawio.com/doc/"},
-    {"id": "org.freeplane.App", "typ": "flatpak", "namn": "Freeplane", "profil": "ideer", "fas": "kombinera",
-     "kort": "Tankekartor", "metod": "Kombinera: kartlägg begrepp och perspektiv och leta efter ovanliga kopplingar.", "läs_mer": "https://docs.freeplane.org"},
-    {"id": "com.github.flxzt.rnote", "typ": "flatpak", "namn": "Rnote", "profil": "ideer", "fas": "kombinera",
-     "kort": "Handskrivna skisser", "metod": "Kombinera: lekfullhet. Skissa fritt innan du formaliserar.", "läs_mer": "https://rnote.flxzt.net"},
-
-    {"id": "ollama", "typ": "brew", "namn": "Ollama", "profil": "lokal-ai", "fas": "pröva",
-     "kort": "Kör språkmodeller lokalt", "metod": "Pröva: låt Motståndaren och Upptäckaren köras utan att forskningsdata lämnar datorn.", "läs_mer": "https://ollama.com"},
-    {"id": "com.jeffser.Alpaca", "typ": "flatpak", "namn": "Alpaca", "profil": "lokal-ai", "fas": "pröva", "topp10": true,
-     "kort": "Chatt med lokala modeller", "metod": "Pröva: klistra in texten från Be AI om hjälp och få kritik lokalt.", "läs_mer": "https://flathub.org/apps/com.jeffser.Alpaca"},
-
-    {"id": "md.obsidian.Obsidian", "typ": "flatpak", "namn": "Obsidian", "profil": "proprietart", "fas": "utforska",
-     "kort": "Gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)", "metod": "Alla faser: här bor ForskarOS Core med cykeln, Revisorn och tänk först. På sikt ersätts det av en öppen editor.", "läs_mer": "https://help.obsidian.md"},
-    {"id": "perplexity", "typ": "webb", "url": "https://www.perplexity.ai", "namn": "Perplexity", "profil": "proprietart", "fas": "utforska",
-     "kort": "AI-sök i molnet. Din fråga lämnar datorn.", "metod": "Utforska: snabb överblick med källor. Kontrollera alltid källorna själv och tänk först.", "läs_mer": "https://www.perplexity.ai"},
-    {"id": "elicit", "typ": "webb", "url": "https://elicit.com", "namn": "Elicit", "profil": "proprietart", "fas": "utforska",
-     "kort": "AI-stöd för litteraturöversikter i molnet", "metod": "Utforska: hitta och sammanfatta studier. Läs originalen innan du drar slutsatser.", "läs_mer": "https://elicit.com"},
-    {"id": "consensus", "typ": "webb", "url": "https://consensus.app", "namn": "Consensus", "profil": "proprietart", "fas": "utforska",
-     "kort": "AI-sök i forskningsartiklar i molnet", "metod": "Utforska: se vad studier säger om en fråga, med länkar till artiklarna.", "läs_mer": "https://consensus.app"}
+    {
+      "id": "org.mozilla.firefox",
+      "typ": "flatpak",
+      "namn": "Firefox",
+      "profil": "grund",
+      "fas": "utforska",
+      "kort": "Webbläsare",
+      "metod": "Webbläsare för litteratursök och öppna databaser (se Verktygslåda).",
+      "läs_mer": "https://support.mozilla.org",
+      "rekommenderat": true
+    },
+    {
+      "id": "org.libreoffice.LibreOffice",
+      "typ": "flatpak",
+      "namn": "LibreOffice",
+      "profil": "grund",
+      "fas": "dela",
+      "desktop": [
+        "org.libreoffice.LibreOffice.writer.desktop",
+        "org.libreoffice.LibreOffice.calc.desktop",
+        "org.libreoffice.LibreOffice.impress.desktop"
+      ],
+      "kort": "Ordbehandling, kalkyl och presentation",
+      "metod": "Rapporter, kalkyler och presentationer i öppna format.",
+      "läs_mer": "https://documentation.libreoffice.org",
+      "rekommenderat": true
+    },
+    {
+      "id": "org.zotero.Zotero",
+      "typ": "flatpak",
+      "namn": "Zotero",
+      "profil": "grund",
+      "fas": "utforska",
+      "kort": "Källhantering och citat",
+      "metod": "Samlar källor med metadata och infogar citat och referenslistor.",
+      "läs_mer": "https://www.zotero.org/support/quick_start_guide",
+      "rekommenderat": true
+    },
+    {
+      "id": "org.jaspstats.JASP",
+      "typ": "flatpak",
+      "namn": "JASP",
+      "profil": "grund",
+      "fas": "utveckla",
+      "kort": "Statistik med klick, klassisk och bayesiansk",
+      "metod": "Vanliga statistiska analyser utan programmering, både frekventistiskt och bayesianskt.",
+      "läs_mer": "https://jasp-stats.org/getting-started/",
+      "rekommenderat": true
+    },
+    {
+      "id": "com.github.xournalpp.xournalpp",
+      "typ": "flatpak",
+      "namn": "Xournal++",
+      "profil": "grund",
+      "fas": "utforska",
+      "kort": "Anteckna direkt i PDF:er",
+      "metod": "Anteckningar och markeringar direkt i PDF:er.",
+      "läs_mer": "https://xournalpp.github.io",
+      "rekommenderat": true
+    },
+    {
+      "id": "org.gnome.DejaDup",
+      "typ": "flatpak",
+      "namn": "Déjà Dup",
+      "profil": "grund",
+      "fas": "ompröva",
+      "kort": "Säkerhetskopiering",
+      "metod": "Schemalagd säkerhetskopiering av hemkatalogen, inklusive vaulten.",
+      "läs_mer": "https://apps.gnome.org/DejaDup/"
+    },
+    {
+      "id": "com.zettlr.Zettlr",
+      "typ": "flatpak",
+      "namn": "Zettlr",
+      "profil": "skriva",
+      "fas": "dela",
+      "kort": "Akademiskt skrivande i Markdown",
+      "metod": "Markdown-redigerare för längre texter, med citat från Zotero.",
+      "läs_mer": "https://docs.zettlr.com",
+      "rekommenderat": true
+    },
+    {
+      "id": "org.onlyoffice.desktopeditors",
+      "typ": "flatpak",
+      "namn": "ONLYOFFICE",
+      "profil": "skriva",
+      "fas": "dela",
+      "kort": "Öppen och mycket Word-kompatibel",
+      "metod": "Kontorspaket med god kompatibilitet med Word-filer.",
+      "läs_mer": "https://helpcenter.onlyoffice.com"
+    },
+    {
+      "id": "org.texstudio.TeXstudio",
+      "typ": "flatpak",
+      "namn": "TeXstudio",
+      "profil": "skriva",
+      "fas": "dela",
+      "kort": "LaTeX-redigerare",
+      "metod": "Redigerare för LaTeX.",
+      "läs_mer": "https://www.texstudio.org"
+    },
+    {
+      "id": "pandoc",
+      "typ": "brew",
+      "namn": "Pandoc",
+      "profil": "skriva",
+      "fas": "dela",
+      "kort": "Konvertera mellan Markdown, Word, LaTeX och PDF",
+      "metod": "Konverterar mellan Markdown, Word, LaTeX, HTML och PDF.",
+      "läs_mer": "https://pandoc.org/getting-started.html",
+      "rekommenderat": true
+    },
+    {
+      "id": "typst",
+      "typ": "brew",
+      "namn": "Typst",
+      "profil": "skriva",
+      "fas": "dela",
+      "kort": "Modern sättning, enklare än LaTeX",
+      "metod": "Sättningssystem för PDF, enklare än LaTeX.",
+      "läs_mer": "https://typst.app/docs/"
+    },
+    {
+      "id": "org.jamovi.jamovi",
+      "typ": "flatpak",
+      "namn": "jamovi",
+      "profil": "statistik",
+      "fas": "utveckla",
+      "kort": "Statistik med klick, byggt på R",
+      "metod": "Statistik med grafiskt gränssnitt, byggt på R. Analyser kan visas som R-kod.",
+      "läs_mer": "https://www.jamovi.org/user-manual.html"
+    },
+    {
+      "id": "org.kde.labplot",
+      "typ": "flatpak",
+      "namn": "LabPlot",
+      "profil": "statistik",
+      "fas": "utveckla",
+      "kort": "Diagram och dataanalys",
+      "metod": "Diagram och dataanalys med grafiskt gränssnitt.",
+      "läs_mer": "https://labplot.org"
+    },
+    {
+      "id": "r",
+      "typ": "brew",
+      "namn": "R",
+      "profil": "statistik",
+      "fas": "utveckla",
+      "kort": "Statistikspråket",
+      "metod": "R installerat lokalt. För en låst version, använd forskaros-labb.",
+      "läs_mer": "https://www.r-project.org"
+    },
+    {
+      "id": "duckdb",
+      "typ": "brew",
+      "namn": "DuckDB",
+      "profil": "statistik",
+      "fas": "utveckla",
+      "kort": "Snabb SQL direkt på CSV- och Parquet-filer",
+      "metod": "SQL direkt på CSV- och Parquet-filer, utan databasserver.",
+      "läs_mer": "https://duckdb.org/docs/"
+    },
+    {
+      "id": "jupyterlab",
+      "typ": "uv",
+      "namn": "JupyterLab",
+      "profil": "statistik",
+      "fas": "utveckla",
+      "starta": "jupyter-lab",
+      "kort": "Anteckningsböcker för Python",
+      "metod": "Anteckningsböcker för Python.",
+      "läs_mer": "https://jupyterlab.readthedocs.io"
+    },
+    {
+      "id": "com.vscodium.codium",
+      "typ": "flatpak",
+      "namn": "VSCodium",
+      "profil": "programmering",
+      "fas": "utveckla",
+      "kort": "Kodredigerare utan telemetri",
+      "metod": "Kodredigerare (VS Code utan Microsofts telemetri).",
+      "läs_mer": "https://vscodium.com"
+    },
+    {
+      "id": "uv",
+      "typ": "brew",
+      "namn": "uv",
+      "profil": "programmering",
+      "fas": "utveckla",
+      "kort": "Python-miljöer per projekt",
+      "metod": "Hanterar Python-versioner och paket per projekt.",
+      "läs_mer": "https://docs.astral.sh/uv/"
+    },
+    {
+      "id": "git-annex",
+      "typ": "brew",
+      "namn": "git-annex",
+      "profil": "programmering",
+      "fas": "ompröva",
+      "kort": "Versionshantera stora datafiler",
+      "metod": "Versionshantering av stora filer med Git.",
+      "läs_mer": "https://git-annex.branchable.com"
+    },
+    {
+      "id": "datalad",
+      "typ": "brew",
+      "namn": "DataLad",
+      "profil": "programmering",
+      "fas": "ompröva",
+      "kort": "Reproducerbar hantering av forskningsdata",
+      "metod": "Versionshantering av data och analyser, bygger på git-annex.",
+      "läs_mer": "https://handbook.datalad.org"
+    },
+    {
+      "id": "ripgrep",
+      "typ": "brew",
+      "namn": "ripgrep",
+      "profil": "programmering",
+      "fas": "kombinera",
+      "kort": "Sök snabbt i anteckningar och data",
+      "metod": "Snabb textsökning i filer och mappar.",
+      "läs_mer": "https://github.com/BurntSushi/ripgrep"
+    },
+    {
+      "id": "net.mkiol.SpeechNote",
+      "typ": "flatpak",
+      "namn": "Speech Note",
+      "profil": "kvalitativ",
+      "fas": "utveckla",
+      "kort": "Transkribering helt på din dator",
+      "metod": "Transkribering och diktering lokalt, utan att ljudet lämnar datorn.",
+      "läs_mer": "https://github.com/mkiol/dsnote",
+      "rekommenderat": true
+    },
+    {
+      "id": "taguette",
+      "typ": "uv",
+      "namn": "Taguette",
+      "profil": "kvalitativ",
+      "fas": "utveckla",
+      "starta": "taguette",
+      "kort": "Kodning av intervjuer och dokument",
+      "metod": "Kvalitativ kodning av intervjuer och dokument.",
+      "läs_mer": "https://www.taguette.org"
+    },
+    {
+      "id": "com.jgraph.drawio.desktop",
+      "typ": "flatpak",
+      "namn": "draw.io",
+      "profil": "ideer",
+      "fas": "kombinera",
+      "kort": "Diagram, modeller och flöden",
+      "metod": "Diagram, flödesscheman och modeller.",
+      "läs_mer": "https://www.drawio.com/doc/",
+      "rekommenderat": true
+    },
+    {
+      "id": "org.freeplane.App",
+      "typ": "flatpak",
+      "namn": "Freeplane",
+      "profil": "ideer",
+      "fas": "kombinera",
+      "kort": "Tankekartor",
+      "metod": "Tankekartor.",
+      "läs_mer": "https://docs.freeplane.org"
+    },
+    {
+      "id": "com.github.flxzt.rnote",
+      "typ": "flatpak",
+      "namn": "Rnote",
+      "profil": "ideer",
+      "fas": "kombinera",
+      "kort": "Handskrivna skisser",
+      "metod": "Handskrivna anteckningar och skisser.",
+      "läs_mer": "https://rnote.flxzt.net"
+    },
+    {
+      "id": "ollama",
+      "typ": "brew",
+      "namn": "Ollama",
+      "profil": "lokal-ai",
+      "fas": "pröva",
+      "kort": "Kör språkmodeller lokalt",
+      "metod": "Kör språkmodeller lokalt.",
+      "läs_mer": "https://ollama.com"
+    },
+    {
+      "id": "com.jeffser.Alpaca",
+      "typ": "flatpak",
+      "namn": "Alpaca",
+      "profil": "lokal-ai",
+      "fas": "pröva",
+      "kort": "Chatt med lokala modeller",
+      "metod": "Chattgränssnitt för lokala modeller via Ollama.",
+      "läs_mer": "https://flathub.org/apps/com.jeffser.Alpaca",
+      "rekommenderat": true
+    },
+    {
+      "id": "md.obsidian.Obsidian",
+      "typ": "flatpak",
+      "namn": "Obsidian",
+      "profil": "proprietart",
+      "fas": "utforska",
+      "kort": "Gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)",
+      "metod": "Gränssnittet för vaulten och ForskarOS Core. Gratis men inte öppen källkod.",
+      "läs_mer": "https://help.obsidian.md"
+    },
+    {
+      "id": "perplexity",
+      "typ": "webb",
+      "url": "https://www.perplexity.ai",
+      "namn": "Perplexity",
+      "profil": "proprietart",
+      "fas": "utforska",
+      "kort": "AI-sök i molnet",
+      "metod": "AI-sök med källhänvisningar. Molntjänst.",
+      "läs_mer": "https://www.perplexity.ai"
+    },
+    {
+      "id": "elicit",
+      "typ": "webb",
+      "url": "https://elicit.com",
+      "namn": "Elicit",
+      "profil": "proprietart",
+      "fas": "utforska",
+      "kort": "AI-stöd för litteraturöversikter i molnet",
+      "metod": "AI-stöd för litteraturöversikter. Molntjänst.",
+      "läs_mer": "https://elicit.com"
+    },
+    {
+      "id": "consensus",
+      "typ": "webb",
+      "url": "https://consensus.app",
+      "namn": "Consensus",
+      "profil": "proprietart",
+      "fas": "utforska",
+      "kort": "AI-sök i forskningsartiklar i molnet",
+      "metod": "AI-sök i forskningsartiklar. Molntjänst.",
+      "läs_mer": "https://consensus.app"
+    }
   ]
 }

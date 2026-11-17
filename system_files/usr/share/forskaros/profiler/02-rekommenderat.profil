@@ -1,6 +1,6 @@
 # Genererad från katalog/verktyg.json. Ändra inte för hand.
-# namn: Topp 10 för forskare
-# beskrivning: De tio verktyg de flesta forskare har nytta av, oavsett fält.
+# namn: Rekommenderat urval
+# beskrivning: Tio verktyg som de flesta forskare har nytta av.
 flatpak org.mozilla.firefox                     Firefox – Webbläsare
 flatpak org.libreoffice.LibreOffice             LibreOffice – Ordbehandling, kalkyl och presentation
 flatpak org.zotero.Zotero                       Zotero – Källhantering och citat

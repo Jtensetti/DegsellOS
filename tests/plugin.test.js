@@ -141,16 +141,16 @@ const { engine } = ForskarOSPlugin;
   await p.saveIdea('AI som handledare i språkundervisning\nKanske en senare fråga.');
   assert(files.has('01 RIKTNING/Idébank/AI som handledare i språkundervisning.md'));
 
-  // AI-konsultation loggas med tänk-först-status och det som skickades.
+  // AI-konsultationen loggas med uppgift, läge och den skickade texten.
   const hyp = [...files.values()].find(f => f.path.startsWith('02 HYPOTESER/'));
-  await p.logConsultation(hyp, 'motståndaren', 'prövning', false, 'TEXT SOM SKICKADES');
+  await p.logConsultation(hyp, 'kritik', 'prövning', false, 'TEXT SOM SKICKADES');
   const log = [...files.values()].find(f => f.path.startsWith('08 REFLEKTION/AI/'));
   assert(log, 'AI-loggen skapades inte');
   assert.match(log.content, /egen_tanke_först: nej/);
   assert.match(log.content, /TEXT SOM SKICKADES/);
-  assert.match(log.content, /Vad tar jag med mig – med egna ord/);
+  assert.match(log.content, /Vad tar jag med mig/);
 
-  // Hela vaulten granskas av Revisorn utan fel.
+  // Granskningen av hela vaulten körs utan fel.
   const findings = engine.audit(await p.collectNotes(), engine.today());
   assert(Array.isArray(findings));
 

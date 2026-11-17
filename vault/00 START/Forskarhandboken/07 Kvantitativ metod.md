@@ -3,7 +3,7 @@ typ: handbok
 ---
 # 7. Kvantitativ metod
 
-**Börja med frågan, inte med testet.** Vilken jämförelse eller vilket samband säger något om hypotesen?
+Börja med vilken jämförelse eller vilket samband som säger något om hypotesen, och välj test efter det.
 
 **Verktyg i ForskarOS:**
 - **JASP** och **jamovi**: statistik med klick. JASP gör både klassisk och bayesiansk analys. jamovi kan visa analysen som R-kod.

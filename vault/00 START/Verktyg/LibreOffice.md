@@ -9,11 +9,11 @@ profil: grund
 
 **Fas:** 7 · Dela  
 **Profil:** Grund  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Dela: skriv rapporter och presentera resultat i format som alla kan öppna.
+Rapporter, kalkyler och presentationer i öppna format.
 
 ## Installera
 

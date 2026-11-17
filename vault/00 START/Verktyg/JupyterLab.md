@@ -10,9 +10,9 @@ profil: statistik
 **Fas:** 5 · Utveckla  
 **Profil:** Statistik och data
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: kod, resultat och resonemang i samma dokument, så att analysen går att följa.
+Anteckningsböcker för Python.
 
 ## Installera
 

@@ -1,28 +1,9 @@
 #!/usr/bin/env bash
-# Testar identiteten, dagens princip och fokusläget.
+# Testar identiteten och fokusläget.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 fail() { echo "FEL: $*" >&2; exit 1; }
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
-
-# 1. Terminalen och panelen visar samma princip samma dag.
-export FORSKAROS_PRINCIPER="$PWD/system_files/usr/share/forskaros/principer.txt"
-for d in 2026-11-17 2027-01-01 2027-06-30; do
-  term=$(bash system_files/usr/bin/forskaros-princip "$d" | sed 's/\x1b\[[0-9;]*m//g; s/^◌ ForskarOS · //')
-  panel=$(node -e '
-    const M=require("node:module"),o=M._load;M._load=function(r,...a){return r==="obsidian"?{Plugin:class{},ItemView:class{},Notice:class{},Modal:class{}}:o.call(this,r,...a)};
-    const {engine:e}=require("./vault/.obsidian/plugins/forskaros-core/main.js");
-    const P=e.PRINCIPLES, d=e.daysBetween("2026-01-01", process.argv[1]);
-    console.log(P[((d % P.length) + P.length) % P.length]);' "$d")
-  [[ "$term" == "$panel" ]] || fail "$d: terminalen '$term' ≠ panelen '$panel'"
-done
-
-# 2. Principfilen innehåller exakt panelens principer.
-node -e '
-  const M=require("node:module"),o=M._load;M._load=function(r,...a){return r==="obsidian"?{Plugin:class{},ItemView:class{},Notice:class{},Modal:class{}}:o.call(this,r,...a)};
-  const {engine:e}=require("./vault/.obsidian/plugins/forskaros-core/main.js");
-  const f=require("fs").readFileSync(process.argv[1],"utf8").trim().split("\n");
-  if (JSON.stringify(f)!==JSON.stringify(e.PRINCIPLES)) { console.error("principer.txt är inte i synk med tillägget"); process.exit(1); }' "$FORSKAROS_PRINCIPER"
 
 # 3. Fokusläget, med ersättare för gsettings, notify-send och systemd-run.
 mkdir -p "$TMP/bin" "$TMP/home/ForskarOS/08 REFLEKTION"
@@ -57,4 +38,4 @@ for desktop in system_files/usr/share/applications/*.desktop; do
   grep -q '^Icon=forskaros$' "$desktop" || fail "$desktop använder inte ForskarOS-ikonen"
 done
 
-echo "OK: identitet, dagens princip i terminal och panel, fokusläge"
+echo "OK: identitet och fokusläge"

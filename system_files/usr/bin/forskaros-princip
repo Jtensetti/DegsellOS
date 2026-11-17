@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# Skriver dagens princip (samma som i ForskarOS-panelen).
-set -euo pipefail
-FIL="${FORSKAROS_PRINCIPER:-/usr/share/forskaros/principer.txt}"
-mapfile -t P < <(grep -v '^\s*$' "$FIL")
-dagar=$(( ( $(date -d "${1:-today} 12:00" +%s) - $(date -d "2026-01-01 12:00" +%s) ) / 86400 ))
-n=${#P[@]}
-printf '\033[2m◌ ForskarOS · \033[0m%s\n' "${P[$(( ((dagar % n) + n) % n ))]}"

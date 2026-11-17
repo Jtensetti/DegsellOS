@@ -1,19 +1,13 @@
 #!/usr/bin/env node
 /*
- * Skärmdumpar till README: renderar riktiga delar av ForskarOS.
- *
- *  - ForskarOS-panelen: tilläggets riktiga kod (main.js och styles.css) körs i
- *    en webbläsare mot ett exempelvalv, med Obsidians färgvariabler. Inte en
- *    skiss: det är samma renderDashboard() som körs i Obsidian.
- *  - Terminalen: riktig utdata från forskaros-princip och forskaros-setup.
- *  - Skrivbordsbakgrunden: den riktiga SVG-filen.
+ * Skärmdump av ForskarOS Core-panelen till README. Tilläggets kod (main.js och
+ * styles.css) körs i en webbläsare mot ett exempelvalv med Obsidians färger.
  *
  * Kräver Playwright:  node scripts/skarmdumpar.js
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { execFileSync } = require('child_process');
 const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -34,7 +28,7 @@ const OBSIDIAN_DARK = `
   .frame { width:420px; border-left:1px solid var(--background-modifier-border); }
 `;
 
-// Ett exempelvalv: en forskare mitt i fasen Pröva.
+// Exempelvalv: en fråga i fasen Pröva.
 function exampleVault() {
   const q = '01 RIKTNING/När stärker AI människans förmåga att tänka';
   const link = `[[${q}]]`;
@@ -96,43 +90,9 @@ async function panel(browser) {
   await page.close();
 }
 
-function sh(cmd, args, env = {}) {
-  return execFileSync(cmd, args, { cwd: ROOT, env: { ...process.env, ...env }, encoding: 'utf8' });
-}
-
-async function terminal(browser) {
-  const env = {
-    FORSKAROS_PRINCIPER: path.join(ROOT, 'system_files/usr/share/forskaros/principer.txt'),
-    FORSKAROS_PROFILDIR: path.join(ROOT, 'system_files/usr/share/forskaros/profiler')
-  };
-  const princip = sh('bash', ['system_files/usr/bin/forskaros-princip'], env).replace(/\x1b\[[0-9;]*m/g, '');
-  const lista = sh('bash', ['system_files/usr/bin/forskaros-setup', '--lista'], env).split('\n').slice(0, 30).join('\n');
-  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const html = `<html><body style="margin:0;background:#0f1b2a;padding:24px;font:13px/1.45 'DejaVu Sans Mono',monospace;color:#d6dde5">
-    <div style="background:#16212e;border-radius:10px;padding:18px 20px;width:860px;box-shadow:0 8px 30px #0008">
-    <div style="color:#7d8b99">${esc(princip)}</div>
-    <div><span style="color:#7bb662">forskare@forskaros</span>:<span style="color:#2e86ab">~</span>$ forskaros-setup --lista</div>
-    <pre style="margin:0;font:inherit">${esc(lista)}\n…</pre></div></body></html>`;
-  const page = await browser.newPage({ viewport: { width: 908, height: 700 }, deviceScaleFactor: 2 });
-  await page.setContent(html);
-  const box = await page.$('div');
-  await box.screenshot({ path: path.join(OUT, 'terminal.png') });
-  await page.close();
-}
-
-async function wallpaper(browser) {
-  const page = await browser.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 1 });
-  const svg = fs.readFileSync(path.join(ROOT, 'system_files/usr/share/forskaros/identitet/forskaros-bakgrund-mork.svg'), 'utf8');
-  await page.setContent(`<html><body style="margin:0">${svg.replace('width="3840" height="2160"', 'width="1600" height="900"')}</body></html>`);
-  await page.screenshot({ path: path.join(OUT, 'skrivbord.png') });
-  await page.close();
-}
-
 (async () => {
   const browser = await chromium.launch();
   await panel(browser);
-  await terminal(browser);
-  await wallpaper(browser);
   await browser.close();
   console.log(`Skärmdumpar sparade i ${OUT}`);
 })();

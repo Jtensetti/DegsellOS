@@ -1,57 +1,27 @@
-# ForskarOS – arkitektur
+# Arkitektur
 
 ```
-┌───────────────────────────────────────────────┐
-│ ForskarOS Core   (tillägg: metoden i praktiken)│
-├───────────────────────────────────────────────┤
-│ Editor: Obsidian i dag, egen öppen editor      │
-│         ("Kunskapsytan") på sikt               │
-├───────────────────────────────────────────────┤
-│ Vault: ~/ForskarOS i ren Markdown              │
-├───────────────────────────────────────────────┤
-│ Verktygslåda i profiler (Flatpak, Homebrew,    │
-│ uv): kontor, källor, statistik, skrivande,     │
-│ kvalitativ analys, lokal AI. Grund automatiskt │
-├───────────────────────────────────────────────┤
-│ ForskarOS-lager: forskaros-init/-setup,        │
-│ autostart, seed-vault                          │
-├───────────────────────────────────────────────┤
-│ Bluefin LTS (GNOME, bootc, Flatpak, Homebrew)  │
-│ amd64 + arm64                                  │
-└───────────────────────────────────────────────┘
+ForskarOS Core (Obsidian-tillägg)      faser, granskning, mallar, AI-logg
+Vault ~/ForskarOS                      Markdown med YAML-frontmatter
+Verktyg                                Flatpak, Homebrew och uv, i profiler
+ForskarOS-lagret                       forskaros-* kommandon, systemd-tjänster, dconf
+Bluefin LTS                            GNOME, bootc, CentOS Stream 10, amd64 + arm64
 ```
 
 ## Beslut
 
-**Vi bygger på en färdig distribution.** Bluefin LTS ger hårdvarustöd,
-säkerhetsuppdateringar, atomära uppdateringar med rollback och stöd för både
-amd64 och arm64. Vi underhåller bara det som är unikt för ForskarOS.
+**Bluefin LTS som bas.** Ger hårdvarustöd, säkerhetsuppdateringar och atomära uppdateringar med rollback för både amd64 och arm64. ForskarOS lägger bara till det som är specifikt för projektet. Nix var första förslaget men byggdes aldrig, och NixOS har svagt stöd för Apple Silicon.
 
-**Nix är inte grunden längre.** NixOS-versionen i 0.1 byggdes aldrig och fungerar
-dåligt på Apple Silicon. Reproducerbarhet för experiment (Nix eller Guix per
-studie) hör till forskningslagret, inte till skrivbordet.
+**Program bakas inte in i avbildningen.** Grundprofilen installeras som Flatpak vid första start (`forskaros-grund.service`), övriga profiler med `forskaros-setup`. Det håller avbildningen liten och undviker konflikter med basens uppdateringar.
 
-**Liten avbildning.** Program bakas inte in i avbildningen. Grundprofilen
-installeras som Flatpak vid första start (`forskaros-grund.service`), resten
-väljer forskaren i verktygslådan (`forskaros-setup`). Profilerna är datafiler i
-`/usr/share/forskaros/profiler`, så att de går att testa och utöka. Det minskar
-konflikter med basens uppdateringar och låter forskaren välja.
+**En källa för verktygen.** `katalog/verktyg.json` genererar profiler, programmenyns mappar och verktygssidorna i vaulten. Ett test kontrollerar att de genererade filerna är i synk.
 
-**Proprietärt ingår inte.** Obsidian distribueras inte i avbildningen.
-Vaultformatet (Markdown, wikilänkar, frontmatter) är öppet. Därför kan en egen
-öppen editor byggas utan att kopiera Obsidians kod, och den ska köra
-ForskarOS Core via ett kompatibelt urval av plugin-API:t.
+**Obsidian ingår inte.** Obsidian är proprietärt och får inte distribueras. Vaultformatet är öppet (Markdown, wikilänkar, frontmatter), så en egen editor kan byggas senare utan att röra Obsidians kod.
 
-**Forskarens data är helig.** `forskaros-init` skapar vaulten en gång och
-uppdaterar därefter bara tilläggets egna tre filer. Anteckningar rörs aldrig.
+**Vaulten skrivs inte över.** `forskaros-init` skapar `~/ForskarOS` en gång. Därefter uppdateras bara tilläggets filer och systemets egna mappar (`00 START/Verktyg`, `00 START/Forskarhandboken`).
 
-## Hur principerna syns i systemet
+**Tillägget gör inga nätverksanrop.** AI-konsultationer blir text som användaren kopierar. Ett test kontrollerar att källkoden saknar nätverksanrop.
 
-- **Mångfald:** perspektivkartan kräver flera teorier med olika antaganden.
-- **Tillit:** felrättningar sparas i historiken. Inga nätverksanrop sker utan aktivt val.
-- **Friktion och ifrågasättande:** motprovet frågar vad som kan kullkasta hypotesen.
-- **Bekväm med det obekväma:** forskarpasset kräver en lista över det du inte förstår.
-- **Envishet och förändring:** omprövningar dokumenterar hur och varför en uppfattning ändrats.
-- **Framtiden:** hypotesmallen frågar vad upptäckten skulle göra möjligt.
-- **Kompetens:** varje pass frågar vad du kan förklara utan AI.
-- **Möten och nätverk:** forskningsmötet dokumenterar kritik från verkliga människor.
+## Tillägget
+
+`main.js` har två delar: regler och mallar som rena funktioner (testas i `tests/engine.test.js`) och Obsidian-gränssnittet (testas mot ett simulerat API i `tests/plugin.test.js`). All data läses från anteckningarnas frontmatter, främst `typ`, `fas`, `status`, `fråga` och `datum`.

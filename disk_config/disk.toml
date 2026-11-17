@@ -1,7 +1,7 @@
 # bootc-image-builder: diskavbildning (qcow2/raw) för virtuella maskiner,
 # t.ex. UTM på en Mac.
 #
-# Som Kalis VM-avbildningar har den ett känt konto: forskare / forskare.
+# Kontot forskare / forskare.
 # Lösenordet MÅSTE bytas vid första inloggningen (forskaros-forskare.service
 # markerar det som utgånget vid första start). ISO-installationer har inget
 # förinställt konto.

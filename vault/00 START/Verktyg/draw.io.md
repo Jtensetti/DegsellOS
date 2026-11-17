@@ -9,11 +9,11 @@ profil: ideer
 
 **Fas:** 2 · Kombinera  
 **Profil:** Idéer och modeller  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Kombinera: rita din teoretiska modell. Det som inte går att rita är ofta inte genomtänkt.
+Diagram, flödesscheman och modeller.
 
 ## Installera
 

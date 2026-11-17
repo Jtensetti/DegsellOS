@@ -1,5 +1,5 @@
 'use strict';
-// Testar ForskarOS-metoden: faskrav, Revisorn, mått och AI-konsultationer.
+// Testar arbetsmetoden: faskrav, granskning, mått och AI-konsultationer.
 // Rena funktioner, ingen Obsidian behövs.
 const assert = require('node:assert/strict');
 const Module = require('node:module');
@@ -62,8 +62,8 @@ test('faskrav: Kombinera kräver hypotes med etablerad grund och ovanlig kombina
   const tom = note('h.md', { typ: 'hypotes', fråga: link }, e.TYPES.hypothesis.render({ date: DAY }));
   assert.deepEqual(e.phaseRequirements(q, [tom]).map(r => r.ok), [true, false, false]);
   const full = note('h.md', { typ: 'hypotes', fråga: link }, tom.body
-    .replace('## Etablerad kunskap jag bygger på\n> Ovanliga idéer blir starkare när de vilar på gedigen kunskap.\n',
-      '## Etablerad kunskap jag bygger på\n> Ovanliga idéer blir starkare när de vilar på gedigen kunskap.\nForskning om kognitiv avlastning.\n')
+    .replace('## Etablerad kunskap jag bygger på\n',
+      '## Etablerad kunskap jag bygger på\nForskning om kognitiv avlastning.\n')
     .replace('## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\n',
       '## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\nSpråkdidaktik möter förvaltningsforskning.\n'));
   assert.deepEqual(e.phaseRequirements(q, [full]).map(r => r.ok), [true, true, true]);
@@ -94,72 +94,72 @@ test('fasloggen läggs till öppet under Fasbeslut', () => {
 
 const princip = (findings, p) => findings.filter(f => f.princip === p);
 
-test('Revisorn: högst två aktiva frågor (envis med frågan)', () => {
+test('granskning: högst två aktiva frågor', () => {
   const qs = [1, 2, 3].map(i => note(`q${i}.md`, { typ: 'forskningsfråga', status: 'aktiv', fas: 'utforska', datum: DAY }));
-  assert.equal(princip(e.audit(qs, DAY), 'Envishet').length, 1);
-  assert.equal(princip(e.audit(qs.slice(0, 2), DAY), 'Envishet').length, 0);
+  assert.equal(princip(e.audit(qs, DAY), 'För många frågor').length, 1);
+  assert.equal(princip(e.audit(qs.slice(0, 2), DAY), 'För många frågor').length, 0);
 });
 
-test('Revisorn: utforskar utan att välja efter 30 dagar', () => {
+test('granskning: utforskar utan att välja efter 30 dagar', () => {
   const q = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'utforska', fas_ändrad: '2026-10-01' });
-  assert.equal(princip(e.audit([q], DAY), 'Utforskning + koncentration').length, 1);
+  assert.equal(princip(e.audit([q], DAY), 'Står still').length, 1);
   const ny = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'utforska', fas_ändrad: '2026-11-10' });
-  assert.equal(princip(e.audit([ny], DAY), 'Utforskning + koncentration').length, 0);
+  assert.equal(princip(e.audit([ny], DAY), 'Står still').length, 0);
 });
 
-test('Revisorn: fördjupning utan friktion', () => {
+test('granskning: fördjupning utan motprov', () => {
   const q = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'utveckla', fas_ändrad: DAY });
-  assert.equal(princip(e.audit([q], DAY), 'Friktion').length, 1);
+  assert.equal(princip(e.audit([q], DAY), 'Ingen kritik').length, 1);
   const m = note('m.md', { typ: 'motprov', fråga: link, datum: DAY });
-  assert.equal(princip(e.audit([q, m], DAY), 'Friktion').length, 0);
+  assert.equal(princip(e.audit([q, m], DAY), 'Ingen kritik').length, 0);
 });
 
-test('Revisorn: AI ersätter inte människor', () => {
+test('granskning: inget forskningsmöte', () => {
   const q = note(Q, { typ: 'forskningsfråga', status: 'aktiv', fas: 'pröva', fas_ändrad: DAY });
-  assert.equal(princip(e.audit([q], DAY), 'Mångfald').length, 1);
+  assert.equal(princip(e.audit([q], DAY), 'Ingen extern återkoppling').length, 1);
   const gammalt = note('mö.md', { typ: 'forskningsmöte', datum: '2026-09-01' });
-  assert.match(princip(e.audit([q, gammalt], DAY), 'Mångfald')[0].text, /77 dagar/);
+  assert.match(princip(e.audit([q, gammalt], DAY), 'Ingen extern återkoppling')[0].text, /77 dagar/);
   const nytt = note('mö.md', { typ: 'forskningsmöte', datum: '2026-11-10' });
-  assert.equal(princip(e.audit([q, nytt], DAY), 'Mångfald').length, 0);
+  assert.equal(princip(e.audit([q, nytt], DAY), 'Ingen extern återkoppling').length, 0);
 });
 
-test('Revisorn: vilande fråga påminner när vilan är slut', () => {
+test('granskning: vilande fråga påminner när vilan är slut', () => {
   const q = note(Q, { typ: 'forskningsfråga', status: 'vilar', vila_till: '2026-11-17' });
-  assert.equal(princip(e.audit([q], DAY), 'Återhämtning').length, 1);
+  assert.equal(princip(e.audit([q], DAY), 'Vila slut').length, 1);
   const vilar = note(Q, { typ: 'forskningsfråga', status: 'vilar', vila_till: '2026-11-30' });
-  assert.equal(princip(e.audit([vilar], DAY), 'Återhämtning').length, 0);
+  assert.equal(princip(e.audit([vilar], DAY), 'Vila slut').length, 0);
 });
 
-test('Revisorn: AI-konsultationer utan egen tanke först', () => {
+test('granskning: AI-konsultationer utan egen tanke först', () => {
   const ai = i => note(`a${i}.md`, { typ: 'ai-konsultation', datum: DAY, egen_tanke_först: i < 3 ? 'nej' : 'ja' },
-    '## Vad tar jag med mig – med egna ord?\nJag behöver fler källor.');
+    '## Vad tar jag med mig?\nJag behöver fler källor.');
   const all = [0, 1, 2, 3].map(ai);
-  assert.equal(princip(e.audit(all, DAY), 'Självständighet').length, 1);
+  assert.equal(princip(e.audit(all, DAY), 'AI-användning').length, 1);
   const bra = [0, 1, 2, 3].map(i => note(`a${i}.md`, { typ: 'ai-konsultation', datum: DAY, egen_tanke_först: 'ja' },
-    '## Vad tar jag med mig – med egna ord?\nOk.'));
-  assert.equal(princip(e.audit(bra, DAY), 'Självständighet').length, 0);
+    '## Vad tar jag med mig?\nOk.'));
+  assert.equal(princip(e.audit(bra, DAY), 'AI-användning').length, 0);
 });
 
-test('Revisorn: AI-svar utan egen sammanfattning', () => {
+test('granskning: AI-svar utan egen sammanfattning', () => {
   const a = note('a.md', { typ: 'ai-konsultation', datum: '2026-11-14', egen_tanke_först: 'ja' },
-    '## Svaret (klistra in)\nAI sa något.\n## Vad tar jag med mig – med egna ord?\n\n');
-  assert.equal(princip(e.audit([a], DAY), 'Självständighet').length, 1);
+    '## Svaret (klistra in)\nAI sa något.\n## Vad tar jag med mig?\n\n');
+  assert.equal(princip(e.audit([a], DAY), 'AI-användning').length, 1);
 });
 
-test('Revisorn: öppna felrättningar och månadsgranskning', () => {
+test('granskning: öppna felrättningar och månadsgranskning', () => {
   const k = note('k.md', { typ: 'felrättning', status: 'öppen', datum: '2026-10-01' });
-  assert.equal(princip(e.audit([k], DAY), 'Tillit').length, 1);
-  assert.equal(princip(e.audit([], DAY), 'Återkoppling').length, 1);
+  assert.equal(princip(e.audit([k], DAY), 'Öppen felrättning').length, 1);
+  assert.equal(princip(e.audit([], DAY), 'Förmågegranskning').length, 1);
   const g = note('g.md', { typ: 'förmågegranskning', datum: '2026-11-01' });
-  assert.equal(princip(e.audit([g], DAY), 'Återkoppling').length, 0);
+  assert.equal(princip(e.audit([g], DAY), 'Förmågegranskning').length, 0);
 });
 
-test('Revisorn: föreslår det första uppdraget när ingen fråga är aktiv', () => {
+test('granskning: föreslår det första uppdraget när ingen fråga är aktiv', () => {
   const f = note('f.md', { typ: 'forskningsfråga', status: 'förslag' });
-  assert.equal(princip(e.audit([f], DAY), 'Riktning').length, 1);
+  assert.equal(princip(e.audit([f], DAY), 'Ingen aktiv fråga').length, 1);
 });
 
-test('Revisorn: varningar före påminnelser', () => {
+test('granskning: varningar före påminnelser', () => {
   const qs = [1, 2, 3].map(i => note(`q${i}.md`, { typ: 'forskningsfråga', status: 'aktiv', fas: 'pröva', fas_ändrad: DAY }));
   const f = e.audit(qs, DAY);
   const first = f.findIndex(x => x.nivå === 'påminnelse');
@@ -185,18 +185,18 @@ test('mått: självständighet och förmåga, inte produktion', () => {
 });
 
 test('AI-konsultation: roll, läge och tillitskontraktet följer med', () => {
-  const p = e.buildPrompt({ roll: 'motståndaren', läge: 'utveckling', titel: 'Hypotes', text: '---\ntyp: hypotes\n---\nMin idé.' });
-  assert.match(p, /Motståndaren/);
+  const p = e.buildPrompt({ roll: 'kritik', läge: 'utveckling', titel: 'Hypotes', text: '---\ntyp: hypotes\n---\nMin idé.' });
+  assert.match(p, /Kritisk granskning/);
   assert.match(p, /Ge mig inte ett färdigt svar/);
   assert.match(p, /\[BELAGT\]/);
-  assert.match(p, /Ta inte över tänkandet/);
+  assert.match(p, /Utgå från det jag har skrivit/);
   assert.match(p, /Min idé\./);
   assert(!p.includes('typ: hypotes'), 'frontmatter ska inte skickas');
 });
 
 test('frågemallen innehåller engagemang, avgränsning och fasloggen', () => {
   const t = e.questionNote({ date: DAY, titel: 'När stärker AI tänkandet?', varför: 'x' });
-  for (const h of ['Varför är frågan värd', 'Det jag väljer bort', 'Lärdomar', 'Delat med', 'Fasbeslut']) assert(t.includes(h), h);
+  for (const h of ['Varför är frågan viktig', 'Det jag väljer bort', 'Lärdomar', 'Delat med', 'Fasbeslut']) assert(t.includes(h), h);
   assert.match(t, /fas: utforska/);
 });
 
@@ -209,4 +209,4 @@ test('datumhjälp', () => {
   assert.equal(e.daysBetween('2026-11-01', '2026-11-17'), 16);
 });
 
-process.stdout.write(`OK: metoden (${n} tester): faser, faskrav, Revisorn, mått, AI-konsultation\n`);
+process.stdout.write(`OK: metoden (${n} tester): faser, faskrav, granskning, mått, AI-konsultation\n`);

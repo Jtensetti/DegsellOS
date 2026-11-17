@@ -9,11 +9,11 @@ profil: skriva
 
 **Fas:** 7 · Dela  
 **Profil:** Skriva och publicera  
-**Topp 10 för forskare**
+**Ingår i det rekommenderade urvalet**
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Dela: skriv artiklar och avhandlingskapitel med citat direkt från Zotero.
+Markdown-redigerare för längre texter, med citat från Zotero.
 
 ## Installera
 

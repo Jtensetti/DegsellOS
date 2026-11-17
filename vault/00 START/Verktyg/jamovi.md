@@ -10,9 +10,9 @@ profil: statistik
 **Fas:** 5 · Utveckla  
 **Profil:** Statistik och data
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: analyser du kan klicka fram och sedan se som R-kod, en bro från klick till kod.
+Statistik med grafiskt gränssnitt, byggt på R. Analyser kan visas som R-kod.
 
 ## Installera
 

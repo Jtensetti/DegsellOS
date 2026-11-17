@@ -10,9 +10,9 @@ profil: kvalitativ
 **Fas:** 5 · Utveckla  
 **Profil:** Kvalitativ forskning
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: koda kvalitativa data och se mönster över intervjuer.
+Kvalitativ kodning av intervjuer och dokument.
 
 ## Installera
 

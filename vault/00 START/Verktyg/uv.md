@@ -10,9 +10,9 @@ profil: programmering
 **Fas:** 5 · Utveckla  
 **Profil:** Programmering och reproducerbarhet
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utveckla: varje studie får egna, låsta paketversioner som kan återskapas.
+Hanterar Python-versioner och paket per projekt.
 
 ## Installera
 

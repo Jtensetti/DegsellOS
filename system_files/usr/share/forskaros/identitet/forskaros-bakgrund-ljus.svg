@@ -6,14 +6,12 @@
     </radialGradient>
   </defs>
   <rect width="3840" height="2160" fill="url(#bg)"/>
-  <path d="M 1941.98 612.67 A 360 360 0 0 1 2187.23 730.78" fill="none" stroke="#2E86AB" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Utforska</title></path>
-  <path d="M 2214.64 765.15 A 360 360 0 0 1 2275.21 1030.53" fill="none" stroke="#3FA7A0" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Kombinera</title></path>
-  <path d="M 2265.43 1073.38 A 360 360 0 0 1 2095.71 1286.21" fill="none" stroke="#7BB662" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Välj</title></path>
-  <path d="M 2056.11 1305.28 A 360 360 0 0 1 1783.89 1305.28" fill="none" stroke="#E0A458" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Pröva</title></path>
-  <path d="M 1744.29 1286.21 A 360 360 0 0 1 1574.57 1073.38" fill="none" stroke="#D9724A" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Utveckla</title></path>
-  <path d="M 1564.79 1030.53 A 360 360 0 0 1 1625.36 765.15" fill="none" stroke="#A45DA8" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Ompröva</title></path>
-  <path d="M 1652.77 730.78 A 360 360 0 0 1 1898.02 612.67" fill="none" stroke="#5B6CC4" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Dela</title></path>
-  <circle cx="1920.0" cy="972.0" r="63.0" fill="#1B2A3A" opacity="0.92"/>
-  <text x="1920.0" y="1592.0" text-anchor="middle" fill="#3A4654"
-        font-family="Cantarell, Inter, sans-serif" font-size="64" letter-spacing="4" opacity="0.8">Framtiden är den viktigaste tiden.</text>
+  <path d="M 1941.98 720.67 A 360 360 0 0 1 2187.23 838.78" fill="none" stroke="#2E86AB" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Utforska</title></path>
+  <path d="M 2214.64 873.15 A 360 360 0 0 1 2275.21 1138.53" fill="none" stroke="#3FA7A0" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Kombinera</title></path>
+  <path d="M 2265.43 1181.38 A 360 360 0 0 1 2095.71 1394.21" fill="none" stroke="#7BB662" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Välj</title></path>
+  <path d="M 2056.11 1413.28 A 360 360 0 0 1 1783.89 1413.28" fill="none" stroke="#E0A458" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Pröva</title></path>
+  <path d="M 1744.29 1394.21 A 360 360 0 0 1 1574.57 1181.38" fill="none" stroke="#D9724A" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Utveckla</title></path>
+  <path d="M 1564.79 1138.53 A 360 360 0 0 1 1625.36 873.15" fill="none" stroke="#A45DA8" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Ompröva</title></path>
+  <path d="M 1652.77 838.78 A 360 360 0 0 1 1898.02 720.67" fill="none" stroke="#5B6CC4" stroke-width="70" stroke-linecap="round" opacity="0.92"><title>Dela</title></path>
+  <circle cx="1920.0" cy="1080.0" r="63.0" fill="#1B2A3A" opacity="0.92"/>
 </svg>

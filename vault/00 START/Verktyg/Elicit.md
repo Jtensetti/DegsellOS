@@ -10,9 +10,9 @@ profil: proprietart
 **Fas:** 1 · Utforska  
 **Profil:** Proprietärt och moln (aktivt val)
 
-## Hur det tjänar metoden
+## Vad det används till
 
-Utforska: hitta och sammanfatta studier. Läs originalen innan du drar slutsatser. Det här är en molntjänst: det du skriver lämnar datorn.
+AI-stöd för litteraturöversikter. Molntjänst. Det du skriver skickas till tjänsten.
 
 ## Installera
 
