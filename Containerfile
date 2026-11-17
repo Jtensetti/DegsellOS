@@ -16,7 +16,8 @@ FROM ${BASE_IMAGE}
 
 LABEL org.opencontainers.image.title="ForskarOS" \
       org.opencontainers.image.description="Ett forskningsorienterat OS byggt på Bluefin LTS" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://github.com/Jtensetti/researchOS"
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
