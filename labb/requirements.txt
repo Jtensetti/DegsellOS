@@ -1,0 +1,11 @@
+# Python-paket i ForskarOS-labbet. Exakta versioner sparas i
+# /opt/forskaros/python-las.txt i varje avbildning.
+numpy
+pandas
+scipy
+statsmodels
+pingouin
+matplotlib
+seaborn
+openpyxl
+jupyterlab

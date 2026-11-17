@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ForskarOS-labbet (RStudio)
+Comment=Reproducerbar analysmiljö med R, Python och RStudio i webbläsaren
+Exec=/usr/bin/forskaros-labb rstudio
+Terminal=true
+Icon=forskaros
+Categories=Education;Science;

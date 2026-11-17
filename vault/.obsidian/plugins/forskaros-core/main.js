@@ -618,6 +618,11 @@ ${source || ''}
 ## Metod och material
 
 
+## Analysmiljö
+> Kör \`forskaros-labb version\` och klistra in raden här. Då kan du och andra
+> köra om analysen i exakt samma miljö, år senare.
+
+
 ## Ny metod eller nytt verktyg?
 > Många genombrott har gjorts möjliga av nya sätt att undersöka verkligheten.
 
