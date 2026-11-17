@@ -15,6 +15,27 @@
 
 Det Kali saknar är metoden: ForskarOS Core med forskningscykeln, Revisorn och tänk först.
 
+## Så ser det ut
+
+<p align="center"><img src="docs/bilder/skrivbord.png" alt="ForskarOS skrivbordsbakgrund: forskningscykeln som sju färgade bågar runt en punkt, med texten Framtiden är den viktigaste tiden" width="720"></p>
+
+<table>
+<tr>
+<td width="40%" valign="top"><img src="docs/bilder/panel.png" alt="ForskarOS-panelen: en forskningsfråga i fasen Pröva, Revisorns varningar och självständighetsmått" width="100%"></td>
+<td valign="top">
+
+**ForskarOS-panelen.** En forskare mitt i fasen *Pröva*: motprovet är skrivet, men ingen människa utanför har prövat idén än, och Revisorn säger till. Längre ner: hur ofta forskaren tänkte själv innan AI, övningar utan AI och förmågan över tid.
+
+<img src="docs/bilder/terminal.png" alt="Terminal med dagens princip och verktygslådans profiler" width="100%">
+
+**Terminalen** visar dagens princip, samma som panelen. `forskaros-setup --lista` visar verktygslådans profiler.
+
+</td>
+</tr>
+</table>
+
+<sub>Bilderna renderas med `node scripts/skarmdumpar.js`: panelen är tilläggets riktiga kod med ett exempelvalv och Obsidians färger, terminalen visar riktig utdata, och bakgrunden är den riktiga filen. Skärmdumpar från en körande ForskarOS-maskin kommer efter första testet i UTM.</sub>
+
 ForskarOS bygger vi inte från grunden. Vi tar **[Bluefin LTS](https://projectbluefin.io/)** från Universal Blue, en färdig och välskött GNOME-distribution med atomära uppdateringar som kan backas, och lägger ett forskningslager ovanpå:
 
 - **ForskarOS-vaulten:** en Obsidian-kompatibel kunskapsbas i ren Markdown med mappar för riktning, hypoteser, evidens, experiment, friktion, förändring, samverkan och reflektion.
