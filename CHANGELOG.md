@@ -2,9 +2,15 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
+## 2027.1-beta2
+
+- Vid första inloggningen visar verktygslådan hur grundinstallationen går. Du kan läsa startsidan utan nät, se installationsloggen eller öppna Obsidian och välja din forskningsmapp.
+- I Core 0.3.1 kräver prestationsläget ett eget val när anteckningen har färre än 50 egna ord. Efter 50 ord öppnas dialogen i utvecklingsläge.
+- De sju fasnamnen får plats på flera rader i smala paneler.
+
 ## 2027.1-beta1
 
-Förhandsversion av 2027.1. Avbildningen byggs och testas i CI men har inte startats på hårdvara eller i en virtuell maskin.
+Förhandsversion av 2027.1. Avbildningen byggs och testas i CI och amd64-disken har [provats i QEMU](docs/VM-TEST-2026-11-17.md).
 
 - Faskraven och granskningen täcker alla begrepp i arbetsmetoden; varje begrepp har ett test som visar att systemet reagerar när det brister (`tests/begrepp.test.js`)
 - Avslut med utfall, gräns för öppna frågor, varning när fler frågor påbörjas än avslutas

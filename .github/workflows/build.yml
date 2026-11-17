@@ -66,10 +66,14 @@ jobs:
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           echo "$TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
+          sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:build-$GITHUB_RUN_ID-${{ matrix.arch }}"
 
   publish:
     if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
     needs: build
+    outputs:
+      digest: ${{ steps.manifest.outputs.digest }}
+      version: ${{ steps.manifest.outputs.version }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -80,13 +84,14 @@ jobs:
       - uses: sigstore/cosign-installer@v3
 
       - name: Skapa och publicera flerarkitekturs-manifest
+        id: manifest
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           podman manifest create forskaros-manifest \
-            "docker://$IMAGE:latest-amd64" "docker://$IMAGE:latest-arm64"
+            "docker://$IMAGE:build-$GITHUB_RUN_ID-amd64" "docker://$IMAGE:build-$GITHUB_RUN_ID-arm64"
           podman manifest push --all --digestfile /tmp/digest \
             forskaros-manifest "docker://$IMAGE:latest"
           podman manifest push --all \
@@ -96,6 +101,8 @@ jobs:
           if [[ "$VERSION" != *-dev ]]; then
             podman manifest push --all forskaros-manifest "docker://$IMAGE:$VERSION"
           fi
+          echo "digest=$(cat /tmp/digest)" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "IMAGE_REF=$IMAGE@$(cat /tmp/digest)" >> "$GITHUB_ENV"
 
       - name: Signera (sigstore, nyckellöst)
@@ -104,3 +111,17 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u "${{ github.actor }}" --password-stdin
           cosign sign "$IMAGE_REF"
+
+  release-media:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[release-media] ')
+    needs: publish
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/release-vm.yml
+    with:
+      version: ${{ needs.publish.outputs.version }}
+      digest: ${{ needs.publish.outputs.digest }}
+    secrets:
+      IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+      IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}

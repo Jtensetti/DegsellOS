@@ -10,6 +10,7 @@ Studier tyder på att AI-stöd kan höja prestationen medan stödet finns men f�
   - **utveckling**: frågor och ledtrådar, inte färdiga svar (standard)
   - **prövning**: leta fel i resonemanget
   - **prestation**: hjälp att producera text eller kod
+- Under 50 egna ord börjar dialogen utan valt läge. Du kan välja prestation om du vill ta hjälp med att producera ett utkast.
 - Texten kopieras till den AI du väljer. Inget skickas automatiskt.
 - Konsultationen loggas i `08 REFLEKTION/AI`. Klistra in svaret och skriv vad du tar med dig.
 

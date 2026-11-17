@@ -7,6 +7,22 @@ name: Släpp färdig VM
 # Kräver hemligheterna IA_ACCESS_KEY och IA_SECRET_KEY
 # (https://archive.org/account/s3.php).
 on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      digest:
+        type: string
+        required: true
+      endast:
+        type: string
+        default: alla
+    secrets:
+      IA_ACCESS_KEY:
+        required: true
+      IA_SECRET_KEY:
+        required: true
   workflow_dispatch:
     inputs:
       version:
@@ -68,11 +84,25 @@ jobs:
       - name: Hämta avbildningen
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+          DIGEST: ${{ inputs.digest }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:${{ inputs.tag }}"
-          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          if [[ -n "$DIGEST" ]]; then
+            [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+            IMAGE="$IMAGE@$DIGEST"
+          else
+            IMAGE="$IMAGE:$TAG"
+          fi
           echo "$TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           sudo podman pull --arch ${{ matrix.arch }} "$IMAGE"
+          [[ "$(sudo podman run --rm --entrypoint cat "$IMAGE" /usr/share/forskaros/RELEASE)" == "$VERSION" ]]
+          if [[ -n "$DIGEST" ]]; then
+            # Bygg med det hämtade innehållet. Installerade system följer latest.
+            sudo podman tag "$IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+            IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+          fi
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 
       - name: Bygg disk med bootc-image-builder
         run: |
@@ -87,6 +117,23 @@ jobs:
             "$IMAGE"
           sudo chown -R "$USER" output
           find output -type f -exec ls -lh {} \;
+
+      - name: Starta den byggda disken och kontrollera gästens arkitektur
+        if: matrix.type == 'qcow2'
+        run: |
+          if [[ "${{ matrix.arch }}" == arm64 ]]; then
+            sudo apt-get install -y qemu-system-arm qemu-efi-aarch64
+          else
+            sudo apt-get install -y qemu-system-x86 ovmf
+          fi
+          sudo bash scripts/testa-vmstart.sh output/qcow2/disk.qcow2 "${{ matrix.arch }}"
+
+      - name: Kontrollera ISO-mediets startkatalog
+        if: matrix.type == 'anaconda-iso'
+        run: |
+          sudo apt-get install -y xorriso
+          xorriso -indev output/bootiso/install.iso -report_el_torito plain > /tmp/boot-catalog
+          grep -E 'El Torito boot img.*UEFI' /tmp/boot-catalog
 
       - name: Förbered filer
         run: |
@@ -118,7 +165,8 @@ jobs:
           WHAT: ${{ matrix.what }}
         run: |
           [[ -n "$IA_ACCESS_KEY" && -n "$IA_SECRET_KEY" ]] || { echo "IA-hemligheterna saknas"; exit 1; }
-          DESC="ForskarOS: Linuxdistribution för forskningsarbete, byggd på Bluefin LTS. Inloggning i diskavbildningen: forskare / forskare (lösenordet måste bytas). Källkod: https://github.com/Jtensetti/researchOS"
+          DESC="ForskarOS $VERSION för forskningsarbete, byggt på Bluefin LTS. Källkod: https://github.com/Jtensetti/researchOS/tree/$GITHUB_SHA"
+          if [[ "${{ matrix.kind }}" == vm ]]; then DESC="$DESC Logga in med forskare / forskare och byt lösenord vid första inloggningen."; fi
           if [[ "$VERSION" == *-* ]]; then DESC="Förhandsversion, inte testad på hårdvara. $DESC"; fi
           uri() { printf 'uri(%s)' "$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$1")"; }
           # Internet Archives S3-gränssnitt. Stora filer kan ta lång tid att

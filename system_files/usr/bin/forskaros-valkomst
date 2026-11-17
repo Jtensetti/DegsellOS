@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Första inloggningen och verktygslådans startvy.
+set -eu
+vault="${FORSKAROS_VAULT:-$HOME/ForskarOS}"
+service=forskaros-grund.service
+
+status() {
+  if [[ -e /var/lib/forskaros/grund.klar ]]; then
+    echo 'Grundverktygen är installerade.'
+    return
+  fi
+  local state
+  state=$(systemctl show "$service" -p SubState --value 2>/dev/null) || state=okänt
+  case "$state" in
+    auto-restart|failed) echo 'Installationen av grundverktygen har misslyckats. Kontrollera nätet. Tjänsten försöker igen efter två minuter.' ;;
+    start|running) echo 'Grundverktygen installeras i bakgrunden. Du kan börja skriva under tiden.' ;;
+    *) echo 'Grundverktygen är ännu inte färdiginstallerade.' ;;
+  esac
+  echo "Senaste installationsmeddelanden visas med journalctl -u $service -n 10."
+}
+
+if [[ ${1:-} == --status ]]; then status; exit 0; fi
+[[ -f "$vault/00 START/Hem.md" ]] || FORSKAROS_INGEN_VALKOMST=1 forskaros-init
+while :; do
+  echo
+  echo 'Välkommen till ForskarOS'
+  echo "Din forskningsmapp finns här: $vault"
+  status
+  echo
+  echo '1. Öppna forskningsmappen i Obsidian'
+  echo '2. Läs startsidan som text (fungerar utan nät)'
+  echo '3. Välj fler verktyg'
+  echo '4. Visa installationsloggen'
+  echo 'Enter stänger verktygslådan.'
+  read -r -p 'Ditt val: ' choice || exit 0
+  case "$choice" in
+    1)
+      if ! flatpak info md.obsidian.Obsidian >/dev/null 2>&1; then
+        if ! forskaros-setup --profil obsidian; then
+          echo 'Obsidian kunde inte installeras. Kontrollera nätet och välj 1 för att försöka igen.'
+          continue
+        fi
+        flatpak info md.obsidian.Obsidian >/dev/null 2>&1 || continue
+      fi
+      echo "Första gången: välj Open folder as vault och mappen $vault."
+      echo 'Godkänn ForskarOS Core om du vill använda tillägget. Öppna 00 START/Hem och välj din första fråga i hjärnpanelen.'
+      flatpak run md.obsidian.Obsidian || echo 'Obsidian kunde inte öppnas.'
+      ;;
+    2) cat -- "$vault/00 START/Hem.md" ;;
+    3) forskaros-setup || echo 'Installationen avbröts. Du kan välja profilen igen.' ;;
+    4) journalctl --no-pager -u "$service" -n 10 || true ;;
+    '') exit 0 ;;
+    *) echo 'Välj 1, 2, 3 eller 4.' ;;
+  esac
+done

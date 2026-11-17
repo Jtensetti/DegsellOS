@@ -15,6 +15,8 @@ Varje push till `main` bygger och publicerar `latest` och en datumtagg. Installe
 2. Pusha. CI publicerar då även taggen `2027.1` för OS:et och labbet.
 3. Testa diskarna med *Bygg installationsmedia*: start i UTM på Mac, ISO i en virtuell PC, inloggning, verktygslåda, labbet.
 4. Först när testerna är gjorda: kör *Släpp färdig VM* med versionen. Den laddar upp till Internet Archive.
+En release kan också startas genom en push till `main` där commitmeddelandet börjar med `[release-media] `. Då publiceras alla tre medier från det signerade manifestets digest efter godkänt bygge.
+
 5. Sätt `VERSION` till nästa `-dev`.
 
 > Labbet får en ny version bara när `labb/` ändras. Gamla versioner tas inte bort,

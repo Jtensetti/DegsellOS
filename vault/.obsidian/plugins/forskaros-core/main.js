@@ -1082,25 +1082,29 @@ class AIModal extends Modal {
 
     el.createEl('label', { text: 'Läge', cls: 'forskaros-label' });
     const läge = el.createEl('select', { cls: 'forskaros-input' });
+    if (!tänktFörst) läge.createEl('option', { text: 'Välj läge', value: '' });
     for (const [id, m] of Object.entries(MODES)) {
       const o = läge.createEl('option', { text: `${m.namn} – ${m.beskrivning}`, value: id });
       if (!tänktFörst && id !== 'prestation') o.disabled = true;
     }
-    läge.value = tänktFörst ? 'utveckling' : 'prestation';
+    läge.value = tänktFörst ? 'utveckling' : '';
+    if (!tänktFörst) el.createEl('p', { text: 'Skriv ett eget utkast för att få frågor och motargument. Välj prestationsläge om du vill ha hjälp att producera text eller kod redan nu.' });
 
     el.createEl('label', { text: 'Text att kopiera (skickas inte automatiskt)', cls: 'forskaros-label' });
     const preview = el.createEl('textarea', { cls: 'forskaros-input forskaros-preview' });
     preview.readOnly = true;
+    const row = el.createDiv({ cls: 'forskaros-row' });
+    const copy = row.createEl('button', { text: 'Kopiera och logga', cls: 'mod-cta' });
     const update = () => {
-      preview.value = buildPrompt({ roll: roll.value, läge: läge.value, titel: this.file.basename, text: this.text });
+      copy.disabled = !läge.value;
+      preview.value = !läge.value ? '' : buildPrompt({ roll: roll.value, läge: läge.value, titel: this.file.basename, text: this.text });
     };
     roll.addEventListener('change', update);
     läge.addEventListener('change', update);
     update();
 
-    const row = el.createDiv({ cls: 'forskaros-row' });
-    const copy = row.createEl('button', { text: 'Kopiera och logga', cls: 'mod-cta' });
     copy.addEventListener('click', async () => {
+      if (!läge.value) return;
       try { await navigator.clipboard.writeText(preview.value); } catch (e) { /* kopiera manuellt */ }
       this.close();
       await this.plugin.logConsultation(this.file, roll.value, läge.value, tänktFörst, preview.value);
