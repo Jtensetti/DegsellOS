@@ -1,0 +1,6 @@
+# bootc-image-builder: diskavbildning (qcow2/raw) för virtuella maskiner,
+# t.ex. UTM på en Mac. Ingen användare skapas här. GNOME:s
+# välkomstguide ska skapa kontot vid första start (ej verifierat än).
+[[customizations.filesystem]]
+mountpoint = "/"
+minsize = "40 GiB"

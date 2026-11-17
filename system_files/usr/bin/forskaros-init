@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Körs vid inloggning (GNOME autostart).
+#  1. Skapar ~/ForskarOS från seed-vaulten om den inte finns.
+#  2. Uppdaterar ForskarOS Core-tillägget i en befintlig vault när OS:et har
+#     uppdaterats. Forskarens egna anteckningar rörs aldrig.
+set -euo pipefail
+
+SEED=/usr/share/forskaros/vault
+TARGET="${FORSKAROS_VAULT:-$HOME/ForskarOS}"
+PLUGIN_REL=.obsidian/plugins/forskaros-core
+
+if [[ ! -d "$SEED" ]]; then
+  echo "forskaros-init: hittar inte $SEED" >&2
+  exit 1
+fi
+
+if [[ ! -e "$TARGET" ]]; then
+  cp -R -- "$SEED" "$TARGET"
+  chmod -R u+rwX -- "$TARGET"
+  echo "forskaros-init: skapade $TARGET"
+  exit 0
+fi
+
+# Vaulten finns redan. Uppdatera bara tilläggets egna filer, och bara om
+# forskaren inte har tagit bort tillägget.
+if [[ -d "$TARGET/$PLUGIN_REL" ]]; then
+  for f in main.js manifest.json styles.css; do
+    if ! cmp -s "$SEED/$PLUGIN_REL/$f" "$TARGET/$PLUGIN_REL/$f"; then
+      cp -- "$SEED/$PLUGIN_REL/$f" "$TARGET/$PLUGIN_REL/$f"
+      echo "forskaros-init: uppdaterade $PLUGIN_REL/$f"
+    fi
+  done
+fi

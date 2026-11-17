@@ -1,0 +1,3 @@
+# bootc-image-builder: installations-ISO (anaconda-iso).
+# Tom med avsikt: installeraren frågar interaktivt om disk, och kontot
+# skapas i GNOME:s välkomstguide vid första start (ej verifierat än).

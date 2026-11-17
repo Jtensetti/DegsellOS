@@ -1,0 +1,9 @@
+{
+  "id": "forskaros-core",
+  "name": "ForskarOS Core",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Forskningspass, hypotesprövning, perspektivmångfald och omprövning – lokalt i din Obsidian-vault.",
+  "author": "ForskarOS",
+  "isDesktopOnly": false
+}

@@ -1,0 +1,5 @@
+# Kommandoradsverktyg som forskaros-setup erbjuder att installera.
+brew "pandoc"
+brew "ripgrep"
+# Lokal AI-motor för 0.5 (Motståndaren, Revisorn). Körs helt lokalt.
+brew "ollama"

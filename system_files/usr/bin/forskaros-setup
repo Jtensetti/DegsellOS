@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Installerar forskningsverktygen efter ett aktivt val från användaren.
+# Obsidian är proprietärt och distribueras därför inte i avbildningen.
+# Användaren hämtar det själv från Flathub.
+set -euo pipefail
+
+FLATPAKS=/usr/share/forskaros/flatpaks.list
+BREWFILE=/usr/share/forskaros/Brewfile
+
+ask() {
+  local reply
+  read -r -p "$1 [j/N] " reply
+  [[ "$reply" =~ ^[jJyY]$ ]]
+}
+
+echo "ForskarOS – installera forskningsverktyg"
+echo
+
+echo "Program från Flathub:"
+grep -vE '^\s*(#|$)' "$FLATPAKS" | sed 's/^/  - /'
+echo "Obs: Obsidian är gratis men proprietärt. Genom att installera det"
+echo "godkänner du Obsidians egna villkor."
+if ask "Installera dessa program?"; then
+  flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  grep -vE '^\s*(#|$)' "$FLATPAKS" | xargs flatpak install --user -y flathub
+fi
+
+echo
+echo "Kommandoradsverktyg via Homebrew (se $BREWFILE)."
+if command -v brew >/dev/null 2>&1; then
+  if ask "Installera dem?"; then
+    brew bundle --file="$BREWFILE"
+  fi
+else
+  echo "Homebrew saknas, hoppar över."
+fi
+
+echo
+forskaros-init
+echo "Klart. Öppna Obsidian → Open folder as vault → ~/ForskarOS"
+echo "och aktivera ForskarOS Core under Settings → Community plugins."
+read -r -p "Tryck Enter för att stänga." _
