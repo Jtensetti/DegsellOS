@@ -1,0 +1,54 @@
+name: Återuppta en uppladdning till Internet Archive
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/archive-retry.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  retry:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, '[archive-retry] '))
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Be Archive köra om ett felande jobb per befintlig arkivpost
+        env:
+          IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+          IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
+        run: |
+          set -euo pipefail
+          version=$(cat VERSION)
+          [[ "$version" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ ]]
+          api=https://archive.org/services/tasks.php
+          auth="Authorization: LOW $IA_ACCESS_KEY:$IA_SECRET_KEY"
+          failed=0
+          for platform in amd64-vm arm64-vm amd64-iso; do
+            item=forskaros-$version-$platform
+            meta=$(curl -fsS --retry 2 "https://archive.org/metadata/$item?ts=$(date +%s)")
+            task=$(jq -r '[.tasks[]? | select(.cmd == "book_op.php" and .wait_admin == 2)] | first | .task_id // empty' <<<"$meta")
+            if [[ -z "$task" ]]; then echo "$item: inget felande katalogjobb."; continue; fi
+            [[ "$task" =~ ^[0-9]+$ ]]
+            # Loggen kan innehålla kontouppgifter. Skriv bara ut klassificeringen.
+            log="$RUNNER_TEMP/archive-$task.log"
+            if curl -fsS --max-time 30 -H "$auth" "$api?task_log=$task" -o "$log"; then
+              if grep -Eiq 'held for review|flagged for (spam|abuse|review)|blocked by policy|copyright claim|account suspended' "$log"; then
+                echo "$item: manuell granskning hos Archive, jobb $task."
+                failed=1
+                continue
+              fi
+            fi
+            response="$RUNNER_TEMP/retry-$task.json"
+            if curl --silent --show-error --max-time 60 -X PUT -H "$auth" -H 'Content-Type: application/json' \
+                --data "$(jq -nc --argjson id "$task" '{op:"rerun",task_id:$id}')" "$api" -o "$response" \
+                && jq -e '.success == true' "$response" >/dev/null; then
+              echo "$item: Archive accepterade omkörning av jobb $task."
+            else
+              echo "$item: Archive avvisade omkörning av jobb $task."
+              failed=1
+            fi
+          done
+          exit "$failed"
