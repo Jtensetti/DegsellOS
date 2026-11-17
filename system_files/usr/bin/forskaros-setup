@@ -1,42 +1,155 @@
 #!/usr/bin/env bash
-# Installerar forskningsverktygen efter ett aktivt val från användaren.
-# Obsidian är proprietärt och distribueras därför inte i avbildningen.
-# Användaren hämtar det själv från Flathub.
+# ForskarOS – forskarens verktygslåda.
+#
+# Installerar verktyg i profiler (se /usr/share/forskaros/profiler).
+# Öppna verktyg är standard. Proprietärt och moln-AI kräver ett aktivt val.
+#
+#   forskaros-setup                       interaktivt val av profiler
+#   forskaros-setup --lista               visa profilerna
+#   forskaros-setup --profil skriva,ai    installera valda profiler
+#   forskaros-setup --ja                  svara ja på frågor (utom aktivt val)
+#   forskaros-setup --torrkörning         visa vad som skulle göras
 set -euo pipefail
 
-FLATPAKS=/usr/share/forskaros/flatpaks.list
-BREWFILE=/usr/share/forskaros/Brewfile
+PROFILDIR="${FORSKAROS_PROFILDIR:-/usr/share/forskaros/profiler}"
+DRY=0
+YES=0
+LIST=0
+WANT=""
+SYSTEM=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --lista) LIST=1 ;;
+    --profil) WANT="$2"; shift ;;
+    --ja) YES=1 ;;
+    --torrkörning) DRY=1 ;;
+    --system) SYSTEM=1 ;;
+    -h|--hjälp) sed -n '2,12p' "$0"; exit 0 ;;
+    *) echo "Okänt argument: $1" >&2; exit 2 ;;
+  esac
+  shift
+done
+
+run() {
+  if [[ $DRY -eq 1 ]]; then echo "+ $*"; else "$@"; fi
+}
+
+meta() { sed -n "s/^# $2: //p" "$1" | head -1; }
+slug() { basename "$1" .profil | sed 's/^[0-9]*-//'; }
+items() { grep -vE '^\s*(#|$)' "$1"; }
 
 ask() {
   local reply
+  [[ $YES -eq 1 ]] && return 0
   read -r -p "$1 [j/N] " reply
   [[ "$reply" =~ ^[jJyY]$ ]]
 }
 
-echo "ForskarOS – installera forskningsverktyg"
-echo
+PROFILES=("$PROFILDIR"/*.profil)
+[[ -e "${PROFILES[0]}" ]] || { echo "Hittar inga profiler i $PROFILDIR" >&2; exit 1; }
 
-echo "Program från Flathub:"
-grep -vE '^\s*(#|$)' "$FLATPAKS" | sed 's/^/  - /'
-echo "Obs: Obsidian är gratis men proprietärt. Genom att installera det"
-echo "godkänner du Obsidians egna villkor."
-if ask "Installera dessa program?"; then
-  flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-  grep -vE '^\s*(#|$)' "$FLATPAKS" | xargs flatpak install --user -y flathub
-fi
+show_profiles() {
+  local i=1
+  for p in "${PROFILES[@]}"; do
+    printf '%2d. %-38s (%s)\n' "$i" "$(meta "$p" namn)" "$(slug "$p")"
+    printf '    %s\n' "$(meta "$p" beskrivning)"
+    items "$p" | while read -r _ _ desc; do printf '      · %s\n' "$desc"; done
+    i=$((i + 1))
+  done
+}
 
-echo
-echo "Kommandoradsverktyg via Homebrew (se $BREWFILE)."
-if command -v brew >/dev/null 2>&1; then
-  if ask "Installera dem?"; then
-    brew bundle --file="$BREWFILE"
-  fi
+if [[ $LIST -eq 1 ]]; then show_profiles; exit 0; fi
+
+# Välj profiler.
+SELECTED=()
+if [[ -n "$WANT" ]]; then
+  IFS=',' read -r -a wanted <<< "$WANT"
+  for w in "${wanted[@]}"; do
+    match=""
+    for p in "${PROFILES[@]}"; do [[ "$(slug "$p")" == "$w" ]] && match="$p"; done
+    [[ -n "$match" ]] || { echo "Okänd profil: $w" >&2; exit 2; }
+    SELECTED+=("$match")
+  done
 else
-  echo "Homebrew saknas, hoppar över."
+  echo "ForskarOS – forskarens verktygslåda"
+  echo "Öppna verktyg är standard. Proprietärt och moln-AI installeras bara om du väljer det."
+  echo
+  show_profiles
+  echo
+  read -r -p "Vilka profiler? (t.ex. 2 3 5, 'alla' = alla öppna, Enter = avbryt) " reply
+  [[ -n "$reply" ]] || exit 0
+  if [[ "$reply" == "alla" ]]; then
+    for p in "${PROFILES[@]}"; do [[ "$(meta "$p" aktivt-val)" == ja ]] || SELECTED+=("$p"); done
+  else
+    for n in $reply; do
+      [[ "$n" =~ ^[0-9]+$ && $n -ge 1 && $n -le ${#PROFILES[@]} ]] || { echo "Ogiltigt val: $n" >&2; exit 2; }
+      SELECTED+=("${PROFILES[$((n - 1))]}")
+    done
+  fi
 fi
 
+FLATPAK_SCOPE=--user
+[[ $SYSTEM -eq 1 ]] && FLATPAK_SCOPE=--system
+
+ensure_flathub() {
+  run flatpak remote-add "$FLATPAK_SCOPE" --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+}
+
+ensure_uv() {
+  command -v uv >/dev/null 2>&1 && return 0
+  if command -v brew >/dev/null 2>&1 || [[ $DRY -eq 1 ]]; then run brew install uv; return 0; fi
+  echo "uv saknas och Homebrew finns inte. Hoppar över Python-verktyget." >&2
+  return 1
+}
+
+web_launcher() {
+  local name="$1" url="$2" desc="$3"
+  local dir="$HOME/.local/share/applications"
+  local file="$dir/forskaros-webb-$name.desktop"
+  if [[ $DRY -eq 1 ]]; then echo "+ skapa genväg $file → $url"; return; fi
+  mkdir -p "$dir"
+  cat > "$file" <<DESKTOP
+[Desktop Entry]
+Type=Application
+Name=${desc%% –*} (moln)
+Comment=${desc}
+Exec=xdg-open ${url}
+Icon=web-browser
+Categories=Education;Science;
+DESKTOP
+}
+
+for p in "${SELECTED[@]}"; do
+  echo
+  echo "== $(meta "$p" namn) =="
+  if [[ "$(meta "$p" aktivt-val)" == ja ]]; then
+    echo "$(meta "$p" beskrivning)"
+    echo "Moln-AI tar emot det du skriver. Följ tänk-först-principen och lägg aldrig in"
+    echo "personuppgifter eller sekretessbelagt material."
+    if [[ $YES -eq 1 && $DRY -eq 0 ]]; then
+      read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm
+    else
+      confirm="jag väljer"
+      [[ $DRY -eq 1 ]] || read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm
+    fi
+    [[ "$confirm" == "jag väljer" ]] || { echo "Hoppar över."; continue; }
+  fi
+  while read -r kind id desc; do
+    echo "· $desc"
+    case "$kind" in
+      flatpak) ensure_flathub; run flatpak install "$FLATPAK_SCOPE" -y --noninteractive flathub "$id" ;;
+      brew)
+        if command -v brew >/dev/null 2>&1 || [[ $DRY -eq 1 ]]; then run brew install "$id"
+        else echo "  Homebrew saknas, hoppar över $id."; fi ;;
+      uv) ensure_uv && run uv tool install "$id" ;;
+      webb) web_launcher "${id%%|*}" "${id#*|}" "$desc" ;;
+      *) echo "  Okänd typ: $kind" >&2 ;;
+    esac
+  done < <(items "$p")
+done
+
 echo
-forskaros-init
-echo "Klart. Öppna Obsidian → Open folder as vault → ~/ForskarOS"
-echo "och aktivera ForskarOS Core under Settings → Community plugins."
-read -r -p "Tryck Enter för att stänga." _
+if [[ $DRY -eq 0 ]] && command -v forskaros-init >/dev/null 2>&1; then FORSKAROS_INGEN_VALKOMST=1 forskaros-init; fi
+echo "Klart. Forskningsportalen och verktygen per fas finns i vaulten: 00 START/Verktygslåda."
+if [[ -z "$WANT" && $DRY -eq 0 ]]; then read -r -p "Tryck Enter för att stänga." _; fi

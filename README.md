@@ -13,6 +13,21 @@ ForskarOS bygger vi inte från grunden. Vi tar **[Bluefin LTS](https://projectbl
   - **Epistemisk märkning** av vad som är belagt, tolkning och spekulation, plus idéparkering och vila (inkubation).
 - **Systemintegration:** vaulten skapas vid första inloggning, tillägget uppdateras när OS:et uppdateras och verktygen installeras efter ett aktivt val.
 
+- **Forskarens verktygslåda:** öppna verktyg i profiler som du väljer bland vid första inloggningen (eller senare via *ForskarOS – verktygslåda*):
+
+  | Profil | Innehåll |
+  |---|---|
+  | **Grund** (installeras automatiskt) | Firefox, LibreOffice, Zotero, JASP, Xournal++, Déjà Dup |
+  | Skriva och publicera | Zettlr, ONLYOFFICE, TeXstudio, Pandoc, Typst |
+  | Statistik och data | jamovi, LabPlot, R, DuckDB, JupyterLab |
+  | Programmering och reproducerbarhet | VSCodium, uv, git-annex, DataLad, ripgrep |
+  | Kvalitativ forskning | Speech Note (lokal transkribering), Taguette |
+  | Idéer och modeller | draw.io, Freeplane, Rnote |
+  | Lokal AI | Ollama, Alpaca |
+  | Proprietärt och moln (aktivt val) | Obsidian, Perplexity, Elicit, Consensus |
+
+  Alla verktyg kontrolleras automatiskt mot Flathub, Homebrew och PyPI så att de finns för både PC och Mac (arm64). Forskningsportalen i vaulten (`00 START/Verktygslåda`) samlar öppna resurser per fas, bland annat OpenAlex, DiVA, SwePub, OSF, SND, Zenodo och Etikprövningsmyndigheten.
+
 Bakgrund och principer: [`Forskningsfilosofi`](vault/00%20START/Forskningsfilosofi.md), [`Arbetsmetod`](vault/00%20START/Arbetsmetod.md) och [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Hårdvara

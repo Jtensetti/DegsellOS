@@ -1,0 +1,8 @@
+# namn: Statistik och data
+# beskrivning: Kvantitativ analys med och utan kod.
+# fas: utveckla
+flatpak org.jamovi.jamovi               jamovi – statistik med klick, bygger på R
+flatpak org.kde.labplot                 LabPlot – diagram och dataanalys
+brew    r                               R – statistikspråket
+brew    duckdb                          DuckDB – snabb SQL direkt på CSV- och Parquet-filer
+uv      jupyterlab                      JupyterLab – anteckningsböcker för Python

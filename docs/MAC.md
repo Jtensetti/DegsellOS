@@ -19,6 +19,11 @@ alla Apple Silicon-Macar.
 5. Starta. GNOME:s välkomstguide skapar ditt konto. Kör sedan
    *ForskarOS – installera verktyg* från programmenyn.
 
+Vid första start installeras grundverktygen automatiskt i bakgrunden (kräver
+nätverk, tar en stund). Vid första inloggningen öppnas verktygslådan där du
+väljer fler verktyg. Delat urklipp och automatisk skärmstorlek fungerar i
+UTM:s QEMU-läge tack vare `spice-vdagent`.
+
 > **Ej verifierat än:** att disken startar i UTM och att välkomstguiden
 > skapar kontot. Det är det första vi testar tillsammans på din MacBook Neo.
 

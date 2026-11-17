@@ -24,6 +24,8 @@ jobs:
         with:
           node-version: 22
       - run: bash scripts/check.sh
+      - name: Kontrollera att alla verktyg finns för amd64 och arm64
+        run: bash tests/verify-apps.sh
 
   build:
     needs: test

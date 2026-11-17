@@ -45,3 +45,4 @@
 .callout[data-callout="belagt"] { --callout-color: 46, 160, 67; --callout-icon: lucide-check-circle; }
 .callout[data-callout="tolkning"] { --callout-color: 210, 153, 34; --callout-icon: lucide-lightbulb; }
 .callout[data-callout="spekulation"] { --callout-color: 163, 113, 247; --callout-icon: lucide-cloud; }
+.forskaros-tools { cursor:pointer; margin-bottom:0.3rem; }

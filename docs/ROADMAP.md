@@ -29,6 +29,20 @@
 - [ ] Prova metoden på riktigt i fyra veckor och justera reglerna efter erfarenheten
 - [ ] Pröva måtten: mäter de det vi tror? (en forskningsfråga i sig)
 
+## 0.3.1 – Forskarens arbetsplats
+
+- [x] Verktygsprofiler: grund, skriva, statistik, programmering, kvalitativ, idéer, lokal AI, proprietärt/moln
+- [x] Grundverktygen installeras automatiskt vid första start (systemtjänst, försöker igen utan nätverk)
+- [x] Verktygslådan öppnas vid första inloggningen
+- [x] Forskningsportal per fas i vaulten, med svenska resurser
+- [x] Panelen visar verktyg för fasen
+- [x] UTM/QEMU: spice-vdagent och qemu-guest-agent
+- [x] Docka med forskningsverktygen
+- [x] CI kontrollerar att alla verktyg finns för amd64 och arm64
+- [ ] Delad mapp mellan Mac och VM (virtiofs/9p)
+- [ ] Öppen självhostad AI-sök som alternativ till Perplexity (t.ex. Perplexica)
+- [ ] Färdig `.utm`-paketering med inställningar för RAM, CPU och skärm
+
 ## 0.4 – Profil och identitet
 
 - [ ] GNOME-standardinställningar (fokusläge, favoriter, bakgrund)

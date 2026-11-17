@@ -200,6 +200,10 @@ test('frågemallen innehåller engagemang, avgränsning och fasloggen', () => {
   assert.match(t, /fas: utforska/);
 });
 
+test('varje fas har verktyg', () => {
+  for (const ph of e.PHASES) assert(e.PHASE_TOOLS[ph.id], `verktyg saknas för ${ph.id}`);
+});
+
 test('datumhjälp', () => {
   assert.equal(e.addDays('2026-12-25', 14), '2027-01-08');
   assert.equal(e.daysBetween('2026-11-01', '2026-11-17'), 16);

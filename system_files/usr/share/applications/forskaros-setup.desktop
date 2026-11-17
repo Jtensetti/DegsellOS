@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=ForskarOS – installera verktyg
-Comment=Installera Obsidian, Zotero och forskningsverktyg
+Name=ForskarOS – verktygslåda
+Comment=Välj forskningsverktyg: kontor, statistik, skrivande, kvalitativ analys, lokal AI
 Exec=/usr/bin/forskaros-setup
 Terminal=true
 Icon=applications-science

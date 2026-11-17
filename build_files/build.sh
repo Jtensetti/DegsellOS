@@ -4,9 +4,9 @@
 # så att basavbildningens uppdateringar inte krockar med våra ändringar.
 set -euxo pipefail
 
-# Systemfiler (kommandon, autostart, programmeny, Brewfile, Flatpak-lista).
+# Systemfiler (kommandon, tjänster, autostart, programmeny, verktygsprofiler).
 cp -a /ctx/system_files/. /
-chmod 0755 /usr/bin/forskaros-init /usr/bin/forskaros-setup
+chmod 0755 /usr/bin/forskaros-init /usr/bin/forskaros-setup /usr/libexec/forskaros-grund
 
 # Seed-vaulten. Kopieras till användarens hemkatalog vid första inloggning.
 install -d /usr/share/forskaros
@@ -19,3 +19,14 @@ sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' \
   /usr/share/forskaros/vault/.obsidian/plugins/forskaros-core/manifest.json \
   > /usr/share/forskaros/VERSION
 test -s /usr/share/forskaros/VERSION
+
+# Virtuell maskin: delat urklipp, automatisk skärmstorlek och ren avstängning
+# i UTM/QEMU. Tjänsterna startar bara när motsvarande virtuella enhet finns.
+dnf -y install spice-vdagent qemu-guest-agent
+dnf clean all
+
+# Grundverktygen installeras vid första start med nätverk.
+systemctl enable forskaros-grund.service
+
+# Arbetsytans standardinställningar (dockan m.m.).
+if command -v dconf >/dev/null 2>&1; then dconf update; fi

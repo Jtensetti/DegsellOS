@@ -1,0 +1,9 @@
+# namn: Grund
+# beskrivning: Installeras automatiskt vid första start. Kontor, källor, statistik, PDF och säkerhetskopior.
+# fas: alla
+flatpak org.mozilla.firefox            Firefox – webbläsare
+flatpak org.libreoffice.LibreOffice    LibreOffice – ordbehandling, kalkyl, presentation
+flatpak org.zotero.Zotero              Zotero – källhantering och citat
+flatpak org.jaspstats.JASP             JASP – statistik med klick, klassisk och bayesiansk
+flatpak com.github.xournalpp.xournalpp Xournal++ – anteckna direkt i PDF:er
+flatpak org.gnome.DejaDup              Déjà Dup – säkerhetskopiering

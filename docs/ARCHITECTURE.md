@@ -9,8 +9,9 @@
 ├───────────────────────────────────────────────┤
 │ Vault: ~/ForskarOS i ren Markdown              │
 ├───────────────────────────────────────────────┤
-│ Forskningsverktyg: Zotero, Pandoc, ripgrep,    │
-│ Ollama (lokal AI), Git                         │
+│ Verktygslåda i profiler (Flatpak, Homebrew,    │
+│ uv): kontor, källor, statistik, skrivande,     │
+│ kvalitativ analys, lokal AI. Grund automatiskt │
 ├───────────────────────────────────────────────┤
 │ ForskarOS-lager: forskaros-init/-setup,        │
 │ autostart, seed-vault                          │
@@ -30,8 +31,10 @@ amd64 och arm64. Vi underhåller bara det som är unikt för ForskarOS.
 dåligt på Apple Silicon. Reproducerbarhet för experiment (Nix eller Guix per
 studie) hör till forskningslagret, inte till skrivbordet.
 
-**Liten avbildning.** Allt som kan installeras som Flatpak eller via Homebrew
-installeras av `forskaros-setup` i stället för att bakas in. Det minskar
+**Liten avbildning.** Program bakas inte in i avbildningen. Grundprofilen
+installeras som Flatpak vid första start (`forskaros-grund.service`), resten
+väljer forskaren i verktygslådan (`forskaros-setup`). Profilerna är datafiler i
+`/usr/share/forskaros/profiler`, så att de går att testa och utöka. Det minskar
 konflikter med basens uppdateringar och låter forskaren välja.
 
 **Proprietärt ingår inte.** Obsidian distribueras inte i avbildningen.

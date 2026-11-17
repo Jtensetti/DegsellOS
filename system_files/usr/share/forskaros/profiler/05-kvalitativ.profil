@@ -1,0 +1,5 @@
+# namn: Kvalitativ forskning
+# beskrivning: Transkribera intervjuer lokalt och koda kvalitativa data.
+# fas: utveckla
+flatpak net.mkiol.SpeechNote            Speech Note – transkribering helt på din dator (Whisper)
+uv      taguette                        Taguette – kodning av intervjuer och dokument

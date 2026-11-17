@@ -40,6 +40,17 @@ const PHASES = [
     fråga: 'Vem ska kunna granska, använda och utmana resultatet?' }
 ];
 
+/** Verktyg per fas (se 00 START/Verktygslåda). Verktyg är medel, inte metod. */
+const PHASE_TOOLS = {
+  utforska: 'Zotero · OpenAlex · DiVA · Perspektivkarta · Upptäckaren',
+  kombinera: 'draw.io · Freeplane · Hypotes · Upptäckaren',
+  välj: 'OSF-förregistrering · Etikprövning · Falsifiering',
+  pröva: 'Motprov · Forskningsmöte · Lokal AI som Motståndaren',
+  utveckla: 'JASP · jamovi · R · Python · Speech Note · Taguette · Experiment',
+  ompröva: 'Omprövning · Felrättning · Förmågegranskning',
+  dela: 'Zettlr · LibreOffice · Pandoc · Zenodo · ORCID'
+};
+
 const MAX_AKTIVA_FRÅGOR = 2;
 const MIN_EGNA_ORD = 50;
 
@@ -775,7 +786,7 @@ function appendPhaseLog(body, line) {
 }
 
 const engine = {
-  PHASES, ROLES, MODES, CAPABILITIES, PRINCIPLES, EPISTEMIC_CONTRACT, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
+  PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, PRINCIPLES, EPISTEMIC_CONTRACT, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
   today, addDays, daysBetween, phaseOf, nextPhase, linkTarget, refersTo, section, ownWords,
   phaseRequirements, audit, metrics, buildPrompt, appendPhaseLog, questionNote, ideaNote, TYPES
 };
@@ -1015,6 +1026,8 @@ class ForskarOSView extends ItemView {
     const p = phaseOf(fas);
     box.createEl('div', { cls: 'forskaros-muted', text: `Cykel ${q.fm.cykel || 1} · ${p.symbios}` });
     box.createEl('div', { cls: 'forskaros-phase-question', text: p.fråga });
+    const tools = box.createEl('div', { cls: 'forskaros-muted forskaros-tools', text: `Verktyg: ${PHASE_TOOLS[fas] || ''}` });
+    tools.addEventListener('click', () => void this.plugin.openPath('00 START/Verktygslåda.md'));
     const reqs = phaseRequirements(q, notes);
     const list = box.createEl('ul', { cls: 'forskaros-checklist' });
     for (const r of reqs) list.createEl('li', { text: `${r.ok ? '✓' : '○'} ${r.text}`, cls: r.ok ? 'is-ok' : 'is-missing' });

@@ -1,0 +1,15 @@
+[Unit]
+Description=ForskarOS: installera forskarens grundverktyg (en gång)
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=!/var/lib/forskaros/grund.klar
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/forskaros-grund
+Restart=on-failure
+RestartSec=120
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

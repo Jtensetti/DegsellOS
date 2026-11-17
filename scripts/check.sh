@@ -7,12 +7,13 @@ node --check vault/.obsidian/plugins/forskaros-core/main.js
 node tests/engine.test.js
 node tests/plugin.test.js
 
-for f in build_files/build.sh scripts/*.sh system_files/usr/bin/*; do
+for f in build_files/build.sh scripts/*.sh tests/*.sh system_files/usr/bin/* system_files/usr/libexec/*; do
   bash -n "$f"
 done
 echo "OK: skalskriptens syntax"
 
 bash tests/init.test.sh
+bash tests/profiles.test.sh
 
 python3 - <<'PY'
 import json
@@ -22,8 +23,6 @@ manifest = json.loads((root / '.obsidian/plugins/forskaros-core/manifest.json').
 assert manifest['id'] == 'forskaros-core'
 assert len(list(root.rglob('*.md'))) >= 4
 assert Path('Containerfile').is_file()
-for line in Path('system_files/usr/share/forskaros/flatpaks.list').read_text().splitlines():
-    line = line.strip()
-    assert not line or line.startswith('#') or line.count('.') >= 2, line
-print('OK: manifest, vault, Containerfile, Flatpak-lista')
+assert any(Path('system_files/usr/share/forskaros/profiler').glob('*.profil'))
+print('OK: manifest, vault, Containerfile, verktygsprofiler')
 PY

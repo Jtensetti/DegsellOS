@@ -1,0 +1,5 @@
+# namn: Lokal AI
+# beskrivning: Språkmodeller som körs helt på din dator. Inget lämnar maskinen.
+# fas: pröva
+brew    ollama                          Ollama – kör språkmodeller lokalt
+flatpak com.jeffser.Alpaca              Alpaca – chatt med lokala modeller
