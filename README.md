@@ -2,19 +2,20 @@
 
 Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LTS](https://projectbluefin.io/). Den innehåller:
 
+- **ForskarOS – forskningsprojekt** knyter ihop data, analys, referenser och rapport i utvecklingsversionen. En kollega kan köra om analysen från samma underlag.
 - **Forskningsverktyg** i profiler som installeras efter behov. Programmenyn har en mapp per arbetsfas.
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
 **ForskarOS 2027.1-beta2 finns att ladda ner för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
 
-<p align="center"><img src="docs/bilder/beta2-forskningsfraga-qemu.png" alt="ForskarOS i QEMU. Obsidian visar en egen forskningsfråga om varför elever byter hypotes, med fasen Utforska och dess kontrollfrågor i sidopanelen." width="1100"></p>
-
-<sub>Den publicerade beta2-disken för PC efter omstart. Frågan skapades med Core 0.3.1 i Obsidian 1.15.1, installerat från Flathub via ForskarOS välkomstguide. <a href="docs/BETA2.md#första-inloggningen-på-den-publicerade-pc-disken">Så gick testet till.</a></sub>
-
 ## Forskningsprojekt i utvecklingsversionen
 
 Öppna **ForskarOS – forskningsprojekt** i programmenyn eller välj **P** i välkomstguiden. Skapa ett kvantitativt projekt för en observationstabell eller ett kvalitativt projekt för kodade utdrag från Taguette. Exempeldata ingår. Importera din egen CSV och dina referenser från Zotero, redigera manuset och välj **Bygg rapport**.
+
+<p align="center"><img src="docs/bilder/projekt-rapport-qemu.png" alt="ForskarOS i QEMU. Till vänster syns projektets knappar för data, manus och omkörning. Till höger visas den byggda rapporten med en fråga, en förutsägelse och ett stapeldiagram." width="1100"></p>
+
+<sub>Projektfönstret och rapporten på en amd64-VM med utvecklingsversionens projektverktyg installerat ovanpå beta2. Observationerna är övningsdata. <a href="docs/BETA2.md#första-inloggningen-på-den-publicerade-pc-disken">Se även skärmdumpen från den publicerade beta2-disken.</a></sub>
 
 Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. Det tillkom på `main` efter de publicerade beta2-diskarna. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
 
