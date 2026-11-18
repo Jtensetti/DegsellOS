@@ -18,10 +18,9 @@ alla Apple Silicon-Macar.
    och 4 CPU-kärnor.
 5. Starta och logga in som **forskare** med lösenordet **forskare**. Du måste
    byta lösenord direkt. Vid första
-   inloggningen öppnas *ForskarOS – verktygslåda* där du väljer verktyg.
+   inloggningen öppnas appen **ForskarOS**. Välj **Nytt forskningsprojekt** för att prova ett exempel eller **Verktyg** för att välja fler program.
 
-När UTM-mallen finns (se `vm/utm/README.md`) blir steg 2–4 ett enda steg:
-packa upp `ForskarOS.utm.zip` och dubbelklicka.
+Beta4 för Apple Silicon levereras som en qcow2-disk för import i UTM.
 
 ## Dela filer mellan Mac och ForskarOS
 
@@ -33,9 +32,8 @@ packa upp `ForskarOS.utm.zip` och dubbelklicka.
   skriv `smb://192.168.64.1` (Macens adress i UTM:s delade nätverk).
 - Zotero, e-post och molnlagring fungerar som vanligt via nätverket.
 
-Vid första start installeras grundverktygen automatiskt i bakgrunden (kräver
-nätverk, tar en stund). Vid första inloggningen öppnas verktygslådan där du
-väljer fler verktyg. Delat urklipp och automatisk skärmstorlek fungerar i
+Grundverktygen installeras i bakgrunden när det finns nät. Du kan skapa ett
+projekt och prova den medföljande analysen under tiden. Delat urklipp och automatisk skärmstorlek fungerar i
 UTM:s QEMU-läge tack vare `spice-vdagent`.
 
 > **Ej verifierat än:** att disken startar i UTM, inloggningen med

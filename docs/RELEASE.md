@@ -19,6 +19,8 @@ Varje push till `main` bygger och publicerar `latest` och en datumtagg. Installe
 
 En release kan också startas genom en push till `main` där commitmeddelandet börjar med `[release-media] `. Då publiceras alla tre medier från det signerade manifestets digest efter godkänt bygge.
 
+Om bara installeraren behöver rättas, behåll den publicerade versionssiffran och använd `[release-iso] ` på `main`. CI hämtar versionsmanifestet och bygger bara den interaktiva ISO:n. För beta4 ligger den i samma arkivpost som det äldre, obevakade installationsmediet och har ett eget filnamn och en egen kontrollsumma.
+
 Om Archive rapporterar ett fel före den publika nedladdningen, kontrollera postens jobb med *Återuppta en uppladdning till Internet Archive*. Arbetsflödet kan inspektera ett kvotfel eller begära en omkörning av ett befintligt katalogjobb.
 
 > Labbet får en ny version bara när `labb/` ändras. Gamla versioner tas inte bort,

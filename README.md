@@ -7,37 +7,35 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
-**ForskarOS 2027.1-beta3 finns som systemuppdatering för amd64 och arm64.** För en ny installation finns beta2 som VM-disk och installations-ISO. [Uppgradering och testresultat för beta3](docs/BETA3.md) · [Nedladdningar](#ladda-ner).
+**ForskarOS 2027.1-beta4** finns som installations-ISO för PC och som VM-disk för både PC och Apple Silicon. [Ladda ner](#ladda-ner) · [Installationsprov och kontrollsummor](docs/BETA4.md).
 
-## Forskningsprojekt i 2027.1-beta3
+## Ditt första forskningsprojekt
 
-Öppna **ForskarOS – forskningsprojekt** i programmenyn eller välj **P** i välkomstguiden. Skapa ett kvantitativt projekt för en observationstabell eller ett kvalitativt projekt för kodade utdrag från Taguette. Exempeldata ingår. Välj **Granska påståenden** för att läsa stödet och eventuella motbelägg. En rättelse i en observation eller ett kodat utdrag visar vilka påståenden du behöver ompröva. [Prova en rättelse i exempelprojektet](docs/PROJEKT.md#pröva-en-rättelse).
+Öppna **ForskarOS** och välj **Nytt forskningsprojekt**. Välj en observationstabell eller kodade intervjuutdrag. Exempeldata ingår. I projektet ser du vilket påstående som behöver din uppmärksamhet, varför det behöver granskas och vilket underlag det bygger på. En källpassage kan kopplas till en Zotero-referens, sida och citat.
 
-Importera din egen CSV och dina referenser från Zotero, redigera manuset och välj **Bygg rapport**.
+<p align="center"><img src="docs/bilder/beta4-installation-qemu.png" alt="Det skyddade intervjuprojektet efter en rättelse. Ett påstående behöver omprövas och två är fortfarande granskade." width="1100"></p>
 
-<p align="center"><img src="docs/bilder/beta3-omprovning-qemu.png" alt="Den sparade rapporten visar påståendet om två av tre elever, statusen Ompröva och de tre rättade observationsraderna med värdena 0, 0 och 1." width="1100"></p>
+I provet ändrades ett intervjuutdrag från ”jag bytte” till ”jag stod fast”. Appen pekade ut den mening i manuset som byggde på utdraget. Den sparade rapporten gick fortfarande att återskapa. [Se citatet och motbelägget i den installerade appen](docs/bilder/beta4-motbelagg-qemu.png).
 
-<sub>Från en ForskarOS-VM. Efter rättelsen bytte en av tre elever hypotes i övningsmaterialet. Klicket på den tidigare meningen öppnade dess underlag och en länk till analyskoden.</sub>
-
-**Under arbete i beta4:** appen ForskarOS ersätter välkomstmenyn i terminalen, verktygslådan och projektfönstret. Den visar ett nästa steg i taget och har kvar allt det gamla kunde, i listor och menyer. Hela systemet får ett gemensamt designsystem: typsnitt för gränssnitt, läsning och kod, accentfärgen teal och en lugnare skrivbordsbakgrund. Rapporten får en läsyta för skärm, mobil och utskrift. Projektet blir också en forskningsdomän. Skyddat material analyseras utan nätverk och utan åtkomst till hemkatalogen, varje körning visar om den är dokumenterad, återkörbar eller återkörd, påståenden kan kopplas till citat i källor från Zotero och varje körning beskrivs i det öppna formatet RO-Crate. [Status mot ForskarOS 3.0](docs/FORSKAROS-3.md).
-
-<p align="center"><img src="docs/bilder/app-projekt.png" alt="Projektvyn i appen ForskarOS med stegen Granska, Bygg, Upprepa och Dela, nästa steg Upprepa den senaste körningen och tre granskade påståenden." width="620"></p>
-
-<sub>Appen i beta4 med ForskarOS typsnitt, i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Accentfärgen är inlagd för hand, eftersom utvecklingsdatorns libadwaita 1.5 saknar GNOME:s accentval. [Designsystemet](docs/DESIGN.md).</sub>
-
-Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
+Varje körning sparar underlag, analyskod och resultat i en mapp med en HTML-rapport och RO-Crate-metadata. Du kan upprepa körningen och jämföra alla resultat. För skyddade projekt körs analysen och rapportbygget med nätverket avstängt och hemkatalogen dold. [Arbetsgång och exempel](docs/PROJEKT.md) · [Vad projektskyddet omfattar](docs/FORSKAROS-3.md#hotmodell-för-skyddade-projekt).
 
 ## Ladda ner
 
 Båda VM-diskarna och installations-ISO:n hämtades i sin helhet från Internet Archive den 18 november 2026. För alla tre stämde SHA-256 med byggresultatet och med arkivets kontrollsummefil.
 
-Den som kör ForskarOS kan byta till **2027.1-beta3** med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta3` och sedan starta om. För en ny VM kan du börja med en av beta2-diskarna nedan.
+Om ForskarOS redan är installerat kan du byta till beta4 med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta4` och sedan starta om.
 
 | Ladda ner | För | SHA-256 |
 |---|---|---|
-| [ForskarOS-2027.1-beta2-arm64.qcow2](https://archive.org/download/forskaros-2027.1-beta2-arm64-vm/ForskarOS-2027.1-beta2-arm64.qcow2) | Apple Silicon-Mac i UTM, se [Mac-guiden](docs/MAC.md) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-arm64-vm/ForskarOS-2027.1-beta2-arm64.qcow2.sha256) |
-| [ForskarOS-2027.1-beta2-amd64.qcow2](https://archive.org/download/forskaros-2027.1-beta2-amd64-vm/ForskarOS-2027.1-beta2-amd64.qcow2) | PC i QEMU eller virt-manager | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-amd64-vm/ForskarOS-2027.1-beta2-amd64.qcow2.sha256) |
-| [ForskarOS-2027.1-beta2-amd64.iso](https://archive.org/download/forskaros-2027.1-beta2-amd64-iso/ForskarOS-2027.1-beta2-amd64.iso) | Installation på PC och Intel-Mac | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-amd64-iso/ForskarOS-2027.1-beta2-amd64.iso.sha256) |
+| [ForskarOS-2027.1-beta4-arm64.qcow2](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) | Apple Silicon-Mac i UTM, se [Mac-guiden](docs/MAC.md) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2.sha256) |
+| [ForskarOS-2027.1-beta4-amd64.qcow2](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2) | PC i QEMU eller virt-manager | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2.sha256) |
+| [ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso) | Installation på PC och Intel-Mac | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256) |
+
+**Har du redan en fil som heter `ForskarOS-2027.1-beta4-amd64.iso`?** Den första ISO:n installerar automatiskt och kan radera anslutna diskar. För installation på en dator, hämta filen med `-interaktiv-r2.iso` i tabellen ovan. Revisionen med enbart `-interaktiv.iso` i namnet kan stanna vid valet av svenska.
+
+[Installera på PC och välj rätt disk](docs/BETA4.md#installera-på-pc).
+
+Tidigare utgåvor: [beta3](docs/BETA3.md) och [beta2](docs/BETA2.md).
 
 ## ForskarOS Core
 

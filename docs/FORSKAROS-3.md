@@ -2,7 +2,7 @@
 
 Målarkitekturen kommer från en arkitekturgranskning med tio simulerade expertperspektiv (18 november 2026). Kärnan: **forskningsprojektet blir systemets centrala resurs**, en forskningsdomän med egna data, behörigheter, körmiljö, proveniens och evidenskedja. Granskningen satte fem acceptanstester. Det här dokumentet visar var ForskarOS står mot dem.
 
-Status gäller 2027.1-beta4 (under arbete). "Automatiserat" betyder att testet körs i CI vid varje push (`tests/doman.test.py`).
+Status gäller [2027.1-beta4 och installationsprovet](BETA4.md). "Automatiserat" betyder att testet körs i CI vid varje push (`tests/doman.test.py`).
 
 ## Acceptanstesten
 
@@ -43,7 +43,7 @@ Skyddet omfattar **inte** program som forskaren själv öppnar, urklipp, AI-tjä
 
 ## Nästa steg (P1–P4 i granskningen)
 
-1. Testa beta4 i en ForskarOS-VM: skyddat projekt, sandlådan under SELinux, upprepning efter uppgradering.
+1. Testa upprepning av en skyddad beta4-körning efter nästa systemuppgradering. På den nyinstallerade beta4-datorn gick den skyddade körningen att upprepa med SELinux i enforcing-läge.
 2. Zotero: läs annoteringar direkt via Zoteros lokala API i stället för kopiera och klistra in.
 3. Ett tolkande, humanistiskt arbetsflöde med motstridiga källor (granskningens scenario D).
 4. Användartester med tre forskarprofiler (test 5).
