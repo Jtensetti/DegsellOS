@@ -20,7 +20,29 @@ Core 0.3.1 från beta2 provades separat i Obsidian 1.15.1 i den [tidigare amd64-
 | 49 egna ord | Samma utgångsläge. Utveckling och prövning var spärrade. |
 | 50 egna ord | Utveckling var förvalt och texten gick att kopiera. |
 
-I en 275 pixlar bred sidopanel fick alla sju fasnamn plats över fyra rader. Fysisk hårdvara, UTM på en Mac, en genomförd installation från ISO och den fullständiga Flatpak-installationen återstår att pröva.
+I en 275 pixlar bred sidopanel fick alla sju fasnamn plats över fyra rader. Fysisk hårdvara, UTM på en Mac och en genomförd installation från ISO återstår att pröva.
+
+### Första inloggningen på den publicerade PC-disken
+
+Den 18 november 2026 hämtades den 3 922 984 960 byte stora amd64-disken från Internet Archive på nytt. SHA-256 stämde med tabellen ovan. QEMU startade från en tom skrivbar överlagring med UEFI, fyra virtuella processorer och 4 GiB minne.
+
+Efter lösenordsbytet öppnades ForskarOS verktygslåda. Det första installationsförsöket nådde inte Flathub eftersom gästens DNS inte kunde slå upp värdnamnet. Efter att testnätets proxy och dess rotcertifikat hade ställts in gick samma menyval igenom. Verktygslådan installerade Obsidian 1.15.1 från Flathub. Därefter valdes `~/ForskarOS` i mappväljaren och det medföljande Core 0.3.1 aktiverades i Obsidians förtroendedialog.
+
+Med *Ny forskningsfråga* skapades ”Hur ofta byter elever hypotes efter konkret respons?”. Motiveringen beskrev ett sätt att skilja förståelse från följsamhet. Core sparade frågan som en lokal Markdown-fil med status `aktiv` och fas `utforska`.
+
+Obsidian stängdes och hela VM:n startades om. Efter ny inloggning öppnades samma fråga och motivering i Obsidian. Gammalt och nytt Linux-start-ID skilde sig åt. Anteckningens SHA-256 var `4887c364db4c1a312c298243a0b050265edf5b13b75529d040536e531eeb0264` både före och efter omstarten. [Skärmdump direkt från QEMU efter omstarten](bilder/beta2-forskningsfraga-qemu.png).
+
+### Vad fasmarkeringarna visar
+
+Tre små prov kördes direkt mot regelmotorn i Core 0.3.1. Provfrågan gällde varför elever byter hypotes efter återkoppling. Två möjliga förklaringar var att eleven förstått belägget och att eleven följer lärarens signal. Ett sätt att skilja dem åt är att ge eleven en ny uppgift utan läraren och be eleven motivera sitt svar.
+
+| Prov | Utfall i beta2 |
+|---|---|
+| Bara den första hypotesen hade en förutsägelse. Bara den andra hade ett falsifieringskriterium och angiven konfidens. Frågans motivering och avgränsning var ifyllda. | Alla fem krav i *Välj* blev godkända. Ingen enskild hypotes innehöll alla tre uppgifterna. |
+| Ett experiment hade status `planerat`. Under *Resultat* stod ”Inga data har samlats in ännu.” | Kravet på ett experiment eller arbetsprov med resultat blev godkänt. |
+| En testbar förutsägelse på 17 ord jämfördes med ”Jag ska fundera på det.” upprepat tio gånger. | Bara den upprepade texten nådde gränsen på 50 egna ord för AI:s prövningsläge. |
+
+Som jämförelse installerades forskningsmappen med `scripts/install-vault.sh` på en Linuxvärd utanför ForskarOS. En rekursiv filjämförelse visade att den innehöll samma mallar och tillägg som källträdet för beta2. Den installerade Core-filen `main.js` hade också samma SHA-256 på Linuxvärden som i den nystartade VM:ns forskningsmapp.
 
 ## Internet Archive
 

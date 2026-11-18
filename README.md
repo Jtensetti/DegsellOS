@@ -8,9 +8,9 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 
 **ForskarOS 2027.1-beta2 finns att ladda ner för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
 
-<p align="center"><img src="docs/bilder/forskaros-core-031-qemu.png" alt="ForskarOS Core 0.3.1 i Obsidian med den aktiva forskningsfrågan och alla sju faserna i sidopanelen" width="1100"></p>
+<p align="center"><img src="docs/bilder/beta2-forskningsfraga-qemu.png" alt="ForskarOS i QEMU. Obsidian visar en egen forskningsfråga om varför elever byter hypotes, med fasen Utforska och dess kontrollfrågor i sidopanelen." width="1100"></p>
 
-<sub>Core 0.3.1 i riktig Obsidian 1.15.1. Skärmdumpen kommer från den befintliga amd64-testmaskinen med beta1 som systembas och tillägget från beta2.</sub>
+<sub>Den publicerade beta2-disken för PC efter omstart. Frågan skapades med Core 0.3.1 i Obsidian 1.15.1, installerat från Flathub via ForskarOS välkomstguide. <a href="docs/BETA2.md#första-inloggningen-på-den-publicerade-pc-disken">Så gick testet till.</a></sub>
 
 ## Ladda ner
 
