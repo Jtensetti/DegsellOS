@@ -51,6 +51,7 @@ jobs:
         run: bash tests/verify-apps.sh
 
   build:
+    if: "!startsWith(github.event.head_commit.message, '[release-iso] ')"
     needs: test
     strategy:
       fail-fast: false
@@ -145,6 +146,39 @@ jobs:
     with:
       version: ${{ needs.publish.outputs.version }}
       digest: ${{ needs.publish.outputs.digest }}
+    secrets:
+      IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
+      IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}
+
+  published-image:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[release-iso] ')
+    needs: test
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.image.outputs.version }}
+      digest: ${{ steps.image.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: image
+        name: Hämta den redan publicerade versionens manifest
+        run: |
+          VERSION=$(cat VERSION)
+          [[ "$VERSION" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ && "$VERSION" != *-dev ]]
+          DIGEST=$(skopeo inspect --format '{{.Digest}}' "docker://ghcr.io/${GITHUB_REPOSITORY,,}:$VERSION")
+          [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+
+  release-iso:
+    needs: published-image
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/release-vm.yml
+    with:
+      version: ${{ needs.published-image.outputs.version }}
+      digest: ${{ needs.published-image.outputs.digest }}
+      endast: iso
     secrets:
       IA_ACCESS_KEY: ${{ secrets.IA_ACCESS_KEY }}
       IA_SECRET_KEY: ${{ secrets.IA_SECRET_KEY }}

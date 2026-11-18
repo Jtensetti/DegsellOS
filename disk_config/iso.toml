@@ -1,3 +1,11 @@
-# bootc-image-builder: installations-ISO (anaconda-iso).
-# Tom med avsikt: installeraren frågar interaktivt om disk, och kontot
-# skapas i GNOME:s välkomstguide vid första start (ej verifierat än).
+# Utan en egen Kickstart genererar bootc-image-builder clearpart --all.
+# Låt Anaconda fråga efter måldisk och invänta användarens bekräftelse.
+[customizations.installer.kickstart]
+contents = """
+graphical
+rootpw --lock
+firstboot --enable
+"""
+
+[customizations.installer.modules]
+enable = ["org.fedoraproject.Anaconda.Modules.Localization"]
