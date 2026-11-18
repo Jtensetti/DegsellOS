@@ -29,7 +29,7 @@ HERE = Path(__file__).resolve().parent
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(HERE))
 from belagg import add_source, approve, source_choices, source_label  # noqa: E402
-from oversikt import (PROJEKTMAPP, STATUS_STYLE, next_step, overview, progress,  # noqa: E402
+from oversikt import (PROJEKTMAPP, STATUS_STYLE, next_step, overview, pending_claims, progress,  # noqa: E402
                       recent_projects, remember_project, suggest_key)
 from projekt import create, domain, run, verify  # noqa: E402
 
@@ -128,7 +128,7 @@ def stepper(steps):
             item.add_css_class("accent")
         else:
             item.add_css_class("dim-label")
-        spoken = {"klar": "klart", "nu": "nästa steg", "senare": "senare"}[state]
+        spoken = {"klar": "klart", "nu": "nästa steg", "senare": "senare", "saknas": "inga länkade påståenden"}[state]
         item.update_property([Gtk.AccessibleProperty.LABEL], [f"{name}: {spoken}"])
         box.append(item)
     return box
@@ -315,7 +315,7 @@ class Window(Adw.ApplicationWindow):
 
     def about(self):
         try:
-            version = Path("/usr/share/forskaros/VERSION").read_text(encoding="utf-8").split()[0]
+            version = Path("/usr/share/forskaros/RELEASE").read_text(encoding="utf-8").split()[0]
         except (OSError, IndexError):
             version = "utvecklingsversion"
         dialog = Adw.AboutDialog(application_name="ForskarOS", application_icon="forskaros", version=version,
@@ -560,7 +560,7 @@ class Window(Adw.ApplicationWindow):
         body.append(inputs)
 
         runs = Adw.PreferencesGroup(title="Körningar",
-                                    description="Varje körning sparar underlag, resultat och rapport. Dokumenterad, återkörbar eller återkörd visar hur säker den är.")
+                                    description="Varje körning sparar underlag, resultat och rapport. Dokumenterad, återkörbar eller återkörd visar hur körningen har kontrollerats.")
         if not state["körningar"]:
             runs.add(row("Inga körningar än", "Bygg rapporten för att skapa den första."))
         newest = list(reversed(state["körningar"]))
@@ -621,9 +621,9 @@ class Window(Adw.ApplicationWindow):
         if self.busy:
             return
         if action == "granska":
-            first = next((k for k, c in self.state["påståenden"].items() if c["status"] != "Granskad"), None)
-            if first:
-                self.nav.push(self.claim_page(first, series=True))
+            pending = pending_claims(self.state)
+            if pending:
+                self.nav.push(self.claim_page(pending[0], series=True))
         elif action == "bygg":
             self.set_busy(True)
             project, lab = self.project, self.lab
@@ -700,7 +700,7 @@ class Window(Adw.ApplicationWindow):
     def claim_page(self, key, series=False):
         """Ett påstående med sitt underlag. I en serie (knappen Granska) går Bekräfta vidare till nästa."""
         claim = self.state["påståenden"][key]
-        pending = [k for k, c in self.state["påståenden"].items() if c["status"] != "Granskad"]
+        pending = pending_claims(self.state)
         body = column()
         head = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         head.append(label(claim["text"], "title-2", selectable=True))
@@ -756,7 +756,7 @@ class Window(Adw.ApplicationWindow):
             approve(self.project / "underlag", key, claim["avtryck"])
             self.nav.pop()
             self.refresh_project()
-            remaining = [k for k, c in self.state["påståenden"].items() if c["status"] in ("Ej granskad", "Ompröva")]
+            remaining = pending_claims(self.state)
             if series and remaining:
                 self.nav.push(self.claim_page(remaining[0], series=True))
             elif remaining:

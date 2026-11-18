@@ -61,13 +61,21 @@ def _count(n, one, many):
     return f"{n} {one if n == 1 else many}"
 
 
+REVIEW_ORDER = ("Underlag saknas", "Ompröva", "Ej granskad")
+
+
+def pending_claims(state):
+    claims = state["påståenden"]
+    return [key for status in REVIEW_ORDER for key, claim in claims.items() if claim["status"] == status]
+
+
 def next_step(state):
     """(åtgärd, rubrik, förklaring). Åtgärden är ett av appens kommandon."""
     if state["fel"]:
         return ("manus", "Rätta underlaget",
                 f'{state["fel"]} Öppna manuset eller belagg.json och rätta, så läser ForskarOS projektet igen.')
     claims = list(state["påståenden"].values())
-    by_status = {s: [c for c in claims if c["status"] == s] for s in ("Underlag saknas", "Ompröva", "Ej granskad")}
+    by_status = {s: [c for c in claims if c["status"] == s] for s in REVIEW_ORDER}
     if by_status["Underlag saknas"]:
         n = len(by_status["Underlag saknas"])
         return ("granska", _count(n, "påstående saknar underlag", "påståenden saknar underlag"),
@@ -90,11 +98,17 @@ def next_step(state):
     if last["nivå"] != "Återkörd":
         return ("upprepa", "Upprepa den senaste körningen",
                 "Upprepningen bygger om resultaten från underlaget och kontrollerar att de blir exakt desamma.")
+    if state["skydd"] == "skyddad":
+        return ("rapport", "Läs rapporten lokalt",
+                "Rapporten kan innehålla citat och observationer från det skyddade materialet. Knappen öppnar din sparade kopia.")
+    if not claims:
+        return ("rapport", "Läs den upprepade rapporten",
+                "Resultaten gick att återskapa. Manuset har inga länkade påståenden att granska.")
     return ("rapport", "Läs och dela rapporten",
             "Alla påståenden är granskade och den senaste körningen är upprepad med samma resultat.")
 
 
-STEG = [("granska", "Granska"), ("bygg", "Bygg"), ("upprepa", "Upprepa"), ("rapport", "Dela")]
+STEG = [("granska", "Granska"), ("bygg", "Bygg"), ("upprepa", "Upprepa"), ("rapport", "Läs")]
 
 
 def progress(state):
@@ -103,9 +117,10 @@ def progress(state):
     action = "granska" if action == "manus" else action
     runs = state["körningar"]
     built = bool(runs) and not state["underlag_ändrat"]
-    done = {"granska": not state["fel"] and all(c["status"] == "Granskad" for c in state["påståenden"].values()),
+    done = {"granska": bool(state["påståenden"]) and not state["fel"] and all(c["status"] == "Granskad" for c in state["påståenden"].values()),
             "bygg": built, "upprepa": built and runs[-1]["nivå"] == "Återkörd", "rapport": False}
-    return [(name, "nu" if key == action else "klar" if done[key] else "senare") for key, name in STEG]
+    return [(name, "nu" if key == action else "klar" if done[key] else
+             "saknas" if key == "granska" and not state["påståenden"] else "senare") for key, name in STEG]
 
 
 STATUS_STYLE = {"Granskad": "success", "Återkörd": "success", "Ompröva": "warning",

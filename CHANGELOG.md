@@ -2,13 +2,14 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
-## 2027.1-beta4 (under arbete)
+## 2027.1-beta4
 
 ### Appen ForskarOS
 
 Ett fönster för forskningsprojekt, forskningsmappen och verktygen, byggt med GTK 4 och libadwaita. Den ersätter välkomstmenyn i terminalen, verktygslådan i terminalen och projektfönstret. [Designspråk](docs/DESIGN.md)
 
 - **Ett nästa steg i taget.** Projektet visar ett steg med en knapp: granska, bygga, upprepa eller dela. Stegraden visar var du är. Det som är fel eller ändrat kommer först.
+- *Om ForskarOS* visar den installerade systemutgåvan. I skyddade projekt avslutas arbetsflödet med lokal läsning.
 - **Granska i serie.** *Granska* visar påståendena ett i taget med underlaget och går vidare efter varje bekräftelse. Ett påstående att ompröva visar vad som ändrats och kan öppna manuset direkt.
 - **Koppla underlag** föreslår ID ur meningen, visar citat och sida bara för källpassager och kopierar länken.
 - **Verktyg** installeras från appen. Obsidian (licens) och molntjänsterna kräver ett aktivt val i en dialog (`forskaros-setup --godkänt`). Installerade profiler visas som installerade.

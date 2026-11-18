@@ -157,6 +157,13 @@ jobs:
           (cd dist && sha256sum "$FILE" > "$FILE.sha256")
           echo "FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh dist
+          cat "dist/$FILE.sha256"
+
+      - name: Spara byggresultatets kontrollsumma
+        uses: actions/upload-artifact@v4
+        with:
+          name: sha256-${{ matrix.arch }}-${{ matrix.kind }}
+          path: dist/*.sha256
 
       - name: Ladda upp till Internet Archive
         env:

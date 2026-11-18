@@ -8,7 +8,7 @@ root = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
 from projekt import domain  # noqa: E402
-from oversikt import (next_step, overview, progress, recent_projects, remember_project, run_label,
+from oversikt import (next_step, overview, pending_claims, progress, recent_projects, remember_project, run_label,
                       suggest_key)  # noqa: E402
 
 cmd = root / "system_files/usr/bin/forskaros-projekt"
@@ -53,6 +53,16 @@ with tempfile.TemporaryDirectory() as tmp:
     call("upprepa", run)
     assert step(project)[:2] == ("rapport", "Läs och dela rapporten")
     assert steps(project) == ["klar", "klar", "klar", "nu"]
+
+    done = overview(project, domain)
+    assert next_step(dict(done, skydd="skyddad"))[1] == "Läs rapporten lokalt"
+    empty = dict(done, påståenden={})
+    assert "inga länkade påståenden" in next_step(empty)[2]
+    assert progress(empty)[0][1] == "saknas"
+    mixed = dict(done, påståenden={"ny": {"status": "Ej granskad"}, "rättad": {"status": "Ompröva"},
+                                  "borta": {"status": "Underlag saknas"}})
+    assert pending_claims(mixed) == ["borta", "rättad", "ny"]
+    assert "saknar underlag" in next_step(mixed)[1]
 
     data = project / "underlag/data.csv"
     data.write_text(data.read_text().replace("Saklig respons,1", "Saklig respons,0", 1))
