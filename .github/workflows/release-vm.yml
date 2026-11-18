@@ -79,9 +79,10 @@ jobs:
         run: |
           endpoint="https://archive.org/metadata/$ITEM"
           current=$(curl -fsS "$endpoint" | jq -er '.metadata.description | strings')
-          notice="OBS: ForskarOS-2027.1-beta4-amd64.iso installerar automatiskt och kan radera inkopplade diskar. Använd bara den äldre filen i en tom virtuell maskin. Den ersätts av ForskarOS-2027.1-beta4-amd64-interaktiv.iso med uttryckligt diskval."
+          notice="OBS: ForskarOS-2027.1-beta4-amd64.iso installerar automatiskt och kan radera inkopplade diskar. Använd bara den äldre filen i en tom virtuell maskin. Välj ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso för installation med diskval och svenskt språk. Den första interaktiva revisionen kan stanna vid språkvalet."
           if [[ "$current" != *"$notice"* ]]; then
-            patch=$(jq -nc --arg old "$current" --arg new "$notice $current" '[{op:"test",path:"/description",value:$old},{op:"replace",path:"/description",value:$new}]')
+            base=${current#*"med uttryckligt diskval. "}
+            patch=$(jq -nc --arg old "$current" --arg new "$notice $base" '[{op:"test",path:"/description",value:$old},{op:"replace",path:"/description",value:$new}]')
             curl -fsS -H "Authorization: LOW $IA_ACCESS_KEY:$IA_SECRET_KEY" --data-urlencode target=metadata --data-urlencode "patch=$patch" "$endpoint" | jq -e '.success == true'
           fi
 
@@ -169,6 +170,7 @@ jobs:
             FILE="$BASE.qcow2"
           else
             FILE="$BASE-interaktiv.iso"
+            if [[ "$VERSION" == 2027.1-beta4 ]]; then FILE="$BASE-interaktiv-r2.iso"; fi
             mv output/bootiso/install.iso "dist/$FILE"
           fi
           rm -rf output

@@ -8,4 +8,8 @@ firstboot --enable
 """
 
 [customizations.installer.modules]
-enable = ["org.fedoraproject.Anaconda.Modules.Localization"]
+# Språkvyn använder tidszonstjänsten när användaren väljer sitt språk.
+enable = [
+    "org.fedoraproject.Anaconda.Modules.Localization",
+    "org.fedoraproject.Anaconda.Modules.Timezone",
+]
