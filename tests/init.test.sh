@@ -11,6 +11,7 @@ INIT="$TMP/forskaros-init"
 sed "s#^SEED=.*#SEED='$PWD/vault'#" system_files/usr/bin/forskaros-init > "$INIT"
 chmod +x "$INIT"
 export HOME="$TMP/home"
+export XDG_CONFIG_HOME="$HOME/.config"  # CI-miljöer sätter ofta en egen
 mkdir -p "$HOME"
 PLUGIN=".obsidian/plugins/forskaros-core"
 
