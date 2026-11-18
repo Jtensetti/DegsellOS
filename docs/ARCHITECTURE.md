@@ -12,7 +12,7 @@ ForskarOS bygger en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. F
 
 ## Projektets filer
 
-`projekt.json` identifierar projektet och dess skyddsnivå. I `underlag/` finns arbetsmaterial, manus och kopplingar mellan påståenden och källor. Appen och kommandot `forskaros-projekt` använder samma filer och projektlogik. Varje lyckad analys sparas i en egen mapp under `korningar/` med en kopia av underlaget, resultaten och deras kontrollsummor. [Projektens filformat och arbetsgång](PROJEKT.md) · [Forskningsdomänen](FORSKAROS-3.md)
+`projekt.json` identifierar projektet och dess skyddsnivå. I `underlag/` finns arbetsmaterial, manus och kopplingar mellan påståenden och källor. Appen och kommandot `forskaros-projekt` använder samma filer och projektlogik. Varje lyckad analys sparas i en egen mapp under `korningar/` med en kopia av underlaget, resultaten och deras kontrollsummor. [Projektens filformat och arbetsgång](PROJEKT.md) · [Projektets krav](FORSKAROS-3.md)
 
 ## Verktyg och första inloggning
 
@@ -24,4 +24,4 @@ ForskarOS bygger en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. F
 
 Ändra verktyg i `katalog/verktyg.json` och generera profiler, programmenyer och verktygskort med `python3 scripts/generera.py`. Ändra färger och typografi i `katalog/design.json` och kör `python3 scripts/identitet.py`. [Designsystem](DESIGN.md)
 
-Kör `bash scripts/check.sh` för projekttesterna. Bygg systemavbildningen från repots rot med `podman build -t localhost/forskaros .` på en Linuxvärd med Podman. CI bygger varje arkitektur på en separat värd. [Byggflöden](../.github/workflows) · [Släpprocess](RELEASE.md)
+Kör `bash scripts/check.sh` för projekttesterna. Bygg systemavbildningen från repots rot med `podman build -t localhost/forskaros .` på en Linuxvärd med Podman. CI bygger varje arkitektur på en separat värd. [Byggflöden](../.github/workflows) · [Släpprocess](RELEASE.md) · [Färdplan](ROADMAP.md)

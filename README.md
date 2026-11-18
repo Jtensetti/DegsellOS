@@ -1,51 +1,27 @@
 # ForskarOS
 
-ForskarOS är en Linuxdistribution för forskningsarbete, byggd på Bluefin LTS. I skrivbordsappen kopplar du meningar i ett manus till exempelvis ett intervjuutdrag, en tabellrad eller en källpassage. När ett underlag ändras visar appen vilka meningar du behöver granska igen. En sparad körning innehåller underlag, analyskod och resultat så att en kollega kan återskapa rapporten.
+ForskarOS är en Linuxdistribution för forskare som vill kunna följa en slutsats tillbaka till underlaget. I skrivbordsappen kopplar du en mening i ditt manus till exempelvis en tabellrad eller ett intervjuutdrag. Rättar du utdraget markerar appen vilka meningar du behöver läsa om.
 
-![Projektet efter en rättelse i intervjumaterialet. En mening behöver omprövas och två är fortfarande granskade.](docs/bilder/beta4-installation-qemu.png)
+Varje analys sparas tillsammans med data, kod och rapport. En kollega kan öppna rapporten, följa en källhänvisning och köra om analysen. Skrivbordet är GNOME på Bluefin LTS.
+
+![En rättelse i intervjumaterialet har markerat ett av manusets tre påståenden för omprövning.](docs/bilder/beta4-installation-qemu.png)
 
 ## Ladda ner
 
-Den publicerade utgåvan är **2027.1-beta4**. Utvecklingsversionen på `main` har också en projektmall för källtolkning med motstridiga källor. Välj fil efter dator och installationssätt.
+**Förhandsversion 2027.1-beta4**
 
-| Ladda ner | För | SHA-256 |
+| Dator | Nedladdning | Installation |
 |---|---|---|
-| [ForskarOS-2027.1-beta4-arm64.qcow2](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) | Apple Silicon-Mac i UTM, se [Mac-guiden](docs/MAC.md) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2.sha256) |
-| [ForskarOS-2027.1-beta4-amd64.qcow2](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2) | PC i QEMU eller virt-manager | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2.sha256) |
-| [ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso) | Installation på PC och Intel-Mac | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256) |
+| PC, virtuell maskin | [VM-disk för amd64](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2) | Importera disken i QEMU eller virt-manager och välj UEFI. |
+| Mac med Apple Silicon | [VM-disk för arm64](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) | [Öppna disken i UTM](docs/MAC.md) |
+| PC eller Intel-Mac, installation på disk | [Installations-ISO för amd64, revision r2](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso) | [Installera på PC](docs/BETA4.md#installera-på-pc) · [Intel-Mac](docs/MAC.md#intel-mac) |
 
-**Välj `-interaktiv-r2.iso` för installation på en dator.** Den första beta4-filen med ändelsen `-amd64.iso` kan automatiskt radera anslutna diskar. Mellanversionen `-interaktiv.iso` kan stanna vid svenskt språkval. Kontrollera vilka diskar som är valda före installationen. [Diskval och installationsanvisningar](docs/BETA4.md#installera-på-pc)
+I en färdig VM är både användarnamn och lösenord `forskare`. Du väljer ett eget lösenord vid första inloggningen. På fysisk disk, använd ISO-filen som slutar på `-interaktiv-r2.iso` och kontrollera vilka diskar som är markerade. Den ursprungliga beta4-ISO:n kan radera anslutna diskar automatiskt. [Kontrollsummor för nedladdningarna](docs/BETA4.md#installationsmedier)
 
-VM-diskarnas första inloggning är `forskare` med lösenordet `forskare`. Du väljer ett nytt lösenord vid inloggningen. En befintlig ForskarOS-installation kan byta till beta4 med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta4` följt av omstart.
+## Ditt första projekt
 
-## Ditt första forskningsprojekt
+Öppna **ForskarOS → Nytt forskningsprojekt**. Välj observationstabeller eller kodade intervjuutdrag för att börja med exempeldata. Under **Granska** ser du meningen i manuset och de källor du kopplat till den. Välj **Bygg rapport** för att spara en körning och **Upprepa** för att kontrollera resultaten. [Guide till forskningsprojekt](docs/PROJEKT.md)
 
-1. Öppna **ForskarOS** och välj **Nytt forskningsprojekt**. Välj en observationstabell eller kodade intervjuutdrag för att börja med exempeldata.
-2. Välj **Granska**. Läs meningen i manuset tillsammans med de källor som talar för eller emot den. Ditt beslut sparas med underlaget.
-3. Välj **Bygg rapport** och sedan **Upprepa**. ForskarOS jämför rapporten, figuren och resultattabellen med den sparade körningen.
-4. Rätta en observation eller ett utdrag. Öppna det påstående som fått status **Ompröva**.
+Du kan även använda **ForskarOS Core** i en befintlig Obsidian-installation. Tillägget samlar forskningsfrågor, hypoteser och granskningsbeslut i lokala Markdown-filer. [Installera Core](docs/INSTALLERA-CORE.md)
 
-Varje körning kan flyttas som en mapp med HTML-rapport och RO-Crate-metadata. Skyddade projekt kör analysen och rapportbygget utan nätåtkomst och med hemkatalogen dold. [Anvisningar för projektet](docs/PROJEKT.md) · [Skyddets omfattning](docs/SECURITY.md) · [Granskningsvyn i beta4](docs/bilder/beta4-motbelagg-qemu.png)
-
-## Forskningsverktyg
-
-Grundverktygen installeras när datorn får nätåtkomst. I appen väljer du **Välj forskningsverktyg** för att lägga till exempelvis JupyterLab, Taguette eller R. Alla profiler och deras innehåll finns i [verktygsöversikten](vault/00%20START/Verktyg/Översikt.md).
-
-| För att | Använd |
-|---|---|
-| Lista verktygsprofiler i terminalen | `forskaros-setup --lista` |
-| Installera en profil | `forskaros-setup --profil statistik` |
-| Köra en analys i R- och Python-labbet | `forskaros-labb Rscript analys.R` |
-| Hitta labbets exakta avbildning | `forskaros-labb version` |
-
-### ForskarOS Core
-
-Obsidian-tillägget organiserar forskningsfrågor, hypoteser, motprov och beslut i lokala Markdown-filer. Det kan även användas separat. Kör `bash scripts/install-vault.sh` från en klon av repot, öppna den skapade mappen `~/ForskarOS` i Obsidian och aktivera **ForskarOS Core** under **Settings → Community plugins**. [Arbetsmetoden](vault/00%20START/Arbetsmetod.md) · [Forskarhandboken](vault/00%20START/Forskarhandboken/00%20Innehåll.md)
-
-## Utveckling
-
-Kör `bash scripts/check.sh` från repots rot. Sviten omfattar projektflödet, Core, verktygsprofiler och systemskript. GitHub Actions kör även kontrollerna som kräver GTK, bubblewrap och RO-Crate-valideraren. [Arkitektur och källkod](docs/ARCHITECTURE.md) · [Färdplan](docs/ROADMAP.md) · [Hur ett släpp byggs](docs/RELEASE.md) · [Ändringslogg](CHANGELOG.md)
-
-Tidigare prov och utgåvor finns i versionsdokumentationen. [Beta4](docs/BETA4.md) · [beta3](docs/BETA3.md) · [beta2](docs/BETA2.md) · [beta1](docs/VM-TEST-2026-11-17.md).
-
-Projektets kod har [MIT-licens](LICENSE). Bluefin, GNOME och forskningsverktygen har egna licenser. Obsidian installeras separat efter ett aktivt val.
+[Verktygskatalog](vault/00%20START/Verktyg/Översikt.md) · [Projektskydd](docs/SECURITY.md) · [Bygga från källkod](docs/ARCHITECTURE.md#ändra-och-bygga) · [Ändringslogg](CHANGELOG.md) · [MIT-licens](LICENSE)

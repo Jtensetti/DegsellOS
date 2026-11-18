@@ -6,7 +6,7 @@ Skyddsnivån styr de processer ForskarOS startar för analys och rapportbygge. D
 
 ## Data på datorn
 
-Anteckningar och forskningsprojekt lagras som lokala filer. Vid uppdatering ersätts de medföljande filerna för Core, verktygskorten och Forskarhandboken. Lägg egna anteckningar utanför dessa systemunderhållna mappar. Forskaren ansvarar för säkerhetskopiering. En automatisk krypterad säkerhetskopia ingår ännu inte.
+Anteckningar och forskningsprojekt lagras som lokala filer. Vid uppdatering ersätts de medföljande filerna för Core, verktygskorten och Forskarhandboken. Lägg egna anteckningar utanför dessa systemunderhållna mappar. Ta en separat säkerhetskopia av egna anteckningar och projekt.
 
 En exporterad körning kan innehålla ursprungliga data och citat. Kontrollera vad mappen innehåller och vem som får ta del av materialet före delning.
 
@@ -16,4 +16,4 @@ Grundprofilen hämtas från Flathub och innehåller bland annat Zotero och Libre
 
 ## Avbildningar
 
-Systemet bygger på Bluefin LTS. GitHub Actions bygger avbildningen och signerar dess manifest med sigstore/cosign. Kontrollsummorna för installationsmedierna publiceras tillsammans med nedladdningarna. En automatiskt upprätthållen signaturpolicy i bootc-klienten återstår. [Nedladdningar och kontrollsummor](../README.md#ladda-ner)
+Systemet bygger på Bluefin LTS. GitHub Actions bygger avbildningen och signerar dess manifest med sigstore/cosign. Kontrollsummorna för installationsmedierna publiceras tillsammans med nedladdningarna. Automatisk signaturkontroll på klienten kräver en separat policy. [Nedladdningar och kontrollsummor](BETA4.md#installationsmedier)

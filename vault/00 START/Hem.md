@@ -3,11 +3,11 @@ typ: hem
 ---
 # ForskarOS
 
-Den här vaulten är en arbetsyta för forskningsprojekt. ForskarOS Core-panelen (hjärnikonen) visar dina forskningsfrågor, var i arbetet de är och vad som saknas.
+I sidopanelen för ForskarOS Core (hjärnikonen) hittar du dina forskningsfrågor, vilken fas varje fråga befinner sig i och vad som behöver följas upp.
 
 ## Kom igång
 
-1. Läs [[00 START/Arbetsmetod|Arbetsmetod]] (fem minuter) eller [[00 START/Forskarhandboken/00 Innehåll|Forskarhandboken]].
+1. Läs [[00 START/Arbetsmetod|Arbetsmetod]] eller [[00 START/Forskarhandboken/00 Innehåll|Forskarhandboken]].
 2. Skapa en forskningsfråga i panelen, eller använd förslaget i `01 RIKTNING`.
 3. Arbeta i faser: Utforska, Kombinera, Välj, Pröva, Utveckla, Ompröva, Dela.
 4. Gör en förmågegranskning en gång i månaden.
@@ -24,9 +24,10 @@ Den här vaulten är en arbetsyta för forskningsprojekt. ForskarOS Core-panelen
 | 06 FÖRÄNDRING | Omprövningar |
 | 07 SAMVERKAN | Forskningsmöten |
 | 08 REFLEKTION | Forskarpass, AI-loggar, övningar, förmågegranskningar |
+| 09 ARKIV | Avslutade anteckningar |
 
 ## Säkerhetskopior
 
-Anteckningarna finns bara i `~/ForskarOS`. Versionshantera mappen med Git och använd Déjà Dup.
+Anteckningarna sparas i forskningsmappen, som normalt ligger i `~/ForskarOS`. Inkludera den i din säkerhetskopiering.
 
 Lägg inte personuppgifter eller sekretessbelagt material i molntjänster.

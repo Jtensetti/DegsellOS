@@ -1,6 +1,6 @@
-# Bakgrund
+# Forskning bakom arbetsmetoden
 
-Arbetsmetoden bygger på några forskningsresultat. De flesta är korrelationer i observationsdata och ska läsas som skäl, inte som bevis för att metoden fungerar.
+Faserna, hypotesmallen och övningarna i Core anknyter till forskning om hur människor väljer problem, prövar idéer och lär sig.
 
 | Resultat | Hur det används |
 |---|---|
@@ -11,4 +11,4 @@ Arbetsmetoden bygger på några forskningsresultat. De flesta är korrelationer 
 | AI-stöd har höjt prestationen men försämrat den när stödet togs bort, medan ett handledande AI-stöd i stort sett motverkade det (Bastani m.fl., *PNAS*, 2025, gymnasieelever i matematik). AI-stöd har också gjort kreativa texter mer lika varandra (Doshi & Hauser, *Science Advances*, 2024). | Eget utkast före AI, utvecklingsläge som standard, övningar utan AI. |
 | Inkubation, att lägga undan ett problem, kan under vissa förutsättningar hjälpa problemlösning (Sio & Ormerod, *Psychological Bulletin*, 2009). | Frågor kan läggas att vila. |
 
-**Begränsningar.** Studierna gäller andra uppgifter och grupper än en enskild forskares arbete. Studier av nobelpristagare och andra framgångsrika forskare har överlevnadsbias. Om ForskarOS faktiskt hjälper är inte undersökt.
+Flera av studierna bygger på observationsdata. Resultat om högt citerade publikationer eller framgångsrika karriärer gäller de studerade urvalen. Deras samband räcker inte för att avgöra vilken arbetsmetod som fungerar för en enskild forskare.

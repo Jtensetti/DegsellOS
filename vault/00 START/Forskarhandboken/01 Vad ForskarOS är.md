@@ -3,13 +3,12 @@ typ: handbok
 ---
 # 1. Vad ForskarOS är
 
-ForskarOS är en Linux-installation för forskningsarbete. Den består av tre delar:
+I skrivbordsappen ForskarOS knyter du påståenden i ditt manus till de observationer och källor de bygger på. När ett underlag ändras kan du öppna de berörda meningarna för ny granskning. Appen sparar analysen och dess resultat så att du kan upprepa en tidigare körning.
 
-1. **Verktyg.** Program för litteratur, skrivande, statistik, kvalitativ analys och lokal AI, sorterade i programmenyn efter arbetsfas.
-2. **En arbetsmetod** i form av ett Obsidian-tillägg. Forskningsfrågor går igenom faser med krav, och tillägget listar det som behöver åtgärdas: hypoteser utan motprov, frågor som stått still, AI-användning utan eget utkast.
-3. **Labbet**, en containeravbildning med R och Python där analyser kan köras om i exakt samma miljö.
+I Obsidian använder du **ForskarOS Core** för ett annat slags arbete. Här formulerar du en forskningsfråga, antecknar hypoteser och motprov och dokumenterar varför din slutsats ändras. I panelen ser du aktiva frågor och vilka uppgifter de saknar. [[00 START/Arbetsmetod|Arbetsmetoden]]
 
-Metoden lägger vikt vid två saker: att idéer prövas mot invändningar innan man investerar i dem, och att AI används som stöd utan att ersätta eget tänkande. Skälen beskrivs i [[00 START/Bakgrund]].
+För statistik och beräkningar finns **ForskarOS-labbet**, en versionsbunden miljö för R och Python. Fler program för litteratur, skrivande och analys finns i [[00 START/Verktyg/Översikt|verktygskatalogen]].
 
 ## Övning utan AI
+
 Skriv i ett forskarpass vilket problem du vill förstå och varför. Tre meningar räcker.

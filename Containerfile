@@ -1,9 +1,4 @@
-# ForskarOS – ett forskningslager ovanpå en färdig, fungerande distribution.
-#
-# Vi bygger inte ett eget OS från grunden. Vi tar Bluefin LTS (Universal Blue,
-# GNOME, atomära uppdateringar, Flatpak, Homebrew) som finns för både
-# amd64 (PC, Intel-Mac) och arm64 (t.ex. virtuell maskin på Apple Silicon)
-# och lägger ForskarOS ovanpå.
+# ForskarOS systemavbildning för amd64 och arm64.
 ARG BASE_IMAGE=ghcr.io/ublue-os/bluefin:lts
 
 # Byggkontext som bara monteras under bygget och inte hamnar i avbildningen.

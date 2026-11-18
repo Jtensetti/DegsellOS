@@ -1,46 +1,17 @@
-# ForskarOS 3.0: målarkitektur och status
+# Forskningsprojektets krav
 
-Målarkitekturen kommer från en arkitekturgranskning med tio simulerade expertperspektiv (18 november 2026). Kärnan: **forskningsprojektet blir systemets centrala resurs**, en forskningsdomän med egna data, behörigheter, körmiljö, proveniens och evidenskedja. Granskningen satte fem acceptanstester. Det här dokumentet visar var ForskarOS står mot dem.
+Ett forskningsprojekt har en arbetsmapp och en separat mapp för varje sparad körning. Projektets skyddsnivå styr var analysen körs. Manusets länkar till underlaget följer med när en körning lämnas till en kollega. [Filformat och arbetsgång](PROJEKT.md)
 
-Status gäller [2027.1-beta4 och installationsprovet](BETA4.md). "Automatiserat" betyder att testet körs i CI i projektets [testsvit](../scripts/check.sh).
-
-## Acceptanstesten
-
-| Test | Krav | Status |
-|---|---|---|
-| **1. Projektisolering** | Ett skyddat projekts data är otillgängliga för obehöriga processer inom den definierade hotmodellen | **Automatiserat för analysen och rapportbygget.** Ett analysskript som försöker nå nätet, läsa en fil i en dold katalog, läsa hemkatalogen eller läsa sessionens miljövariabler stoppas. Kan sandlådan inte startas vägrar ForskarOS köra. Se hotmodellen nedan. |
-| **2. Reproducerbarhet** | Ett dokumenterat testexperiment kan återköras på en annan installation med redovisat resultat | **Automatiserat.** Täckningsgrad (dokumenterad, återkörbar, återkörd) och logg över varje upprepning, även avvikande. Flytt mellan installationer provades manuellt i beta3 (amd64-VM till Debian). |
-| **3. Evidenskedja** | En forskare kan följa ett påstående bakåt till det specificerade underlaget | **Automatiserat** för datarader, hela filer och, från beta4, källpassager (BibTeX-nyckel, sida, citat, valfri källtext). |
-| **4. Omprövning** | En ändring i ett känt beroende identifierar berörda påståenden utan orimligt många falsklarm | **Automatiserat.** Ändrat urval, metodfil, lydelse eller källa ger *Ompröva* för just de påståenden som bygger på det. Testerna kontrollerar också att andra påståenden inte flaggas och att en ny Zotero-export inte ger falsklarm. Andelen falsklarm i verkligt bruk är inte mätt. |
-| **5. Användbarhet** | Forskare gör relevanta uppgifter med mindre administrativ friktion än i en jämförbar miljö | **Inte gjort.** Kräver användartester med riktiga forskare. |
-
-## De sex systemfunktionerna
-
-| Funktion | I ForskarOS | Saknas |
-|---|---|---|
-| **Research Domain** | Projektmapp med `projekt.json` för identitet, titel, skyddsnivå och valfri licens. Skyddsnivån styr hur analysen körs. | Datakällor, projektspecifika program och behörigheter som systemet aktiverar när projektet öppnas |
-| **Research Ledger** | `korning.json` (SHA-256, miljö, isolering, tider) och `verifieringar.json` | Körningar på externa kluster med körningskvitto och täckningsgrad för ofullständig proveniens |
-| **Evidence Engine** | `belagg.json`, granskningsbeslut, omprövning, källpassager | Ämnesspecifika granskningsmodeller, t.ex. motstridiga tolkningar av historiska källor |
-| **Research Guard** | bubblewrap utan nätverk och hemkatalog för analysen; Podman utan nätverk i labbet | Isolering av skrivbordsprogram, AI-policy som upprätthålls på systemnivå, krypterad lagring per projekt, penetrationstest |
-| **Research Capsule** | Körningsmappen som RO-Crate 1.1 / Process Run Crate 0.5, godkänd av `rocrate-validator` | Export av ett helt projekt, W3C PROV-export |
-| **Research Companion** | AI-konsultationer i ForskarOS Core: lägen, eget utkast först, logg | Lokala modeller anslutna direkt, gränser för vilka data AI får läsa |
+| Krav | Vad forskaren ska kunna göra |
+|---|---|
+| Isolering | Köra analys och rapportbygge med avstängt nätverk och dold hemkatalog. Körningen ska avbrytas om isoleringen misslyckas. |
+| Reproducerbarhet | Flytta en körning till en annan installation, återskapa resultaten och se vilka filer som eventuellt avviker. |
+| Spårbarhet | Gå från ett påstående i manuset till den valda tabellraden, källpassagen eller analysfilen. |
+| Omprövning | Se vilka påståenden som påverkas när ett registrerat underlag ändras. Oberoende granskningsbeslut ska behållas. |
+| Användbarhet | Genomföra en forskningsuppgift med mindre administrativt arbete än i den vanliga arbetsmiljön. Jämförelsen omfattar tid, handgrepp, fel och hjälpbehov. |
 
 ## Hotmodell för skyddade projekt
 
-Skyddet gäller processer som ForskarOS själv startar för analys och rapport. I sandlådan:
+Det lokala analys- och rapportbygget i ett skyddat projekt använder en egen nätverksnamnrymd. Hemkataloger, `/run`, temporära kataloger och monteringsplatserna `/mnt`, `/media` och `/srv` döljs. Övriga systemfiler är skrivskyddade. Processen kan skriva i körningsmappen och får en separat uppsättning miljövariabler.
 
-- finns inget nätverk (egen nätverksnamnrymd)
-- är `/home`, `/var/home`, `/root`, `/run`, `/tmp`, `/var/tmp`, `/mnt`, `/media` och `/srv` dolda; `/run` döljs eftersom en skrivskyddad montering inte hindrar anslutning till systemets och sessionens uttag
-- är resten av systemet skrivskyddat och bara körningsmappen skrivbar
-- följer inga miljövariabler med från sessionen
-
-Skyddet omfattar **inte** program som forskaren själv öppnar, urklipp, AI-tjänster i webbläsaren, eller en användare med administratörsbehörighet. Det har inte penetrationstestats. ForskarOS påstår därför inte att skyddat material inte kan lämna datorn, bara att analysen och rapportbygget inte kan skicka det.
-
-## Avvikelser från målarkitekturen
-
-- **Bluefin LTS i stället för NixOS.** Granskningen föreslog NixOS för deklarativ konfiguration. ForskarOS bygger på Bluefin LTS (bootc) eftersom den finns för både amd64 och arm64, uppdateras atomärt och kan backas. Avbildningen beskrivs deklarativt i `Containerfile`.
-- **Ingen `researchd` än.** Domänen hanteras av `forskaros-projekt` och dess filer. En systemtjänst med lokalt API behövs först när flera program ska dela projektkontext samtidigt.
-
-## Fortsatt arbete
-
-Aktuella uppgifter efter beta4 finns i [färdplanen](ROADMAP.md).
+Skyddet gäller de processer som ForskarOS startar för körningen. Andra skrivbordsprogram, urklipp och användare med administratörsbehörighet har sina vanliga åtkomsträttigheter. En exporterad körning innehåller en kopia av sina underlag. [Säkerhet och integritet](SECURITY.md)
