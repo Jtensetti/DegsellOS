@@ -7,7 +7,7 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
-**ForskarOS 2027.1-beta2 finns att ladda ner för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
+**ForskarOS 2027.1-beta3 finns som systemuppdatering för amd64 och arm64.** För en ny installation finns beta2 som VM-disk och installations-ISO. [Uppgradering och testresultat för beta3](docs/BETA3.md) · [Nedladdningar](#ladda-ner).
 
 ## Forskningsprojekt i 2027.1-beta3
 
@@ -15,9 +15,9 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 
 Importera din egen CSV och dina referenser från Zotero, redigera manuset och välj **Bygg rapport**.
 
-<p align="center"><img src="docs/bilder/projekt-rapport-qemu.png" alt="ForskarOS i QEMU. Till vänster syns projektets knappar för data, manus och omkörning. Till höger visas den byggda rapporten med en fråga, en förutsägelse och ett stapeldiagram." width="1100"></p>
+<p align="center"><img src="docs/bilder/beta3-omprovning-qemu.png" alt="Den sparade rapporten visar påståendet om två av tre elever, statusen Ompröva och de tre rättade observationsraderna med värdena 0, 0 och 1." width="1100"></p>
 
-<sub>Projektfönstret och rapporten på en amd64-VM med utvecklingsversionens projektverktyg installerat ovanpå beta2. Observationerna är övningsdata. <a href="docs/BETA2.md#första-inloggningen-på-den-publicerade-pc-disken">Se även skärmdumpen från den publicerade beta2-disken.</a></sub>
+<sub>Från en ForskarOS-VM. Efter rättelsen bytte en av tre elever hypotes i övningsmaterialet. Klicket på den tidigare meningen öppnade dess underlag och en länk till analyskoden.</sub>
 
 Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
 
