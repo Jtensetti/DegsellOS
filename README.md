@@ -2,28 +2,30 @@
 
 Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LTS](https://projectbluefin.io/). Den innehåller:
 
-- **ForskarOS – forskningsprojekt** knyter ihop data, analys, referenser och rapport i utvecklingsversionen. En kollega kan köra om analysen från samma underlag.
+- **ForskarOS – forskningsprojekt** knyter ihop påståenden i manuset med data, analyskod, referenser och rapport. En kollega kan köra om analysen från samma underlag.
 - **Forskningsverktyg** i profiler som installeras efter behov. Programmenyn har en mapp per arbetsfas.
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
 **ForskarOS 2027.1-beta2 finns att ladda ner för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
 
-## Forskningsprojekt i utvecklingsversionen
+## Forskningsprojekt i 2027.1-beta3
 
-Öppna **ForskarOS – forskningsprojekt** i programmenyn eller välj **P** i välkomstguiden. Skapa ett kvantitativt projekt för en observationstabell eller ett kvalitativt projekt för kodade utdrag från Taguette. Exempeldata ingår. Importera din egen CSV och dina referenser från Zotero, redigera manuset och välj **Bygg rapport**.
+Öppna **ForskarOS – forskningsprojekt** i programmenyn eller välj **P** i välkomstguiden. Skapa ett kvantitativt projekt för en observationstabell eller ett kvalitativt projekt för kodade utdrag från Taguette. Exempeldata ingår. Välj **Granska påståenden** för att läsa stödet och eventuella motbelägg. En rättelse i en observation eller ett kodat utdrag visar vilka påståenden du behöver ompröva. [Prova en rättelse i exempelprojektet](docs/PROJEKT.md#pröva-en-rättelse).
+
+Importera din egen CSV och dina referenser från Zotero, redigera manuset och välj **Bygg rapport**.
 
 <p align="center"><img src="docs/bilder/projekt-rapport-qemu.png" alt="ForskarOS i QEMU. Till vänster syns projektets knappar för data, manus och omkörning. Till höger visas den byggda rapporten med en fråga, en förutsägelse och ett stapeldiagram." width="1100"></p>
 
 <sub>Projektfönstret och rapporten på en amd64-VM med utvecklingsversionens projektverktyg installerat ovanpå beta2. Observationerna är övningsdata. <a href="docs/BETA2.md#första-inloggningen-på-den-publicerade-pc-disken">Se även skärmdumpen från den publicerade beta2-disken.</a></sub>
 
-Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. Det tillkom på `main` efter de publicerade beta2-diskarna. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
+Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
 
 ## Ladda ner
 
 Båda VM-diskarna och installations-ISO:n hämtades i sin helhet från Internet Archive den 18 november 2026. För alla tre stämde SHA-256 med byggresultatet och med arkivets kontrollsummefil.
 
-Den som redan kör ForskarOS kan hämta beta2 från den publicerade containeravbildningen med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta2` och sedan starta om.
+Den som kör ForskarOS kan byta till **2027.1-beta3** med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta3` och sedan starta om. För en ny VM kan du börja med en av beta2-diskarna nedan.
 
 | Ladda ner | För | SHA-256 |
 |---|---|---|

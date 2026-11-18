@@ -43,14 +43,26 @@ def execute(args, cwd):
         raise ValueError(detail.splitlines()[-1] if args[0] == sys.executable else detail[-1600:])
 
 
-def build(root):
+def build(root, with_evidence):
     output = root / "resultat"
     output.mkdir()
     # Analysen får arbeta i sin egen kopia av underlaget.
     execute([sys.executable, "-IB", "analys.py", str(output)], root / "underlag")
-    execute(["pandoc", "underlag/manus.md", "--standalone", "--embed-resources",
-             "--resource-path=.:underlag", "--citeproc", "--bibliography=underlag/kallor.bib",
-             "--fail-if-warnings", "--output=resultat/rapport.html"], root)
+    cmd = ["pandoc", "underlag/manus.md", "--standalone", "--embed-resources",
+           "--resource-path=.:underlag", "--citeproc", "--bibliography=underlag/kallor.bib",
+           "--fail-if-warnings", "--output=resultat/rapport.html"]
+    if with_evidence:
+        sys.dont_write_bytecode = True
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from belagg import appendix, inspect
+        claims = inspect(root / "underlag")
+        if claims:
+            with tempfile.TemporaryDirectory() as tmp:
+                snippet = Path(tmp) / "belagg.html"
+                snippet.write_text(appendix(claims), encoding="utf-8")
+                execute(cmd + ["--include-after-body", str(snippet)], root)
+            return
+    execute(cmd, root)
 
 
 def environment():
@@ -61,10 +73,13 @@ def environment():
 def record(root, image=None):
     inputs = inventory(root / "underlag")
     env = environment()
-    build(root)
+    with_evidence = (root / "belagg.py").is_file()
+    build(root, with_evidence)
     compare("Underlag ändrat av analysen", inputs, inventory(root / "underlag"))
     manifest = {"format": 1, "miljö": env, "labb": image, "underlag": inputs,
                 "resultat": inventory(root / "resultat"), "upprepa.py": checksum(root / "upprepa.py")}
+    if with_evidence:
+        manifest["belagg.py"] = checksum(root / "belagg.py")
     (root / "korning.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
@@ -73,6 +88,8 @@ def repeat(root):
     if manifest.get("format") != 1:
         raise ValueError("Okänt format på korning.json.")
     compare("Körprogram", {"upprepa.py": manifest["upprepa.py"]}, {"upprepa.py": checksum(root / "upprepa.py")})
+    if "belagg.py" in manifest:
+        compare("Beläggsprogram", {"belagg.py": manifest["belagg.py"]}, {"belagg.py": checksum(root / "belagg.py")})
     compare("Underlag", manifest["underlag"], inventory(root / "underlag"))
     compare("Sparade resultat", manifest["resultat"], inventory(root / "resultat"))
     env = environment()
@@ -81,7 +98,7 @@ def repeat(root):
     with tempfile.TemporaryDirectory() as tmp:
         work = Path(tmp)
         shutil.copytree(root / "underlag", work / "underlag", symlinks=True)
-        build(work)
+        build(work, "belagg.py" in manifest)
         compare("Återskapade resultat", manifest["resultat"], inventory(work / "resultat"))
     print("Återskapad från underlaget. Alla resultat har samma SHA-256.")
 

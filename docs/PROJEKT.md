@@ -1,6 +1,6 @@
 # Ett forskningsprojekt från underlag till granskning
 
-I utvecklingsversionen efter beta2 finns **ForskarOS – forskningsprojekt** i programmenyn och i välkomstguiden (val **P**). Du kan arbeta med färdiga exempel första gången och sedan skapa en separat mapp för din studie.
+Från 2027.1-beta3 finns **ForskarOS – forskningsprojekt** i programmenyn och i välkomstguiden (val **P**). Du kan arbeta med färdiga exempel första gången och sedan skapa en separat mapp för din studie.
 
 | När du vill … | Börja med | Lämna vidare |
 |---|---|---|
@@ -12,6 +12,24 @@ I utvecklingsversionen efter beta2 finns **ForskarOS – forskningsprojekt** i p
 En CSV kan använda komma eller semikolon och UTF-8 med eller utan byteordningsmärke. För andra undersökningar ändrar du analysen och kolumnnamnen i `underlag/analys.py`. Beskriv frågan, din förutsägelse och tolkningen i `underlag/manus.md`. De medföljande observationerna, intervjuerna och referensen är övningsmaterial.
 
 Om ingen webbläsare har installerats ännu visar projektfönstret rapporten med GNOME:s inbyggda webbkomponent.
+
+## Pröva en rättelse
+
+1. Skapa ett kvantitativt exempelprojekt. Välj **Granska påståenden** och läs de båda påståendena, observationsraderna och vilken analysfil de bygger på. Bekräfta granskningen för vart och ett. Bygg en rapport.
+2. Öppna `data.csv` i Calc. Ändra en etta till en nolla i gruppen *Saklig respons* och spara som CSV. Välj **Granska påståenden** igen. Påståendet om saklig respons får status **Ompröva**. Påståendet om neutral respons står kvar som **Granskad**. Bygg rapporten igen. Den nya figuren visar en av tre i bägge grupperna, medan manusets tidigare formulering fortfarande går att granska.
+3. Klicka på den länkade meningen i rapporten för att se det sparade urvalet. Öppna analysfilen för att se hur andelen beräknades. Rätta själv meningen i manus och bekräfta granskningen när du har bedömt den. Även ändrad lydelse kräver ny granskning.
+
+I det kvalitativa exemplet har en tolkning både ett stödjande utdrag och ett motbelägg. Ta bort raden med koden `auktoritet` ur din arbetskopia. **Underlag saknas** visar vilka tolkningar som förlorat ett angivet utdrag. Du kan öppna den tidigare körningens rapport för att läsa det citat som var tillgängligt då.
+
+### Koppla ditt eget material
+
+- Skriv meningen i din vanliga Markdown-editor. I projektfönstret väljer du **Koppla underlag**, anger ett eget kort ID och meningen som länktext. Välj ett villkor från din tabell, ett dokument och utdrags-ID från Taguette eller en hel projektfil. Ange rollen *stöd*, *motbelägg* eller *metod*. Klistra in den kopierade länken över meningen i manuset. Återanvänd samma ID för fler underlag till samma påstående.
+- **Granska påståenden** läser arbetsmappen på nytt när du öppnar vyn. En granskning gäller den lydelse och de underlag som visades. När underlag saknas behöver kopplingen repareras innan du kan bekräfta en ny granskning. **Öppna sparad rapport** visar senaste färdiga körning. Bygg om rapporten när du vill dela en ny bedömning.
+- En koppling är en vanlig Markdown-länk, exempelvis `[Min tolkning](#belagg-min-tolkning)`. Reglerna finns i `underlag/belagg.json`. Där kan du ändra eller ta bort en koppling, skriva en kommentar och välja andra CSV-filer, matchningsvillkor och kolumner. En fil utan angivet urval följs i sin helhet, exempelvis ett analysskript. Koppla även hjälpskript eller en hel datafil om analysen beror på dem.
+- Programmet kontrollerar alla träffar, inklusive dubbletter. Vyn visar högst 40 rader per urval. Ett byte av radordning påverkar inte urvalet. När ordningen är en del av metoden kan du välja hela filen. En Taguette-export innehåller de exporterade utdragen. Lägg till originaltexten separat om läsaren ska kunna kontrollera hela sammanhanget.
+- I rapporten följer läsbara utdrag med i HTML-filen. Länkar till källfiler och analyskod fungerar när körningsmappen hålls samman. En människa väljer vilka samband som ska följas och avgör vad förändringen betyder för slutsatsen.
+
+På terminalen visar `forskaros-projekt belägg "Min studie"` alla länkade påståenden. Lägg till påståendets ID för att läsa underlaget och dess avtryck. Med `forskaros-projekt granska "Min studie" mitt-id --avtryck AVTRYCK` bekräftar du just den versionen. Beslutet sparas i `underlag/granskningar.json` och följer med nästa körning. Äldre projekt går att köra vidare och kan få egna kopplingar när du behöver dem.
 
 ## Vad en körning bevarar
 

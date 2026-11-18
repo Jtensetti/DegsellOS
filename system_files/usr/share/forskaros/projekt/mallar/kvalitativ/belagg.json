@@ -1,0 +1,60 @@
+{
+  "format": 1,
+  "påståenden": {
+    "omprovning": {
+      "kommentar": "En möjlig tolkning. Utsagan om handledaren ger en konkurrerande förklaring. Taguette-exporten omfattar de kodade utdragen.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "fil": "data.csv",
+          "urval": {
+            "document": "Exempelintervju A",
+            "id": "1",
+            "tag": "belägg"
+          },
+          "kolumner": [
+            "document",
+            "id",
+            "tag",
+            "content"
+          ]
+        },
+        {
+          "roll": "motbelägg",
+          "fil": "data.csv",
+          "urval": {
+            "document": "Exempelintervju B",
+            "id": "2",
+            "tag": "auktoritet"
+          },
+          "kolumner": [
+            "document",
+            "id",
+            "tag",
+            "content"
+          ]
+        }
+      ]
+    },
+    "auktoritet": {
+      "kommentar": "En enskild utsaga i den konstruerade intervjun.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "fil": "data.csv",
+          "urval": {
+            "document": "Exempelintervju B",
+            "id": "2",
+            "tag": "auktoritet"
+          },
+          "kolumner": [
+            "document",
+            "id",
+            "tag",
+            "content"
+          ]
+        }
+      ]
+    }
+  }
+}

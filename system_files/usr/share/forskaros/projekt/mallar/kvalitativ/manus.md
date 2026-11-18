@@ -11,6 +11,9 @@ av kodade utdrag från Taguette och ange urvalet här.
 
 ## Tolkning
 
+[En deltagare beskrev den andra mätningen som skäl att byta förklaring.](#belagg-omprovning)
+[En annan hänvisade till handledarens auktoritet.](#belagg-auktoritet)
+
 Beskriv din läsning av ett utdrag och ett motexempel. Använd dokumentnamn
 och utdrags-ID från [tabellen med koder och citat](resultat.csv).
 

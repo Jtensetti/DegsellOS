@@ -1,0 +1,45 @@
+{
+  "format": 1,
+  "påståenden": {
+    "saklig": {
+      "kommentar": "Beskrivande andel i övningsmaterialet. Ett orsakssamband kräver en annan undersökning.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "fil": "data.csv",
+          "urval": {
+            "villkor": "Saklig respons"
+          },
+          "kolumner": [
+            "villkor",
+            "bytte_hypotes"
+          ]
+        },
+        {
+          "roll": "metod",
+          "fil": "analys.py"
+        }
+      ]
+    },
+    "neutral": {
+      "kommentar": "Beskrivande andel i övningsmaterialet. Ett orsakssamband kräver en annan undersökning.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "fil": "data.csv",
+          "urval": {
+            "villkor": "Neutral respons"
+          },
+          "kolumner": [
+            "villkor",
+            "bytte_hypotes"
+          ]
+        },
+        {
+          "roll": "metod",
+          "fil": "analys.py"
+        }
+      ]
+    }
+  }
+}

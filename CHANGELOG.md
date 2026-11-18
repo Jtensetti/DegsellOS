@@ -2,7 +2,11 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
-## 2027.1-dev efter beta2
+## 2027.1-beta3
+
+- Klicka på ett länkat påstående i rapporten för att läsa observationerna eller intervjuutdragen, se motbelägg och hitta analysfilen som forskaren valt.
+- Granska ett påstående mot arbetsmaterialet. När ett kopplat urval, en metodfil eller påståendets lydelse ändras visar ForskarOS vad som behöver omprövas. Tidigare körningar bevarar den granskning som gällde då.
+- Befintliga projekt kan få sina första kopplingar från projektfönstret. Exempel för Calc och Taguette ingår. [Prova omprövningen](docs/PROJEKT.md#pröva-en-rättelse).
 
 - Forskningsprojekt kan startas från skrivbordet. Kalkyldata eller kodade intervjuutdrag, manus och en BibTeX-export blir en rapport med figur och referenser. Varje körning går att flytta och kontrollera separat. [Arbeta i ett projekt](docs/PROJEKT.md).
 

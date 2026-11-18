@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 import shutil
 import tempfile
 from threading import Thread
@@ -6,6 +7,8 @@ from threading import Thread
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gio, GLib, Gtk
+
+from granskningsfonster import connect_source, review
 
 
 def window(create, run, verify):
@@ -62,6 +65,7 @@ def window(create, run, verify):
         heading.set_text(folder.name)
         files.set_sensitive(True)
         imports.set_sensitive(True)
+        evidence_group.set_sensitive(True)
         build_group.set_sensitive(True)
         results.set_sensitive(last is not None)
         status.set_text(str(folder))
@@ -89,14 +93,28 @@ def window(create, run, verify):
         view = WebKit2.WebView.new_with_context(WebKit2.WebContext.new_ephemeral())
         view.get_settings().set_enable_javascript(False)
         table = report.with_name("resultat.csv")
+        inputs = (last / "underlag").resolve()
 
         def navigation(_, decision, kind):
             if kind == WebKit2.PolicyDecisionType.NAVIGATION_ACTION:
                 uri = decision.get_navigation_action().get_request().get_uri()
-                if uri == table.as_uri():
-                    decision.ignore()
-                    view.load_plain_text(table.read_text(encoding="utf-8"))
-                    return True
+                url = urlsplit(uri)
+                if url.scheme == "file" and url.netloc == "":
+                    source = Path(unquote(url.path)).resolve()
+                    if source == table or (source.is_relative_to(inputs) and source.is_file()):
+                        decision.ignore()
+                        if source.suffix.lower() in (".py", ".csv", ".md", ".txt", ".bib", ".json", ".r"):
+                            source_window = Gtk.Window(title=source.name, transient_for=preview)
+                            source_window.set_default_size(720, 480)
+                            scroll = Gtk.ScrolledWindow()
+                            text = Gtk.TextView(editable=False, monospace=True, wrap_mode=Gtk.WrapMode.WORD_CHAR)
+                            text.get_buffer().set_text(source.read_text(encoding="utf-8-sig", errors="replace"))
+                            scroll.add(text)
+                            source_window.add(scroll)
+                            source_window.show_all()
+                        else:
+                            guarded(lambda: open_file(source))
+                        return True
                 if uri.split("#", 1)[0] not in (report.as_uri(), "about:blank", ""):
                     decision.ignore()
                     return True
@@ -125,7 +143,7 @@ def window(create, run, verify):
                 copied = Path(tmp) / name
                 shutil.copyfile(source, copied)
                 copied.replace(target)
-            status.set_text(f"{Path(source).name} finns nu i projektet som {name}.")
+            status.set_text(f"{Path(source).name} finns nu i projektet som {name}. Granska påståendena mot det nya underlaget.")
 
     def work(action, building):
         layout.set_sensitive(False)
@@ -178,17 +196,20 @@ def window(create, run, verify):
     imports = row()
     button(imports, "Importera CSV…", lambda: import_file("data.csv", "Välj en CSV-fil från kalkylprogram eller Taguette"))
     button(imports, "Importera BibTeX…", lambda: import_file("kallor.bib", "Välj en exporterad BibTeX-fil från Zotero"))
+    evidence_group = row()
+    button(evidence_group, "Koppla underlag…", lambda: connect_source(app, current / "underlag", status))
+    button(evidence_group, "Granska påståenden…", lambda: review(app, current / "underlag"))
     build_group = row()
     button(build_group, "Bygg rapport", build)
     lab = Gtk.CheckButton(label="Kör i versionslåst labb (Podman)")
     build_group.pack_start(lab, False, False, 0)
     results = row()
-    button(results, "Öppna rapport", open_report)
+    button(results, "Öppna sparad rapport", open_report)
     button(results, "Visa körningsmapp", lambda: open_file(last))
     button(results, "Upprepa körning", lambda: work(lambda: verify(last), False))
     button(row(), "Upprepa från annan mapp…", repeat_other)
     status = label("")
-    for group in (files, imports, build_group, results):
+    for group in (files, imports, evidence_group, build_group, results):
         group.set_sensitive(False)
     if (Path.cwd() / "underlag/analys.py").is_file():
         guarded(lambda: select_project(Path.cwd()))
