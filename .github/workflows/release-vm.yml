@@ -41,6 +41,12 @@ permissions:
   contents: read
   packages: read
 
+# Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
+# datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
+# Byt bara namn tillsammans med en flyttväg för installerade datorer.
+env:
+  IMAGE_NAME: ghcr.io/jtensetti/researchos
+
 jobs:
   plan:
     runs-on: ubuntu-24.04
@@ -102,7 +108,7 @@ jobs:
           TAG: ${{ inputs.tag }}
           DIGEST: ${{ inputs.digest }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          IMAGE="$IMAGE_NAME"
           if [[ -n "$DIGEST" ]]; then
             [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
             IMAGE="$IMAGE@$DIGEST"
@@ -114,8 +120,8 @@ jobs:
           [[ "$(sudo podman run --rm --entrypoint cat "$IMAGE" /usr/share/forskaros/RELEASE)" == "$VERSION" ]]
           if [[ -n "$DIGEST" ]]; then
             # Bygg med det hämtade innehållet. Installerade system följer latest.
-            sudo podman tag "$IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
-            IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+            sudo podman tag "$IMAGE" "$IMAGE_NAME:latest"
+            IMAGE="$IMAGE_NAME:latest"
           fi
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 

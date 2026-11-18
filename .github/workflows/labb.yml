@@ -12,6 +12,12 @@ on:
 permissions:
   contents: read
 
+# Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
+# datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
+# Byt bara namn tillsammans med en flyttväg för installerade datorer.
+env:
+  IMAGE_NAME: ghcr.io/jtensetti/researchos-labb
+
 jobs:
   build:
     strategy:
@@ -37,7 +43,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}-labb"
+          IMAGE="$IMAGE_NAME"
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           podman push localhost/forskaros-labb:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
 
@@ -56,7 +62,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}-labb"
+          IMAGE="$IMAGE_NAME"
           VERSION=$(cat VERSION)
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           podman manifest create labb "docker://$IMAGE:latest-amd64" "docker://$IMAGE:latest-arm64"

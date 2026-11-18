@@ -14,6 +14,10 @@ permissions:
 
 env:
   BASE_IMAGE: ghcr.io/ublue-os/bluefin:lts
+  # Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
+  # datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
+  # Byt bara namn tillsammans med en flyttväg för installerade datorer.
+  IMAGE_NAME: ghcr.io/jtensetti/researchos
 
 jobs:
   test:
@@ -87,7 +91,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          IMAGE="$IMAGE_NAME"
           echo "$TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
           sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:build-$GITHUB_RUN_ID-${{ matrix.arch }}"
@@ -113,7 +117,7 @@ jobs:
           RELEASE_MEDIA: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[release-media] ') }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          IMAGE="$IMAGE_NAME"
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           podman manifest create forskaros-manifest \
             "docker://$IMAGE:build-$GITHUB_RUN_ID-amd64" "docker://$IMAGE:build-$GITHUB_RUN_ID-arm64"
@@ -166,7 +170,7 @@ jobs:
         run: |
           VERSION=$(cat VERSION)
           [[ "$VERSION" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ && "$VERSION" != *-dev ]]
-          DIGEST=$(skopeo inspect --format '{{.Digest}}' "docker://ghcr.io/${GITHUB_REPOSITORY,,}:$VERSION")
+          DIGEST=$(skopeo inspect --format '{{.Digest}}' "docker://$IMAGE_NAME:$VERSION")
           [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"

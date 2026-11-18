@@ -35,5 +35,13 @@ assert manifest['id'] == 'forskaros-core'
 assert len(list(root.rglob('*.md'))) >= 4
 assert Path('Containerfile').is_file()
 assert any(Path('system_files/usr/share/forskaros/profiler').glob('*.profil'))
-print('OK: manifest, vault, Containerfile, verktygsprofiler')
+import re
+workflows = ''.join(f.read_text() for f in Path('.github/workflows').glob('*.yml'))
+assert 'GITHUB_REPOSITORY,,' not in workflows, 'avbildningens namn får inte bero på repots namn'
+names = set(re.findall(r'IMAGE_NAME: (ghcr\.io/\S+)', workflows))
+assert names == {'ghcr.io/jtensetti/researchos', 'ghcr.io/jtensetti/researchos-labb'}, names
+assert 'ghcr.io/jtensetti/researchos-labb:latest' in Path('system_files/usr/share/forskaros/projekt/projekt.py').read_text()
+assert 'ghcr.io/jtensetti/researchos-labb:latest' in Path('system_files/usr/bin/forskaros-labb').read_text()
+assert 'bootc switch ghcr.io/jtensetti/researchos:' in Path('docs/INSTALLATION.md').read_text()
+print('OK: manifest, vault, Containerfile, verktygsprofiler, avbildningarnas namn')
 PY
