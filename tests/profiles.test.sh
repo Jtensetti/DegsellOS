@@ -39,9 +39,15 @@ done
 # 4. Torrkörning: rätt kommandon, inget körs på riktigt.
 out=$(bash "$SETUP" --profil skriva,statistik --ja --torrkörning)
 grep -q '+ flatpak install --user -y --noninteractive flathub com.zettlr.Zettlr' <<<"$out" || fail "Zettlr installeras inte"
-grep -q '+ brew install pandoc' <<<"$out" || fail "pandoc installeras inte"
+if command -v pandoc >/dev/null; then
+  grep -q 'Pandoc finns redan' <<<"$out" || fail "systemets Pandoc ska återanvändas"
+else
+  grep -q '+ brew install pandoc' <<<"$out" || fail "pandoc installeras inte"
+fi
 grep -q '+ uv tool install jupyterlab' <<<"$out" || fail "jupyterlab installeras inte"
 grep -q '+ skapa startare forskaros-jupyterlab.desktop' <<<"$out" || fail "startare för JupyterLab saknas"
+out=$(bash "$SETUP" --profil kvalitativ --ja --torrkörning)
+grep -Fq '+ uv tool install --with setuptools<81 taguette' <<<"$out" || fail "Taguettes körmiljö saknas"
 
 # 5. 'alla' i interaktivt läge tar inte med det som kräver aktivt val.
 out=$(echo alla | bash "$SETUP" --torrkörning)

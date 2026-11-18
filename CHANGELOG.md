@@ -2,6 +2,10 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
+## 2027.1-dev efter beta2
+
+- Forskningsprojekt kan startas från skrivbordet. Kalkyldata eller kodade intervjuutdrag, manus och en BibTeX-export blir en rapport med figur och referenser. Varje körning går att flytta och kontrollera separat. [Arbeta i ett projekt](docs/PROJEKT.md).
+
 ## 2027.1-beta2
 
 - Vid första inloggningen visar verktygslådan hur grundinstallationen går. Du kan läsa startsidan utan nät, se installationsloggen eller öppna Obsidian och välja din forskningsmapp.

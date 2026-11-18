@@ -27,6 +27,7 @@ while :; do
   echo "Din forskningsmapp finns här: $vault"
   status
   echo
+  echo 'P. Starta ett forskningsprojekt med data, analys och rapport'
   echo '1. Öppna forskningsmappen i Obsidian'
   echo '2. Läs startsidan som text (fungerar utan nät)'
   echo '3. Välj fler verktyg'
@@ -34,6 +35,7 @@ while :; do
   echo 'Enter stänger verktygslådan.'
   read -r -p 'Ditt val: ' choice || exit 0
   case "$choice" in
+    p|P) forskaros-projekt || echo 'Projektfönstret kunde inte öppnas.' ;;
     1)
       if ! flatpak info md.obsidian.Obsidian >/dev/null 2>&1; then
         if ! forskaros-setup --profil obsidian; then
@@ -50,6 +52,6 @@ while :; do
     3) forskaros-setup || echo 'Installationen avbröts. Du kan välja profilen igen.' ;;
     4) journalctl --no-pager -u "$service" -n 10 || true ;;
     '') exit 0 ;;
-    *) echo 'Välj 1, 2, 3 eller 4.' ;;
+    *) echo 'Välj P, 1, 2, 3 eller 4.' ;;
   esac
 done

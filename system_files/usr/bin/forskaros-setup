@@ -139,10 +139,15 @@ for p in "${SELECTED[@]}"; do
     case "$kind" in
       flatpak) ensure_flathub; run flatpak install "$FLATPAK_SCOPE" -y --noninteractive flathub "$id" ;;
       brew)
+        if [[ "$id" == pandoc ]] && command -v pandoc >/dev/null; then echo '  Pandoc finns redan.'; continue; fi
         if command -v brew >/dev/null 2>&1 || [[ $DRY -eq 1 ]]; then run brew install "$id"
         else echo "  Homebrew saknas, hoppar över $id."; fi ;;
       uv)
-        ensure_uv && run uv tool install "$id"
+        if ensure_uv; then
+          # Taguettes OpenTelemetry-version importerar pkg_resources vid start.
+          if [[ "$id" == taguette ]]; then run uv tool install --with 'setuptools<81' "$id"
+          else run uv tool install "$id"; fi
+        fi
         tmpl="$STARTDIR/forskaros-$id.desktop"
         if [[ -f "$tmpl" ]]; then
           if [[ $DRY -eq 1 ]]; then echo "+ skapa startare forskaros-$id.desktop"

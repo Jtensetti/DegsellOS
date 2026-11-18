@@ -12,6 +12,12 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 
 <sub>Den publicerade beta2-disken för PC efter omstart. Frågan skapades med Core 0.3.1 i Obsidian 1.15.1, installerat från Flathub via ForskarOS välkomstguide. <a href="docs/BETA2.md#första-inloggningen-på-den-publicerade-pc-disken">Så gick testet till.</a></sub>
 
+## Forskningsprojekt i utvecklingsversionen
+
+Öppna **ForskarOS – forskningsprojekt** i programmenyn eller välj **P** i välkomstguiden. Skapa ett kvantitativt projekt för en observationstabell eller ett kvalitativt projekt för kodade utdrag från Taguette. Exempeldata ingår. Importera din egen CSV och dina referenser från Zotero, redigera manuset och välj **Bygg rapport**.
+
+Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. Det tillkom på `main` efter de publicerade beta2-diskarna. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
+
 ## Ladda ner
 
 Båda VM-diskarna och installations-ISO:n hämtades i sin helhet från Internet Archive den 18 november 2026. För alla tre stämde SHA-256 med byggresultatet och med arkivets kontrollsummefil.

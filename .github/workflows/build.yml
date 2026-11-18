@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Installera Pandoc för projektproven
+        run: command -v pandoc || (sudo apt-get update && sudo apt-get install -y pandoc)
       - run: bash scripts/check.sh
       - name: Kontrollera att alla verktyg finns för amd64 och arm64
         run: bash tests/verify-apps.sh

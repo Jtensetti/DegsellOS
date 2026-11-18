@@ -1,0 +1,48 @@
+# Ett forskningsprojekt från underlag till granskning
+
+I utvecklingsversionen efter beta2 finns **ForskarOS – forskningsprojekt** i programmenyn och i välkomstguiden (val **P**). Du kan arbeta med färdiga exempel första gången och sedan skapa en separat mapp för din studie.
+
+| När du vill … | Börja med | Lämna vidare |
+|---|---|---|
+| Jämföra observationer mellan villkor | Välj *Kvantitativ*. Redigera CSV i Calc eller exportera en tabell till UTF-8. | Importera CSV med kolumnerna `villkor` och `bytte_hypotes` (0 eller 1). Exempelanalysen ger antal observationer, antal byten och andel per villkor. |
+| Undersöka hur deltagare beskriver något | Välj *Kvalitativ*. Koda dokument i Taguette och exportera de markerade utdragen som CSV. | Importera exporten med `id,document,tag,content`. Tabellen kopplar varje kod och citat till dokument och utdrags-ID. Figuren räknar distinkta utdrag per kod. |
+| Skriva om resultatet | Exportera relevanta poster från Zotero som BibTeX. Importera filen och öppna manuset i din Markdown-editor, exempelvis Zettlr. | Använd posternas nycklar i texten, exempelvis `[@ovning]` för exempelkällan. Pandoc sätter citaten, referenslistan och figuren i rapporten. |
+| Granska och dela | Välj *Bygg rapport* och sedan *Öppna rapport*. | HTML-filen innehåller figuren och källhänvisningarna. Behåll `resultat.csv` bredvid HTML-filen om läsaren ska kunna öppna tabellen. För omkörning behövs hela körningsmappen. |
+
+En CSV kan använda komma eller semikolon och UTF-8 med eller utan byteordningsmärke. För andra undersökningar ändrar du analysen och kolumnnamnen i `underlag/analys.py`. Beskriv frågan, din förutsägelse och tolkningen i `underlag/manus.md`. De medföljande observationerna, intervjuerna och referensen är övningsmaterial.
+
+Om ingen webbläsare har installerats ännu visar projektfönstret rapporten med GNOME:s inbyggda webbkomponent.
+
+## Vad en körning bevarar
+
+Projektets `underlag/` är arbetsmappen. *Bygg rapport* kopierar hela mappen till en ny daterad undermapp i `korningar/` och kör analysen på kopian. Tidigare körningar kan därför återskapas efter att du har ändrat data eller manus. Vid avbruten eller misslyckad analys publiceras ingen färdig körning. Lägg bara filer som ska följa med analysen i `underlag/`. Ett kvalitativt underlag och dess resultattabell innehåller själva citaten.
+
+I varje körning finns `korning.json` med SHA-256 för underlag, resultat och körprogram samt versionerna av Python och Pandoc och maskinens arkitektur. Figurfilen och rapporten kan öppnas oberoende av analysmiljön. En SHA-256-jämförelse visar om filerna matchar den sparade förteckningen. När förutsägelsen registrerades måste beläggas separat om studien kräver förregistrering.
+
+**På kollegans dator:** kopiera en enskild körningsmapp, läs analyskoden och välj *Upprepa från annan mapp*. Verktyget kontrollerar det sparade underlaget och resultaten, kör analysen i en ny temporär mapp och jämför de nya filerna byte för byte. Även en redigerad CSV, en borttagen fil eller en annan figur ger ett namngivet fel.
+
+Med lokal körning behövs Python 3 och Pandoc 3. De ingår i utvecklingsavbildningen. På en dator utanför ForskarOS kan kollegan öppna den kopierade mappen och köra `python3 upprepa.py`. Andra programversioner kan ge andra byte för ett numeriskt likvärdigt resultat.
+
+För en versionslåst körning, kryssa i *Kör i versionslåst labb (Podman)*. Första hämtningen kräver nät. Körningen sparar den använda containeravbildningens digest. *Upprepa* på en annan ForskarOS-maskin väljer den avbildningen. Själva analysen körs med containerns nätverk avstängt. Använd kompatibel processorarkitektur för den sparade avbildningen.
+
+```bash
+forskaros-projekt skapa kvantitativ "Min studie"
+forskaros-projekt kör "Min studie"
+# Alternativt i ForskarOS-labbet
+forskaros-projekt kör --labb "Min studie"
+# Ange en av de körningsmappar kommandot ovan skriver ut
+forskaros-projekt upprepa "Min studie/korningar/KÖRNINGENS-NAMN"
+```
+
+## Välj verktyg efter vad du behöver lämna vidare
+
+| Uppgift | Verktyg och överlämning |
+|---|---|
+| Litteratur och läsning | Spara den källa du hittat i Firefox till Zotero. Markeringar i en PDF från Xournal++ kan hjälpa dig att återfinna sidan. Exportera de källor du faktiskt citerar till projektets BibTeX-fil. Perplexity, Elicit och Consensus är tillval för sökning. Kontrollera originalkällan före import. |
+| Samtal och kodning | Speech Note kan ge ett lokalt textutkast. Läs igenom det, spara texten och importera den i Taguette. Dess export av kodade utdrag är underlaget för det kvalitativa projektet. |
+| Statistik | Calc lämpar sig för en liten tabell. DuckDB kan ta fram ett urval ur en större datamängd. JASP eller jamovi kan öppna tabellen för en separat statistisk analys. LabPlot kan användas för att utforska ett diagram. För att få med en bearbetning i omkörningen måste den uttryckas i projektets analyskod. |
+| Kod och beräkning | VSCodium kan redigera analysen. JupyterLab och RStudio kan användas för att utforska data. Flytta de valda stegen till analyskoden. Python kan där anropa ett eget R-skript i ForskarOS-labbet. För lokala extraberoenden kan uv användas i en egen miljö. |
+| Perspektiv och skisser | Freeplane ger en begreppskarta, draw.io en modell och Rnote en skiss. Exportera den valda bilden till `underlag/` och länka från manuset, exempelvis `![Modell](modell.svg)`. Den följer med rapporten och dess kontrollsumma sparas. |
+| Text och publicering | Samma Markdown-manus kan redigeras i Zettlr eller Obsidian. Pandoc bygger projektets HTML. Behövs ett särskilt slutformat kan LibreOffice eller ONLYOFFICE användas för Word, TeXstudio för LaTeX och Typst för en egen PDF-layout. De efterbearbetningarna ligger utanför standardkörningen. |
+| Lokal AI | Alpaca kan användas med Ollama för att pröva en alternativ tolkning. Anteckna vad som ändrade analysen i manuset. En lokal körning behöver ingen AI-tjänst. |
+| Arkiv och sökning | ripgrep hittar ett citat eller utdrags-ID i filerna. DataLad och git-annex kan versionshantera större underlag före export. Lägg materialiserade vanliga filer i `underlag/`. Déjà Dup kan säkerhetskopiera projektmappen, inklusive tidigare körningar. |
