@@ -20,6 +20,18 @@ Ett fönster för forskningsprojekt, forskningsmappen och verktygen, byggt med G
 
 <p align="center"><img src="docs/bilder/app-start.png" alt="Startsidan i appen ForskarOS: rubriken Vad vill du arbeta med?, knappen Nytt forskningsprojekt, listorna Senaste projekt, Forskningsmappen och Verktyg." width="480"> <img src="docs/bilder/rapport-lasyta.png" alt="Rapporten med rubriken Hypotesbyten efter återkoppling i seriff på papperston, med frågan, förutsägelsen och resultatet." width="380"></p>
 
+### Designsystem för hela ForskarOS
+
+Färger och typsnitt finns på ett ställe, `katalog/design.json`, och når skrivbordet, appen, Obsidian och rapporten. [Designsystemet](docs/DESIGN.md)
+
+- **Typsnitt med var sin roll:** Adwaita Sans för gränssnitt, Noto Serif för läsning och JetBrains Mono för kod och data. De gäller i GNOME, i alla program som ber om sans-serif, serif eller monospace, och i Flatpak-program som Firefox, LibreOffice och Obsidian. Avbildningen kontrollerar med `fc-match` att de används.
+- **Accentfärgen teal** i GNOME, appen och nya forskningsmappar i Obsidian. Forskaren kan byta i Inställningar.
+- **Lugnare skrivbordsbakgrund:** papperston med forskningscykeln stor och lätt, i ljust och mörkt läge.
+- Rapportens färger och exempelfiguren kommer ur samma värden. All text i rapporten klarar WCAG AA i båda lägena, och testet kontrollerar det.
+- Inget eget tema och inga låsta inställningar. Forskarens egna val går före.
+
+<p align="center"><img src="docs/bilder/designsystem.png" alt="ForskarOS designsystem med tre typsnitt, accentfärg, papperstoner, statusfärger och forskningscykelns sju fasfärger." width="720"></p>
+
 ### Forskningsdomänen
 
 Forskningsprojektet blir en forskningsdomän, enligt [ForskarOS 3.0](docs/FORSKAROS-3.md). Acceptanstest 1–4 körs i CI.

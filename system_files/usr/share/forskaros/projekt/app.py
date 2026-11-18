@@ -1059,7 +1059,13 @@ def main(argv):
 
     def activate(application):
         provider = Gtk.CssProvider()
-        provider.load_from_string(CSS)
+        css = CSS
+        if test_dir and os.environ.get("FORSKAROS_ACCENT") and Adw.get_minor_version() < 6:
+            # Bara för skärmbilder: libadwaita före 1.6 saknar GNOME:s accentfärger,
+            # så självtestet kan lägga in ForskarOS accentfärg för hand.
+            fill, _, text = os.environ["FORSKAROS_ACCENT"].partition(",")
+            css += f"@define-color accent_bg_color {fill}; @define-color accent_color {text or fill};"
+        provider.load_from_string(css)
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider,
                                                   Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         window = Window(application, start)

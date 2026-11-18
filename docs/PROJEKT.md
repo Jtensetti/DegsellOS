@@ -6,7 +6,7 @@ I projektet visar appen ett enda **nästa steg** med en knapp: *granska* påstå
 
 <p align="center"><img src="bilder/app-projekt.png" alt="Projektvyn i appen ForskarOS. Överst stegen Granska, Bygg, Upprepa och Dela, där Granska och Bygg är klara. Nästa steg: Upprepa den senaste körningen, med knappen Upprepa. Under den listan Påståenden med tre påståenden markerade Granskad, och listan Underlag." width="620"></p>
 
-<sub>Appen i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Typsnitt och accentfärg följer systemet och ser något annorlunda ut i ForskarOS.</sub>
+<sub>Appen med ForskarOS typsnitt, i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Accentfärgen är inlagd för hand, eftersom utvecklingsdatorns libadwaita 1.5 saknar GNOME:s accentval.</sub>
 
 | När du vill … | Börja med | Lämna vidare |
 |---|---|---|

@@ -7,5 +7,5 @@
   <path d="M 83.10 208.30 A 92 92 0 0 1 39.72 153.91" fill="none" stroke="#D9724A" stroke-width="22" stroke-linecap="round" opacity="1.0"><title>Utveckla</title></path>
   <path d="M 37.22 142.96 A 92 92 0 0 1 52.70 75.14" fill="none" stroke="#A45DA8" stroke-width="22" stroke-linecap="round" opacity="1.0"><title>Ompröva</title></path>
   <path d="M 59.71 66.35 A 92 92 0 0 1 122.38 36.17" fill="none" stroke="#5B6CC4" stroke-width="22" stroke-linecap="round" opacity="1.0"><title>Dela</title></path>
-  <circle cx="128" cy="128" r="19.8" fill="#F4F1EA" stroke="#1B2A3A" stroke-width="4.8" opacity="1.0"/>
+  <circle cx="128" cy="128" r="19.8" fill="#f4f1ea" stroke="#1f1d1a" stroke-width="4.8"/>
 </svg>

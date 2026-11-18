@@ -2,8 +2,13 @@
    bygger exakt samma rapport. Ändra fritt; nästa körning använder din version.
    Läsyta enligt docs/DESIGN.md: seriff, smal spalt, lugn papperston. */
 
+/* designvärden: början */
+/* Genererad av scripts/identitet.py från katalog/design.json. Ändra inte för hand. */
 :root {
   color-scheme: light dark;
+  --lasning: "Noto Serif", "Source Serif 4", "DejaVu Serif", "Georgia", serif;
+  --granssnitt: "Adwaita Sans", system-ui, "Cantarell", "Noto Sans", sans-serif;
+  --kod: "JetBrains Mono", "Adwaita Mono", ui-monospace, "DejaVu Sans Mono", monospace;
   --papper: #faf8f4;
   --text: #1f1d1a;
   --dampad: #67625a;
@@ -28,6 +33,7 @@
     --saknas: #f97066;
   }
 }
+/* designvärden: slut */
 
 html {
   background: var(--papper);
@@ -39,7 +45,7 @@ body {
   max-width: 44rem;
   margin: 0 auto;
   padding: 4rem 1.5rem 6rem;
-  font-family: "Noto Serif", "Source Serif 4", "DejaVu Serif", Georgia, serif;
+  font-family: var(--lasning);
   font-size: 1.1875rem;
   line-height: 1.55;
   hyphens: auto;
@@ -53,7 +59,7 @@ p, li { max-width: 68ch; }
 /* Rubriker och allt som inte är löptext: systemets sans-serif. */
 h1, h2, h3, h4, figcaption, table, nav, .status, .subtitle, .author, .date,
 header#title-block-header p {
-  font-family: system-ui, "Cantarell", "Noto Sans", sans-serif;
+  font-family: var(--granssnitt);
 }
 
 h1, h2, h3, h4 {
@@ -109,7 +115,7 @@ table {
 th, td { text-align: left; padding: 0.45em 0.8em 0.45em 0; border-bottom: 1px solid var(--linje); vertical-align: top; }
 th { font-weight: 600; border-bottom-color: var(--dampad); }
 
-code, pre { font-family: ui-monospace, "Noto Sans Mono", "DejaVu Sans Mono", monospace; font-size: 0.85em; }
+code, pre { font-family: var(--kod); font-size: 0.85em; }
 pre { background: var(--yta); padding: 1em; border-radius: 8px; overflow-x: auto; }
 :not(pre) > code { background: var(--yta); padding: 0.1em 0.3em; border-radius: 4px; overflow-wrap: anywhere; }
 
@@ -117,11 +123,13 @@ hr { border: 0; border-top: 1px solid var(--linje); margin: 3rem 0; }
 
 /* Referenser */
 #refs { font-size: 0.95rem; }
-.csl-entry { padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 0.6em; }
+/* Hängande indrag. Ersätter Pandocs egna regler, som skiljer sig mellan versioner. */
+#refs.hanging-indent { margin-left: 0; text-indent: 0; }
+#refs .csl-entry { margin-left: 0; padding-left: 1.5em; text-indent: -1.5em; margin-bottom: 0.6em; }
 
 /* Belägg och omprövning */
 section[aria-label="Belägg"] {
-  font-family: system-ui, "Cantarell", "Noto Sans", sans-serif;
+  font-family: var(--granssnitt);
   font-size: 0.95rem;
   hyphens: manual;
   margin-top: 4rem;
@@ -138,7 +146,7 @@ section[id^="belagg-"] {
 section[id^="belagg-"] h3 { margin-top: 0; font-size: 1.05rem; }
 section[id^="belagg-"] h4 { margin-top: 1.4em; }
 section[id^="belagg-"] p { margin-bottom: 0.7em; }
-section[id^="belagg-"] blockquote { font-family: "Noto Serif", "Source Serif 4", "DejaVu Serif", Georgia, serif; font-size: 1.05rem; }
+section[id^="belagg-"] blockquote { font-family: var(--lasning); font-size: 1.05rem; }
 section[id^="belagg-"]:target { outline: 2px solid var(--accent); outline-offset: 4px; }
 
 .status {

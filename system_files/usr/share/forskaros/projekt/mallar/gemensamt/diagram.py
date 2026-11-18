@@ -29,7 +29,7 @@ def bars(file, title, values, maximum):
              '@media (prefers-color-scheme: dark){.figur-yta{fill:#1c1b19}.figur-text{fill:#ebe7e0}'
              '.figur-stapel{fill:#5fb3a9}}</style>',
              '<rect class="figur-yta" width="100%" height="100%"/>',
-             '<g class="figur-text" font-family="sans-serif">',
+             '<g class="figur-text" font-family="\'Adwaita Sans\', \'Noto Sans\', sans-serif">',
              f'<text x="16" y="29" font-size="19">{escape(title)}</text>']
     for index, (label, value, display) in enumerate(values):
         y = 59 + 48 * index

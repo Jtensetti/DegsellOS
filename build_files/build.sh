@@ -53,5 +53,17 @@ systemctl enable forskaros-grund.service forskaros-forskare.service forskaros-de
 # Identitet: logotypen som programikon.
 install -Dm644 /usr/share/forskaros/identitet/forskaros-logotyp.svg /usr/share/icons/hicolor/scalable/apps/forskaros.svg
 
+# Typsnitt för gränssnitt, läsning och kod (katalog/design.json, docs/DESIGN.md).
+# Bluefin har dem oftast redan; installera bara det som saknas.
+for pkg in adwaita-sans-fonts google-noto-serif-vf-fonts jetbrains-mono-fonts; do
+  rpm -q "$pkg" >/dev/null || dnf -y install "$pkg"
+done
+ln -sf /usr/share/forskaros/identitet/52-forskaros-typsnitt.conf /etc/fonts/conf.d/52-forskaros-typsnitt.conf
+fc-cache -f >/dev/null
+for pair in 'sans\-serif=Adwaita Sans' 'serif=Noto Serif' 'monospace=JetBrains Mono'; do
+  got=$(fc-match -f '%{family[0]}' "${pair%%=*}")
+  [[ "$got" == "${pair#*=}" ]] || { echo "Typsnittet för ${pair%%=*} blev $got, inte ${pair#*=}" >&2; exit 1; }
+done
+
 # Arbetsytans standardinställningar (dockan m.m.).
 if command -v dconf >/dev/null 2>&1; then dconf update; fi

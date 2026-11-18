@@ -4,12 +4,3 @@ favorite-apps=['io.github.jtensetti.Forskaros.desktop', 'org.mozilla.firefox.des
 
 [org/gnome/desktop/interface]
 show-battery-percentage=true
-
-[org/gnome/desktop/background]
-picture-uri='file:///usr/share/forskaros/identitet/forskaros-bakgrund-ljus.svg'
-picture-uri-dark='file:///usr/share/forskaros/identitet/forskaros-bakgrund-mork.svg'
-picture-options='zoom'
-primary-color='#0F1B2A'
-
-[org/gnome/desktop/screensaver]
-picture-uri='file:///usr/share/forskaros/identitet/forskaros-bakgrund-mork.svg'

@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "beskrivning": "ForskarOS designvärden. scripts/identitet.py skapar bakgrunder, logotyp, typsnittsinställningar, GNOME-inställningar, Obsidians utseende och rapportens färger ur den här filen. Se docs/DESIGN.md.",
+  "accent": {
+    "gnome": "teal",
+    "gnome_hex": "#2190a4",
+    "text": {"ljus": "#1f6f93", "mörk": "#5fb3d6"}
+  },
+  "ytor": {
+    "papper": {"ljus": "#faf8f4", "mörk": "#1c1b19"},
+    "skrivbord": {"ljus": "#f4f1ea", "mörk": "#1c1b19"},
+    "upphöjd": {"ljus": "#f1ede5", "mörk": "#262421"},
+    "linje": {"ljus": "#e2ddd3", "mörk": "#3a3732"},
+    "text": {"ljus": "#1f1d1a", "mörk": "#ebe7e0"},
+    "dämpad": {"ljus": "#67625a", "mörk": "#a49e94"}
+  },
+  "status": {
+    "granskad": {"ljus": "#2c6e49", "mörk": "#74c69d"},
+    "ompröva": {"ljus": "#8a5a00", "mörk": "#e9b949"},
+    "saknas": {"ljus": "#b42318", "mörk": "#f97066"}
+  },
+  "diagram": {
+    "stapel": {"ljus": "#27736e", "mörk": "#5fb3a9"}
+  },
+  "faser": [
+    {"namn": "Utforska", "färg": "#2E86AB"},
+    {"namn": "Kombinera", "färg": "#3FA7A0"},
+    {"namn": "Välj", "färg": "#7BB662"},
+    {"namn": "Pröva", "färg": "#E0A458"},
+    {"namn": "Utveckla", "färg": "#D9724A"},
+    {"namn": "Ompröva", "färg": "#A45DA8"},
+    {"namn": "Dela", "färg": "#5B6CC4"}
+  ],
+  "typsnitt": {
+    "gränssnitt": {"familj": "Adwaita Sans", "storlek": 11, "paket": "adwaita-sans-fonts",
+                   "reserv": ["system-ui", "Cantarell", "Noto Sans", "sans-serif"]},
+    "läsning": {"familj": "Noto Serif", "storlek": 12, "paket": "google-noto-serif-vf-fonts",
+                "reserv": ["Source Serif 4", "DejaVu Serif", "Georgia", "serif"]},
+    "kod": {"familj": "JetBrains Mono", "storlek": 11, "paket": "jetbrains-mono-fonts",
+            "reserv": ["Adwaita Mono", "ui-monospace", "DejaVu Sans Mono", "monospace"]}
+  }
+}

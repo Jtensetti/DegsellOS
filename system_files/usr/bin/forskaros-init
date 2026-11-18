@@ -3,11 +3,23 @@
 #  1. Skapar ~/ForskarOS från seed-vaulten om den inte finns.
 #  2. Uppdaterar ForskarOS Core-tillägget i en befintlig vault när OS:et har
 #     uppdaterats. Forskarens egna anteckningar rörs aldrig.
+#  3. Ger Flatpak-programmen ForskarOS typsnitt, en gång.
 set -euo pipefail
 
 SEED=/usr/share/forskaros/vault
 TARGET="${FORSKAROS_VAULT:-$HOME/ForskarOS}"
 PLUGIN_REL=.obsidian/plugins/forskaros-core
+
+# ForskarOS typsnitt även i Flatpak-program (Firefox, LibreOffice, Obsidian, Zotero).
+# De läser inte systemets /etc/fonts men väl användarens fontconfig. Filen läggs dit
+# en gång; tar forskaren bort den kommer den inte tillbaka.
+FONTCONF="${FORSKAROS_TYPSNITT:-/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf}"
+CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+if [[ -f "$FONTCONF" && ! -e "$CONFIG/forskaros/typsnitt.installerade" ]]; then
+  mkdir -p "$CONFIG/fontconfig/conf.d" "$CONFIG/forskaros"
+  [[ -e "$CONFIG/fontconfig/conf.d/$(basename "$FONTCONF")" ]] || cp -- "$FONTCONF" "$CONFIG/fontconfig/conf.d/"
+  : > "$CONFIG/forskaros/typsnitt.installerade"
+fi
 
 if [[ ! -d "$SEED" ]]; then
   echo "forskaros-init: hittar inte $SEED" >&2

@@ -19,11 +19,11 @@ Importera din egen CSV och dina referenser från Zotero, redigera manuset och v�
 
 <sub>Från en ForskarOS-VM. Efter rättelsen bytte en av tre elever hypotes i övningsmaterialet. Klicket på den tidigare meningen öppnade dess underlag och en länk till analyskoden.</sub>
 
-**Under arbete i beta4:** appen ForskarOS ersätter välkomstmenyn i terminalen, verktygslådan och projektfönstret. Den visar ett nästa steg i taget och har kvar allt det gamla kunde, i listor och menyer. Rapporten får en läsyta för skärm, mobil och utskrift. Projektet blir också en forskningsdomän. Skyddat material analyseras utan nätverk och utan åtkomst till hemkatalogen, varje körning visar om den är dokumenterad, återkörbar eller återkörd, påståenden kan kopplas till citat i källor från Zotero och varje körning beskrivs i det öppna formatet RO-Crate. [Status mot ForskarOS 3.0](docs/FORSKAROS-3.md).
+**Under arbete i beta4:** appen ForskarOS ersätter välkomstmenyn i terminalen, verktygslådan och projektfönstret. Den visar ett nästa steg i taget och har kvar allt det gamla kunde, i listor och menyer. Hela systemet får ett gemensamt designsystem: typsnitt för gränssnitt, läsning och kod, accentfärgen teal och en lugnare skrivbordsbakgrund. Rapporten får en läsyta för skärm, mobil och utskrift. Projektet blir också en forskningsdomän. Skyddat material analyseras utan nätverk och utan åtkomst till hemkatalogen, varje körning visar om den är dokumenterad, återkörbar eller återkörd, påståenden kan kopplas till citat i källor från Zotero och varje körning beskrivs i det öppna formatet RO-Crate. [Status mot ForskarOS 3.0](docs/FORSKAROS-3.md).
 
 <p align="center"><img src="docs/bilder/app-projekt.png" alt="Projektvyn i appen ForskarOS med stegen Granska, Bygg, Upprepa och Dela, nästa steg Upprepa den senaste körningen och tre granskade påståenden." width="620"></p>
 
-<sub>Appen i beta4, i en virtuell bildskärm (Xvfb) på utvecklingsdatorn. Typsnitt och accentfärg följer systemet och ser något annorlunda ut i ForskarOS. [Designspråket](docs/DESIGN.md).</sub>
+<sub>Appen i beta4 med ForskarOS typsnitt, i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Accentfärgen är inlagd för hand, eftersom utvecklingsdatorns libadwaita 1.5 saknar GNOME:s accentval. [Designsystemet](docs/DESIGN.md).</sub>
 
 Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
 

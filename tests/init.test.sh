@@ -42,4 +42,12 @@ echo "gammalt" > "$HOME/ForskarOS/00 START/Verktyg/JASP.md"
 cmp -s "vault/00 START/Verktyg/JASP.md" "$HOME/ForskarOS/00 START/Verktyg/JASP.md"
 grep -q "min hypotes" "$HOME/ForskarOS/02 HYPOTESER/Min.md"
 
-echo "OK: forskaros-init skapar, bevarar och uppdaterar korrekt"
+# 5. Typsnitten för Flatpak-program läggs i användarens fontconfig en gång.
+CONF="$HOME/.config/fontconfig/conf.d/52-forskaros-typsnitt.conf"
+FORSKAROS_TYPSNITT="$PWD/system_files/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf" "$INIT" >/dev/null
+cmp -s system_files/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf "$CONF"
+rm "$CONF"
+FORSKAROS_TYPSNITT="$PWD/system_files/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf" "$INIT" >/dev/null
+test ! -e "$CONF"  # borttagen av forskaren: kommer inte tillbaka
+
+echo "OK: forskaros-init skapar, bevarar och uppdaterar korrekt, typsnitt för Flatpak en gång"
