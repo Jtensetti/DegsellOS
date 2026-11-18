@@ -23,7 +23,7 @@ Urval och filkopplingar finns i `underlag/belagg.json`. Ett tabellurval omfattar
 
 ## Pröva en rättelse
 
-Granska påståendena i ett kvantitativt exempelprojekt och välj **Bygg rapport**. Öppna därefter CSV-filen i Calc och ändra en etta till en nolla i gruppen *Saklig respons*. När du återgår till ForskarOS får påståendet om den gruppen status **Ompröva**. Påståendet om den neutrala gruppen behåller sin granskning. För intervjumaterial kan du på samma sätt granska både ett citat som stöder tolkningen och ett avvikande utdrag. [Intervjucitat och motbelägg i beta4](bilder/beta4-motbelagg-qemu.png)
+Granska påståendena i ett kvantitativt exempelprojekt och välj **Bygg rapport**. Öppna därefter CSV-filen i Calc och ändra en etta till en nolla i gruppen *Saklig respons*. När du återgår till ForskarOS får påståendet om den gruppen status **Ompröva**. Påståendet om den neutrala gruppen behåller sin granskning. För intervjumaterial kan du på samma sätt granska både ett citat som stöder tolkningen och ett avvikande utdrag.
 
 I utvecklingsversionen visas det tidigare och det aktuella underlaget under rubrikerna **Vid förra granskningen** och **Nu** när jämförelsetext har sparats. Välj **Ändra meningen i manus** eller **Bekräfta granskning**. Vill du läsa den tidigare tolkningen öppnar du **Rapport** på den äldre körningens rad.
 
@@ -47,7 +47,7 @@ En ändrad titel, författare eller DOI kräver en ny granskning av källan. En 
 
 **Bygg rapport** sparar en kopia av arbetsunderlaget i `korningar/` och kör analysen på kopian. Rapport, figur och resultattabell ligger i körningens `resultat/`. Rapporten går att läsa direkt i ForskarOS. Om du delar HTML-filen separat, lägg `resultat.csv` bredvid den så att länken till tabellen fungerar.
 
-**Upprepa** kör analysen på nytt och jämför resultaten med de sparade SHA-256-summorna. På en annan dator kan du öppna hela körningsmappen från projektmenyn eller köra `python3 upprepa.py` i mappen. För lokala körningar behövs Python 3 och Pandoc 3. Versionerna från originalkörningen finns i `korning.json`.
+**Upprepa** kör analysen på nytt och jämför resultaten med de sparade SHA-256-summorna. På en annan dator kan du öppna hela körningsmappen från projektmenyn eller köra `python3 upprepa.py` i mappen. För lokala körningar behövs Python 3 och Pandoc 3. Versionerna från originalkörningen finns i `korning.json`. Andra programversioner eller okontrollerad slump kan ge andra resultat; kontrollen jämför filerna byte för byte.
 
 | Status | Innebörd |
 |---|---|

@@ -21,7 +21,7 @@ jobs:
         include:
           # PC och Intel-Mac: installations-ISO
           - { arch: amd64, runner: ubuntu-24.04, type: anaconda-iso, config: iso.toml }
-          # Apple Silicon (t.ex. MacBook Neo) i UTM: färdig virtuell disk
+          # Apple Silicon i UTM: färdig virtuell disk
           - { arch: arm64, runner: ubuntu-24.04-arm, type: qcow2, config: disk.toml }
           # Virtuell disk även för PC, för test i QEMU/virt-manager
           - { arch: amd64, runner: ubuntu-24.04, type: qcow2, config: disk.toml }
@@ -79,6 +79,13 @@ jobs:
               "output/ForskarOS-${{ matrix.arch }}.qcow2" "output/ForskarOS-${{ matrix.arch }}.utm.zip" --minne 4096
           fi
           ls -lh output
+
+      - name: Skapa kontrollsummor för installationsmedier
+        run: |
+          find output -type f \( -name '*.iso' -o -name '*.qcow2' -o -name '*.utm.zip' \) -print0 |
+            while IFS= read -r -d '' file; do
+              (cd "$(dirname "$file")" && sha256sum "$(basename "$file")" > "$(basename "$file").sha256")
+            done
 
       - uses: actions/upload-artifact@v4
         with:

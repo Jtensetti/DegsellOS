@@ -5,7 +5,7 @@ on:
     branches: ["**"]
   pull_request:
   schedule:
-    # Varje vecka, så att vi får basavbildningens säkerhetsuppdateringar.
+    # Veckobyggnad med basavbildningens uppdateringar.
     - cron: "17 4 * * 2"
   workflow_dispatch:
 

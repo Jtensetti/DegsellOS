@@ -5,6 +5,8 @@ typ: hem
 
 I sidopanelen för ForskarOS Core (hjärnikonen) hittar du dina forskningsfrågor, vilken fas varje fråga befinner sig i och vad som behöver följas upp.
 
+Skrivbordsappens projekt med data, analys och manus ligger normalt i `~/Forskningsprojekt`. Den här forskningsmappen, `~/ForskarOS`, innehåller Core-anteckningarna.
+
 ## Kom igång
 
 1. Läs [[00 START/Arbetsmetod|Arbetsmetod]] eller [[00 START/Forskarhandboken/00 Innehåll|Forskarhandboken]].
@@ -28,6 +30,6 @@ I sidopanelen för ForskarOS Core (hjärnikonen) hittar du dina forskningsfrågo
 
 ## Säkerhetskopior
 
-Anteckningarna sparas i forskningsmappen, som normalt ligger i `~/ForskarOS`. Inkludera den i din säkerhetskopiering.
+Säkerhetskopiera både `~/ForskarOS` och `~/Forskningsprojekt`, exempelvis med Déjà Dup. Git kan användas för versionshantering av anteckningar och kod.
 
 Lägg inte personuppgifter eller sekretessbelagt material i molntjänster.

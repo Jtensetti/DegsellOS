@@ -2,7 +2,7 @@
 
 ## Apple Silicon
 
-Installera [UTM](https://mac.getutm.app/). En färdig virtuell maskin kan öppnas med ett dubbelklick. Hämta beta4-paketet medan det finns på GitHub eller importera VM-disken från Internet Archive enligt anvisningarna nedan. [UTM-paket för beta4, tillgängligt till 16 februari 2027, GitHub-inloggning krävs](https://github.com/Jtensetti/researchOS/actions/runs/44338731185/artifacts/14442862777)
+Installera [UTM](https://mac.getutm.app/). En färdig virtuell maskin kan öppnas med ett dubbelklick. Hämta beta4-paketet medan det finns på GitHub eller importera VM-disken från Internet Archive enligt anvisningarna nedan. [UTM-paket för beta4, tidsbegränsad GitHub-artifakt som kräver inloggning](https://github.com/Jtensetti/researchOS/actions/runs/44338731185/artifacts/14442862777)
 
 1. Packa upp nedladdningen från GitHub. Där ligger `.utm.zip` och dess `.sha256` tillsammans.
 2. Kör `shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.utm.zip.sha256` i den uppackade mappen.
@@ -22,4 +22,4 @@ För att dela filer väljer du **VirtFS** i maskinens delningsinställningar och
 
 ## Intel-Mac
 
-Använd amd64-ISO:n med ändelsen `-interaktiv-r2.iso`. På modeller med T2-krets kan tangentbord, styrplatta och trådlöst nätverk kräva särskilda drivrutiner. [Installera på PC eller Intel-Mac](BETA4.md#installera-på-pc) · [t2linux](https://t2linux.org/)
+Använd amd64-ISO:n med ändelsen `-interaktiv-r2.iso`. På modeller med T2-krets kan tangentbord, styrplatta och trådlöst nätverk kräva särskilda drivrutiner. [Installera på PC eller Intel-Mac](INSTALLATION.md#installera-på-pc) · [t2linux](https://t2linux.org/)

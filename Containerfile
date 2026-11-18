@@ -1,4 +1,4 @@
-# ForskarOS systemavbildning för amd64 och arm64.
+# ForskarOS-systemavbildning för amd64 och arm64, byggd på Bluefin LTS.
 ARG BASE_IMAGE=ghcr.io/ublue-os/bluefin:lts
 
 # Byggkontext som bara monteras under bygget och inte hamnar i avbildningen.

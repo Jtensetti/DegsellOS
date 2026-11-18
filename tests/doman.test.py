@@ -1,4 +1,4 @@
-"""Acceptanstest 1–4 ur ForskarOS 3.0 (dokument 14, avsnitt 12) för forskningsdomänen.
+"""Kontroller av projektskydd, reproducerbarhet, evidenskedja och forskningspaket.
 
 1. Projektisolering   – skyddat projekt körs utan nätverk och hemkatalog, annars inte alls
 2. Reproducerbarhet   – täckningsgrad: dokumenterad, återkörbar, återkörd (med logg)
@@ -24,6 +24,8 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
 from upprepa import sandbox_probe  # noqa: E402
 
+skipped = []
+
 
 def call(*args, fail=False, env=None):
     result = subprocess.run([str(cmd), *map(str, args)], capture_output=True, text=True,
@@ -45,6 +47,7 @@ def skip(what, variable):
     if os.environ.get(variable) == "1":
         raise AssertionError(f"{what} krävs men saknas ({variable}=1)")
     print(f"  HOPPAR ÖVER: {what} saknas här")
+    skipped.append(what)
 
 
 with tempfile.TemporaryDirectory() as tmp:
@@ -236,4 +239,7 @@ with tempfile.TemporaryDirectory() as tmp:
     Path(call("kör", legacy))
     print("Äldre projekt utan projekt.json körs som öppna")
 
-print("OK: acceptanstest 1–4 för forskningsdomänen")
+if skipped:
+    print("Godkända körda domänkontroller. Ej körda: " + ", ".join(skipped))
+else:
+    print("OK: projektskydd, reproducerbarhet, evidenskedja och forskningspaket")
