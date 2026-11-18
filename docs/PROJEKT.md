@@ -31,6 +31,56 @@ I det kvalitativa exemplet har en tolkning både ett stödjande utdrag och ett m
 
 På terminalen visar `forskaros-projekt belägg "Min studie"` alla länkade påståenden. Lägg till påståendets ID för att läsa underlaget och dess avtryck. Med `forskaros-projekt granska "Min studie" mitt-id --avtryck AVTRYCK` bekräftar du just den versionen. Beslutet sparas i `underlag/granskningar.json` och följer med nästa körning. Äldre projekt går att köra vidare och kan få egna kopplingar när du behöver dem.
 
+## Skyddat material
+
+Välj **Skyddat material** när projektet skapas om underlaget innehåller intervjuer, personuppgifter eller annat som inte får lämna datorn (`forskaros-projekt skapa kvalitativ "Min studie" --skydd skyddad`). Valet sparas i `projekt.json` i projektmappen.
+
+I ett skyddat projekt körs analysen och rapportbygget i en bubblewrap-sandlåda:
+
+- inget nätverk, så analysen kan inte skicka eller hämta något
+- hemkatalogen, `/tmp`, `/run` och monterade diskar är dolda; bara körningens egen mapp går att skriva i
+- inga miljövariabler från din session följer med
+
+Kan sandlådan inte startas kör ForskarOS inte analysen och säger varför. Det versionslåsta labbet (Podman utan nätverk) är ett alternativ. Hur körningen faktiskt isolerades sparas i `korning.json`.
+
+Skyddet gäller analysen och rapporten. Program du själv öppnar, till exempel Calc, Zettlr eller en webbläsare, omfattas inte. Lägg därför inte skyddat material i molntjänster eller AI-tjänster.
+
+<p align="center"><img src="bilder/beta4-projektfonster-xvfb.png" alt="Projektfönstret visar Skyddad studie, skyddat material, att den senaste körningen är återkörbar och att rapporten är klar." width="620"></p>
+
+<sub>Projektfönstret i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Rapporten byggdes i sandlådan med knappen Bygg rapport.</sub>
+
+## Hur säker är en körning?
+
+Varje körning har en täckningsgrad som visas i projektfönstret och med `forskaros-projekt status "Min studie"`:
+
+| Nivå | Betyder |
+|---|---|
+| **Dokumenterad** | Underlag, resultat och programversioner är registrerade med SHA-256. |
+| **Återkörbar** | Körningen gjordes utan nätverk och utan åtkomst utanför körningsmappen, så allt den behöver finns i mappen. |
+| **Återkörd** | Minst en upprepning har gett samma SHA-256 för alla resultat. |
+
+Varje upprepning loggas i körningens `verifieringar.json` med tid, miljö och utfall, även när resultaten avviker. En upprepning av en skyddad körning görs i sandlådan. På en dator utan bubblewrap vägrar `python3 upprepa.py` och föreslår `--utan-skydd`; en sådan upprepning loggas som oskyddad.
+
+## Koppla ett påstående till en källpassage
+
+Ett påstående kan bygga på en passage i litteraturen, inte bara på data. Exportera källan från Zotero som BibTeX och importera den. Välj **Koppla underlag**, välj *Källpassage* och klistra in citatet och sidan. Zoteros PDF-läsare kopierar en markerad annotering med citat.
+
+<p align="center"><img src="bilder/beta4-kallpassage-xvfb.png" alt="Dialogen Koppla underlag med fälten Påståendets ID, Länktext, Underlag, Roll, Citat och Sida." width="520"></p>
+
+ForskarOS kontrollerar:
+
+- att källan finns i `kallor.bib`; annars visas **Underlag saknas**
+- att citatet står i källtexten, om du har lagt källans text i `underlag/kallor/` (exempelvis `kallor/smith2020.md`)
+- att källans identifierande uppgifter (författare, titel, år, tidskrift, sidor, DOI med flera) inte ändrats sedan granskningen; annars **Ompröva**. Fält som ofta ändras vid en ny export, till exempel filsökväg och sammanfattning, räknas inte.
+
+Rapporten visar citatet vid påståendet. Exempelprojekten har ett påstående om att övningsmaterialet är konstruerat, kopplat till en passage i `kallor/ovning.md`.
+
+## Forskningspaketet
+
+Varje körning innehåller `ro-crate-metadata.json` i det öppna formatet [RO-Crate 1.1](https://w3id.org/ro/crate/1.1) med profilen [Process Run Crate 0.5](https://w3id.org/ro/wfrun/process/0.5). Den beskriver analysen som en körning med underlag, analyskod, resultat, programversioner och isolering, varje upprepning, och påståendena med de källor och filer de bygger på. Andra program som läser RO-Crate kan öppna paketet. CI kontrollerar varje paket med den officiella valideraren `rocrate-validator`.
+
+Licensen anger du i `projekt.json`, till exempel `"licens": "https://creativecommons.org/licenses/by/4.0/"`. ForskarOS väljer ingen licens åt dig. Utan angiven licens säger paketet det, och för ett skyddat projekt står det att materialet inte får spridas utan forskningshuvudmannens tillstånd. Paketet innehåller inga namn på personer.
+
 ## Vad en körning bevarar
 
 Projektets `underlag/` är arbetsmappen. *Bygg rapport* kopierar hela mappen till en ny daterad undermapp i `korningar/` och kör analysen på kopian. Tidigare körningar kan därför återskapas efter att du har ändrat data eller manus. Vid avbruten eller misslyckad analys publiceras ingen färdig körning. Lägg bara filer som ska följa med analysen i `underlag/`. Ett kvalitativt underlag och dess resultattabell innehåller själva citaten.

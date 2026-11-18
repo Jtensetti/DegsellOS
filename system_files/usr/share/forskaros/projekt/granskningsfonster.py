@@ -84,13 +84,24 @@ def connect_source(parent, folder, status):
     for value in ("stöd", "motbelägg", "metod"):
         role.append_text(value)
     role.set_active(0)
-    for index, (label, widget) in enumerate([("Påståendets ID", key), ("Länktext", title),
-                                            ("Underlag", source), ("Roll", role)]):
+    # Källpassage: klistra in citatet från Zotero och ange sidan.
+    quote = Gtk.Entry(placeholder_text="Ordagrant citat ur källan")
+    page = Gtk.Entry(placeholder_text="Sida, t.ex. s. 12")
+    rows = [("Påståendets ID", key), ("Länktext", title), ("Underlag", source), ("Roll", role),
+            ("Citat", quote), ("Sida", page)]
+    for index, (label, widget) in enumerate(rows):
         grid.attach(Gtk.Label(label=label, xalign=0), 0, index, 1, 1)
         grid.attach(widget, 1, index, 1, 1)
         widget.set_hexpand(True)
+
+    def passage_fields(*_):
+        chosen = choices[source.get_active()][1] if source.get_active() >= 0 else {}
+        for widget in (quote, page):
+            widget.set_sensitive("källa" in chosen)
+    source.connect("changed", passage_fields)
+    passage_fields()
     message = Gtk.Label(xalign=0, wrap=True, label="Klistra sedan in länken på meningens plats i manus.md.")
-    grid.attach(message, 0, 4, 2, 1)
+    grid.attach(message, 0, len(rows), 2, 1)
     dialog.show_all()
     try:
         while dialog.run() == Gtk.ResponseType.OK:
@@ -99,8 +110,18 @@ def connect_source(parent, folder, status):
             if not text:
                 message.set_text("Ange en mening att länka från.")
                 continue
+            spec = dict(choices[source.get_active()][1], roll=role.get_active_text())
+            if "källa" in spec:
+                spec["citat"] = quote.get_text().strip()
+                if page.get_text().strip():
+                    spec["sida"] = page.get_text().strip()
+                for suffix in (".md", ".txt"):
+                    # Finns källans text i projektet kontrolleras citatet mot den.
+                    if (folder / "kallor" / (spec["källa"] + suffix)).is_file():
+                        spec["fil"] = f'kallor/{spec["källa"]}{suffix}'
+                        break
             try:
-                add_source(folder, name, dict(choices[source.get_active()][1], roll=role.get_active_text()))
+                add_source(folder, name, spec)
             except ValueError as error:
                 message.set_text(str(error))
                 continue

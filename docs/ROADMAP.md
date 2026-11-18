@@ -43,6 +43,22 @@
 - [ ] Öppen självhostad AI-sök som alternativ till Perplexity (t.ex. Perplexica)
 - [ ] Färdig `.utm`-paketering med inställningar för RAM, CPU och skärm
 
+## ForskarOS 3.0: forskningsdomänen
+
+Målarkitektur och status: [`FORSKAROS-3.md`](FORSKAROS-3.md).
+
+- [x] Forskningsprojekt med data, analys, referenser och rapport (beta3)
+- [x] Påståenden kopplade till underlag, riktad omprövning (beta3)
+- [x] Projektmanifest med skyddsnivå och licens (beta4)
+- [x] Skyddade körningar i sandlåda, eller ingen körning (beta4, acceptanstest 1)
+- [x] Täckningsgrad och upprepningslogg (beta4, acceptanstest 2)
+- [x] Källpassager som belägg (beta4, acceptanstest 3)
+- [x] Körningar som RO-Crate / Process Run Crate (beta4)
+- [ ] Beta4 provad i en ForskarOS-VM
+- [ ] Zoteros annoteringar via lokalt API
+- [ ] Tolkande arbetsflöde med motstridiga källor
+- [ ] Användartester (acceptanstest 5)
+
 ## 2027.1
 
 - [x] Appmappar per fas, verktygskatalog, verktygssidor, rekommenderat urval

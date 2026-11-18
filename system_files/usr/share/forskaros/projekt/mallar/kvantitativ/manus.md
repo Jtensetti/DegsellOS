@@ -6,7 +6,7 @@ lang: sv
 ## Fråga
 
 Hur ofta byter elever hypotes efter saklig respektive neutral respons?
-Tabellen innehåller konstruerade observationer för att prova arbetsflödet [@ovning].
+[Observationerna är konstruerade och beskriver inga verkliga elever.](#belagg-material) [@ovning]
 
 ## Förutsägelse före analysen
 

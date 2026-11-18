@@ -11,7 +11,7 @@ from gi.repository import Gio, GLib, Gtk
 from granskningsfonster import connect_source, review
 
 
-def window(create, run, verify):
+def window(create, run, verify, domain, coverage, protections):
     app = Gtk.Window(title="ForskarOS – forskningsprojekt")
     app.set_default_size(570, 350)
     app.set_border_width(22)
@@ -62,7 +62,7 @@ def window(create, run, verify):
         completed = sorted(p for p in (folder / "korningar").iterdir()
                            if not p.name.startswith(".") and (p / "korning.json").is_file())
         last = completed[-1] if completed else None
-        heading.set_text(folder.name)
+        show_heading()
         files.set_sensitive(True)
         imports.set_sensitive(True)
         evidence_group.set_sensitive(True)
@@ -70,10 +70,18 @@ def window(create, run, verify):
         results.set_sensitive(last is not None)
         status.set_text(str(folder))
 
+    def show_heading():
+        manifest = domain(current)
+        text = f'{current.name} · {"skyddat material" if manifest["skydd"] == "skyddad" else "öppet material"}'
+        if last is not None:
+            level, why = coverage(last)
+            text += f"\nSenaste körningen: {level}. {why}."
+        heading.set_text(text)
+
     def new_project():
         path = choose("Var ska det nya projektet skapas?", saving=True)
         if path is not None:
-            select_project(create(method.get_active_id(), path))
+            select_project(create(method.get_active_id(), path, protection.get_active_id()))
 
     def open_file(path):
         if not path.exists():
@@ -157,9 +165,11 @@ def window(create, run, verify):
             elif building:
                 last = result
                 results.set_sensitive(True)
+                show_heading()
                 status.set_text(f"Rapporten är klar. Körning {last.name}")
             else:
-                status.set_text("Återskapad. Alla resultat har samma SHA-256.")
+                show_heading()
+                status.set_text("Återskapad. Alla resultat har samma SHA-256. Upprepningen är loggad i körningen.")
             return False
 
         def worker():
@@ -186,6 +196,12 @@ def window(create, run, verify):
     method.append("kvalitativ", "Kvalitativ · kodade utdrag")
     method.set_active(0)
     new.pack_start(method, False, False, 0)
+    protection = Gtk.ComboBoxText()
+    protection.append("öppen", "Öppet material")
+    protection.append("skyddad", "Skyddat material")
+    protection.set_active(0)
+    protection.set_tooltip_text(protections["skyddad"])
+    new.pack_start(protection, False, False, 0)
     button(new, "Skapa projekt…", new_project)
     button(new, "Öppna projekt…", lambda: select_project(choose("Välj projektmapp")))
     heading = label("Välj ett befintligt projekt eller skapa ett med exempeldata.")

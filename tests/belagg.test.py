@@ -47,6 +47,7 @@ with tempfile.TemporaryDirectory() as temp:
         call("skapa", method, project)
         folder = project / "underlag"
         assert all(c["status"] == "Ej granskad" for c in inspect(folder).values())
+        accept(project, "material")  # Påståendet som bygger på en källpassage, inte på data.csv.
         with ThreadPoolExecutor(max_workers=2) as pool:
             otherwise, fingerprint = pool.map(lambda key: accept(project, key), [other, affected])
         assert all(c["status"] == "Granskad" for c in inspect(folder).values())
@@ -81,7 +82,8 @@ with tempfile.TemporaryDirectory() as temp:
         if method == "kvalitativ":
             data.write_text(data.read_text().replace("Jag antog att handledaren redan kände till svaret.", "Rättat citat."))
             changed = inspect(folder)
-            assert all(c["status"] == "Ompröva" for c in changed.values())
+            assert all(c["status"] == "Ompröva" for k, c in changed.items() if k != "material")
+            assert changed["material"]["status"] == "Granskad", "en ändrad intervju berör inte källpassagen"
             assert changed[affected]["ändrat"][0].startswith("Motbelägg")
             data.write_text("\n".join(line for line in data.read_text().splitlines() if ",auktoritet," not in line) + "\n")
             assert inspect(folder)[affected]["status"] == "Underlag saknas"
@@ -91,7 +93,8 @@ with tempfile.TemporaryDirectory() as temp:
             # Byte av analystext berör båda kvantitativa påståendena.
             analysis = folder / "analys.py"
             analysis.write_text(analysis.read_text() + "\n# alternativ analysversion\n")
-            assert all(c["ändrat"] == ["Metod · analys.py"] for c in inspect(folder).values())
+            assert all(c["ändrat"] == ["Metod · analys.py"] for k, c in inspect(folder).items() if k != "material")
+            assert inspect(folder)["material"]["status"] == "Granskad", "en ändrad analys berör inte källpassagen"
             accept(project, affected)
             manus = folder / "manus.md"
             manus.write_text(manus.read_text().replace("två av tre", "en av tre"))

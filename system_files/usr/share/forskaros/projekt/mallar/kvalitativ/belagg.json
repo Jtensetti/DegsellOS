@@ -55,6 +55,18 @@
           ]
         }
       ]
+    },
+    "material": {
+      "kommentar": "Begränsning som ska följa med varje tolkning av exemplet.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "källa": "ovning",
+          "sida": "s. 1",
+          "citat": "De kommer inte från verkliga intervjuer.",
+          "fil": "kallor/ovning.md"
+        }
+      ]
     }
   }
 }

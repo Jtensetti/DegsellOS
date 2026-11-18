@@ -40,6 +40,18 @@
           "fil": "analys.py"
         }
       ]
+    },
+    "material": {
+      "kommentar": "Begränsning som ska följa med varje tolkning av exemplet.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "källa": "ovning",
+          "sida": "s. 1",
+          "citat": "De beskriver inga verkliga elever.",
+          "fil": "kallor/ovning.md"
+        }
+      ]
     }
   }
 }

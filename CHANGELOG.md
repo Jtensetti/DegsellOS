@@ -2,6 +2,16 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
+## 2027.1-beta4 (under arbete)
+
+Forskningsprojektet blir en forskningsdomän, enligt [ForskarOS 3.0](docs/FORSKAROS-3.md). Acceptanstest 1–4 körs i CI.
+
+- **Skyddat material:** välj skyddsnivå när projektet skapas. I ett skyddat projekt körs analysen och rapporten utan nätverk och utan åtkomst till hemkatalogen. Kan skyddet inte upprättas körs analysen inte alls. [Skyddat material](docs/PROJEKT.md#skyddat-material)
+- **Täckningsgrad:** varje körning visas som dokumenterad, återkörbar eller återkörd. Upprepningar loggas, även misslyckade. [Hur säker är en körning?](docs/PROJEKT.md#hur-säker-är-en-körning)
+- **Källpassager:** ett påstående kan kopplas till ett citat och en sida i en källa från Zotero. En ändrad eller borttagen källa och ett citat som inte står i källtexten upptäcks. [Koppla en källpassage](docs/PROJEKT.md#koppla-ett-påstående-till-en-källpassage)
+- **Forskningspaket:** varje körning beskrivs i det öppna formatet RO-Crate (Process Run Crate). [Forskningspaketet](docs/PROJEKT.md#forskningspaketet)
+- Projektets identitet, titel, skyddsnivå och licens finns i `projekt.json`. Äldre projekt fungerar som tidigare och behandlas som öppna.
+
 ## 2027.1-beta3
 
 - Klicka på ett länkat påstående i rapporten för att läsa observationerna eller intervjuutdragen, se motbelägg och hitta analysfilen som forskaren valt.

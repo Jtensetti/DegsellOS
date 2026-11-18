@@ -74,10 +74,83 @@ def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def normalized(text):
+    return " ".join(text.split())
+
+
+# Fält som identifierar källan. Ändras de behöver kopplade påståenden omprövas.
+# Andra fält (fil, sammanfattning, nyckelord) ändras ofta vid ny export.
+KALLFALT = ("author", "editor", "title", "year", "date", "journal", "journaltitle", "booktitle",
+            "publisher", "volume", "number", "pages", "edition", "doi", "url", "isbn")
+
+
+def bib_value(body, name):
+    match = re.search(r"(?:^|[,{\s])" + name + r"\s*=\s*", body, re.I)
+    if not match:
+        return None
+    rest = body[match.end():]
+    if rest.startswith("{"):
+        depth = 0
+        for index, char in enumerate(rest):
+            depth += {"{": 1, "}": -1}.get(char, 0)
+            if depth == 0:
+                return normalized(rest[1:index])
+    if rest.startswith('"'):
+        end = rest.find('"', 1)
+        return normalized(rest[1:end]) if end > 0 else None
+    word = re.match(r"[^,}\s]+", rest)
+    return word.group(0) if word else None
+
+
+def bib_entries(path):
+    """BibTeX-poster (som Zotero exporterar dem): nyckel -> (identifierande fält, titel)."""
+    text = path.read_text(encoding="utf-8-sig") if path.is_file() and not path.is_symlink() else ""
+    entries = {}
+    for match in re.finditer(r"@\s*([A-Za-z]+)\s*\{\s*([^,\s]+)\s*,", text):
+        if match.group(1).lower() in ("comment", "preamble", "string"):
+            continue
+        depth, end = 0, None
+        for index in range(text.index("{", match.start()), len(text)):
+            depth += {"{": 1, "}": -1}.get(text[index], 0)
+            if depth == 0:
+                end = index
+                break
+        if end is None:
+            raise ValueError(f"Ofullständig BibTeX-post: {match.group(2)}")
+        body = text[match.end():end]
+        fields = {name: value for name in KALLFALT if (value := bib_value(body, name)) is not None}
+        fields["typ"] = match.group(1).lower()
+        title = (fields.get("title") or "").replace("{", "").replace("}", "")
+        entries[match.group(2)] = (fields, title)
+    return entries
+
+
+def passage(folder, spec, item):
+    """En markerad passage i en källa: BibTeX-nyckel, sida och ordagrant citat."""
+    key, quote = spec["källa"], spec.get("citat", "")
+    if not isinstance(key, str) or not key or not isinstance(quote, str) or not quote.strip():
+        raise ValueError(f"Ange källans BibTeX-nyckel och citatet ur källan för {key}.")
+    entries = bib_entries(folder / "kallor.bib")
+    if key not in entries:
+        item["fel"] = f"Källan {key} saknas i kallor.bib"
+        return item
+    item["post"], item["titel"] = entries[key]
+    if "fil" in spec:
+        # Har forskaren lagt källans text i projektet kontrolleras att citatet står där.
+        path = source_path(folder, spec["fil"])
+        if not path.is_file():
+            item["fel"] = f"Källtexten {spec['fil']} saknas"
+        elif normalized(quote) not in normalized(path.read_text(encoding="utf-8-sig", errors="replace")):
+            item["fel"] = f"Citatet finns inte i {spec['fil']}"
+    return item
+
+
 def evidence(folder, spec):
     role = spec["roll"]
     if role not in ("stöd", "motbelägg", "metod"):
         raise ValueError(f"Okänd roll för belägg: {role}")
+    if "källa" in spec:
+        return passage(folder, spec, {"spec": spec, "rader": [], "fel": ""})
     path = source_path(folder, spec["fil"])
     item = {"spec": spec, "rader": [], "fel": ""}
     if not path.is_file():
@@ -114,6 +187,9 @@ def evidence(folder, spec):
 
 
 def source_label(spec):
+    if "källa" in spec:
+        page = f' · {spec["sida"]}' if spec.get("sida") else ""
+        return f'{spec["roll"].capitalize()} · källa {spec["källa"]}{page}'
     condition = ", ".join(f"{k}={v}" for k, v in sorted(spec.get("urval", {}).items()))
     return f'{spec["roll"].capitalize()} · {spec["fil"]}' + (f" · {condition}" if condition else "")
 
@@ -224,6 +300,8 @@ def source_choices(folder):
                 for values in sorted(matches):
                     spec = {"fil": "data.csv", "urval": dict(zip(keys, values)), "kolumner": columns}
                     choices.append((" · ".join(f"{k}={v}" for k, v in zip(keys, values)), spec))
+    for key, (_, title) in bib_entries(folder / "kallor.bib").items():
+        choices.append((f"Källpassage · {key}" + (f" · {title}" if title else ""), {"källa": key}))
     for file in sorted(folder.rglob("*")):
         name = file.relative_to(folder).as_posix()
         if file.is_file() and not file.is_symlink() and name not in ("belagg.json", "granskningar.json"):
@@ -261,6 +339,11 @@ def detail(claim):
         lines.extend(["", source_label(spec)])
         if item["fel"]:
             lines.append(item["fel"])
+        elif "källa" in spec:
+            lines.append(item.get("titel") or spec["källa"])
+            lines.append("»" + normalized(spec["citat"]) + "«")
+            if "fil" in spec:
+                lines.append(f'Citatet finns i {spec["fil"]}.')
         elif "sha256" in item:
             lines.append("Hela filen · SHA-256 " + item["sha256"])
         else:
@@ -292,6 +375,10 @@ def appendix(claims):
             parts.append(f'<h4>{escape(source_label(spec))}</h4>')
             if item["fel"]:
                 parts.append(f'<p>{escape(item["fel"])}</p>')
+            elif "källa" in spec:
+                parts.append(f'<blockquote>{escape(normalized(spec["citat"]))}</blockquote>'
+                             f'<p>{escape(item.get("titel") or spec["källa"])}'
+                             + (f', {escape(spec["sida"])}' if spec.get("sida") else "") + '</p>')
             elif "sha256" in item:
                 parts.append(f'<p>SHA-256 <code>{item["sha256"]}</code></p>')
             else:
@@ -303,7 +390,7 @@ def appendix(claims):
                 parts.append('</tbody></table>')
                 if len(item["rader"]) > 40:
                     parts.append('<p>De första 40 visas. Hela urvalet ingår i kontrollen.</p>')
-            if not item["fel"]:
+            if not item["fel"] and "fil" in spec:
                 url = escape(quote(spec["fil"]), quote=True)
                 parts.append(f'<p><a href="../underlag/{url}">Öppna {escape(spec["fil"])} i körningsmappen</a></p>')
         parts.append('</section>')

@@ -1,4 +1,10 @@
-"""Återskapa en ForskarOS-körning: python3 upprepa.py (i valfri arbetskatalog)."""
+"""Återskapa en ForskarOS-körning: python3 upprepa.py (i valfri arbetskatalog).
+
+En körning från ett skyddat projekt upprepas i en bubblewrap-sandlåda utan
+nätverk och utan hemkatalog. Finns inte bubblewrap avbryts upprepningen, om
+du inte uttryckligen väljer python3 upprepa.py --utan-skydd.
+"""
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -8,6 +14,45 @@ import shutil
 import subprocess
 import sys
 import tempfile
+
+
+# Mappar som döljs i sandlådan. /run döljs eftersom en skrivskyddad montering
+# inte hindrar en process från att ansluta till systemets och sessionens uttag.
+DOLDA = ("/home", "/var/home", "/root", "/run", "/tmp", "/var/tmp", "/mnt", "/var/mnt",
+         "/media", "/srv")
+
+
+def sandbox(work, argv):
+    """Kör argv utan nätverk och utan åtkomst till hemkataloger. Bara work är skrivbar."""
+    # FORSKAROS_BWRAP pekar ut en annan bubblewrap, t.ex. i tester av vägran.
+    bwrap = os.environ.get("FORSKAROS_BWRAP") or shutil.which("bwrap")
+    if not bwrap:
+        raise ValueError("bubblewrap (bwrap) saknas, så sandlådan kan inte startas.")
+    work = Path(work).resolve()
+    cmd = [bwrap, "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
+           "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc"]
+    hidden = []
+    for name in DOLDA:
+        path = Path(name)
+        if path.is_dir() and not path.is_symlink() and not any(path.is_relative_to(h) for h in hidden):
+            hidden.append(path)
+            cmd += ["--tmpfs", name]
+    cmd += ["--bind", str(work), str(work), "--chdir", str(work),
+            "--setenv", "PATH", "/usr/local/bin:/usr/bin:/bin", "--setenv", "HOME", str(work),
+            "--setenv", "LANG", "C.UTF-8", "--setenv", "FORSKAROS_SANDLADA", "bubblewrap"]
+    return cmd + ["--", *argv]
+
+
+def sandbox_probe(work):
+    """Kontrollera att sandlådan faktiskt kan startas innan analysen körs."""
+    result = subprocess.run(sandbox(work, ["true"]), capture_output=True, text=True)
+    if result.returncode:
+        reason = (result.stderr.strip() or f"avslutningskod {result.returncode}").splitlines()[-1]
+        raise ValueError(f"Sandlådan kunde inte startas ({reason}).")
+
+
+def now():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def checksum(path):
@@ -70,20 +115,68 @@ def environment():
     return {"python": platform.python_version(), "pandoc": version, "arkitektur": platform.machine()}
 
 
+def protection():
+    """Hur den här processen är isolerad, enligt den som startade den."""
+    value = os.environ.get("FORSKAROS_SKYDD")
+    return json.loads(value) if value else None
+
+
 def record(root, image=None):
     inputs = inventory(root / "underlag")
     env = environment()
     with_evidence = (root / "belagg.py").is_file()
+    started = now()
     build(root, with_evidence)
     compare("Underlag ändrat av analysen", inputs, inventory(root / "underlag"))
     manifest = {"format": 1, "miljö": env, "labb": image, "underlag": inputs,
-                "resultat": inventory(root / "resultat"), "upprepa.py": checksum(root / "upprepa.py")}
+                "resultat": inventory(root / "resultat"), "upprepa.py": checksum(root / "upprepa.py"),
+                "start": started, "slut": now(), "skydd": protection()}
     if with_evidence:
         manifest["belagg.py"] = checksum(root / "belagg.py")
     (root / "korning.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def log_verification(root, outcome, detail):
+    """Spara varje upprepning, även misslyckade, så att täckningsgraden stämmer."""
+    path = root / "verifieringar.json"
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+        entries.append({"tid": now(), "utfall": outcome, "detalj": detail,
+                        "miljö": environment(), "system": platform.system() + " " + platform.release(),
+                        "skydd": os.environ.get("FORSKAROS_SANDLADA") or ("podman" if os.environ.get("FORSKAROS_KORNINGSLABB") else None)})
+        tmp = path.with_name(".verifieringar.json.tmp")
+        tmp.write_text(json.dumps(entries, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        tmp.replace(path)
+    except OSError as error:
+        print(f"Upprepningen kunde inte loggas i {path}: {error}", file=sys.stderr)
+
+
+def coverage(root):
+    """Dokumenterad, återkörbar eller återkörd, med det som visar nivån."""
+    manifest = json.loads((root / "korning.json").read_text(encoding="utf-8"))
+    path = root / "verifieringar.json"
+    entries = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    same = [e for e in entries if e["utfall"] == "samma"]
+    if same:
+        when = same[-1]["tid"][:16].replace("T", " ") + " UTC"
+        count = "1 upprepning" if len(same) == 1 else f"{len(same)} upprepningar"
+        return "Återkörd", f"{count} gav samma SHA-256, senast {when}"
+    shield = manifest.get("skydd") or {}
+    if manifest.get("labb") or shield.get("nätverk") == "avstängt":
+        return "Återkörbar", "Körd utan nätverk och utan åtkomst utanför körningsmappen"
+    return "Dokumenterad", "Underlag, resultat och programversioner är registrerade"
+
+
 def repeat(root):
+    try:
+        _repeat(root)
+    except ValueError as error:
+        log_verification(root, "avviker", str(error))
+        raise
+    log_verification(root, "samma", "Alla resultat har samma SHA-256.")
+
+
+def _repeat(root):
     manifest = json.loads((root / "korning.json").read_text(encoding="utf-8"))
     if manifest.get("format") != 1:
         raise ValueError("Okänt format på korning.json.")
@@ -108,7 +201,17 @@ if __name__ == "__main__":
         root = Path(__file__).resolve().parent
         if sys.argv[1:] == ["--bygg"]:
             record(root, os.environ.get("FORSKAROS_KORNINGSLABB"))
-        elif not sys.argv[1:]:
+        elif sys.argv[1:] in ([], ["--utan-skydd"]):
+            manifest = json.loads((root / "korning.json").read_text(encoding="utf-8"))
+            protected = (manifest.get("skydd") or {}).get("nivå") == "skyddad"
+            isolated = os.environ.get("FORSKAROS_SANDLADA") or os.environ.get("FORSKAROS_KORNINGSLABB")
+            if protected and not isolated and sys.argv[1:] != ["--utan-skydd"]:
+                if not (os.environ.get("FORSKAROS_BWRAP") or shutil.which("bwrap")):
+                    raise ValueError("Körningen kommer från ett skyddat projekt och ska upprepas utan nätverk "
+                                     "och utan hemkatalog. bubblewrap saknas här. Kör python3 upprepa.py "
+                                     "--utan-skydd för att ändå upprepa den utan skydd.")
+                sandbox_probe(root)
+                sys.exit(subprocess.run(sandbox(root, [sys.executable, "-IB", str(root / "upprepa.py")])).returncode)
             repeat(root)
         else:
             raise ValueError("Använd python3 upprepa.py för att verifiera körningen.")

@@ -6,7 +6,7 @@ lang: sv
 ## Fråga
 
 Vilka skäl ger deltagarna för att hålla fast vid eller byta förklaring?
-Exempelintervjuerna är påhittade [@ovning]. Ersätt data.csv med en CSV-export
+[Utdragen är konstruerade och kommer inte från verkliga intervjuer.](#belagg-material) [@ovning] Ersätt data.csv med en CSV-export
 av kodade utdrag från Taguette och ange urvalet här.
 
 ## Tolkning

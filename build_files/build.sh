@@ -40,6 +40,11 @@ fi
 pandoc --version
 /usr/bin/python3 -c 'import gi; gi.require_version("Gtk", "3.0"); from gi.repository import Gtk'
 
+# Skyddade forskningsprojekt kör sin analys i en bubblewrap-sandlåda.
+# Utan bwrap vägrar ForskarOS köra dem, så den måste finnas i avbildningen.
+command -v bwrap >/dev/null || dnf -y install bubblewrap
+bwrap --version
+
 # Grundverktygen installeras vid första start med nätverk.
 systemctl enable forskaros-grund.service forskaros-forskare.service forskaros-delad-mapp.service
 

@@ -23,9 +23,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Installera Pandoc för projektproven
-        run: command -v pandoc || (sudo apt-get update && sudo apt-get install -y pandoc)
-      - run: bash scripts/check.sh
+      - name: Installera Pandoc, bubblewrap och RO-Crate-validerare för projektproven
+        run: |
+          sudo apt-get update && sudo apt-get install -y pandoc bubblewrap
+          # Ubuntu 24.04 begränsar användarnamnrymder för oprivilegierade program med AppArmor.
+          # ForskarOS-avbildningen (CentOS Stream 10) har ingen sådan begränsning.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          python3 -m venv "$RUNNER_TEMP/rocrate" && "$RUNNER_TEMP/rocrate/bin/pip" install -q roc-validator==0.14.0
+          echo "FORSKAROS_ROCRATE_VALIDATOR=$RUNNER_TEMP/rocrate/bin/rocrate-validator" >> "$GITHUB_ENV"
+      - name: Kontroller och acceptanstest (sandlåda och RO-Crate krävs)
+        env:
+          FORSKAROS_KRAV_SANDLADA: "1"
+          FORSKAROS_KRAV_ROCRATE: "1"
+        run: bash scripts/check.sh
       - name: Kontrollera att alla verktyg finns för amd64 och arm64
         run: bash tests/verify-apps.sh
 

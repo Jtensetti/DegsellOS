@@ -19,6 +19,8 @@ Importera din egen CSV och dina referenser från Zotero, redigera manuset och v�
 
 <sub>Från en ForskarOS-VM. Efter rättelsen bytte en av tre elever hypotes i övningsmaterialet. Klicket på den tidigare meningen öppnade dess underlag och en länk till analyskoden.</sub>
 
+**Under arbete i beta4:** projektet blir en forskningsdomän. Skyddat material analyseras utan nätverk och utan åtkomst till hemkatalogen, varje körning visar om den är dokumenterad, återkörbar eller återkörd, påståenden kan kopplas till citat i källor från Zotero och varje körning beskrivs i det öppna formatet RO-Crate. [Status mot ForskarOS 3.0](docs/FORSKAROS-3.md).
+
 Varje körning sparar underlaget, analyskoden, bibliografin, figuren, resultattabellen och en HTML-rapport. En kollega kan kopiera körningsmappen och välja **Upprepa från annan mapp** för att bygga om resultatet och jämföra kontrollsummorna. Arbetsflödet fungerar lokalt med Obsidian stängt. [Arbetsgång, filformat och verktygens roller](docs/PROJEKT.md).
 
 ## Ladda ner
