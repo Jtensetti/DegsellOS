@@ -74,10 +74,9 @@ jobs:
           sudo apt-get update && sudo apt-get install -y qemu-utils
           qemu-img convert -p -c -O qcow2 output/qcow2/disk.qcow2 "output/ForskarOS-${{ matrix.arch }}.qcow2"
           rm -rf output/qcow2
-          if [[ "${{ matrix.arch }}" == arm64 && -f vm/utm/config.plist ]]; then
+          if [[ "${{ matrix.arch }}" == arm64 ]]; then
             python3 scripts/paketera_utm.py vm/utm/config.plist \
-              "output/ForskarOS-${{ matrix.arch }}.qcow2" "output/ForskarOS-${{ matrix.arch }}.utm.zip"
-            rm "output/ForskarOS-${{ matrix.arch }}.qcow2"
+              "output/ForskarOS-${{ matrix.arch }}.qcow2" "output/ForskarOS-${{ matrix.arch }}.utm.zip" --minne 4096
           fi
           ls -lh output
 

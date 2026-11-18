@@ -90,7 +90,7 @@ Rapporten visar citatet vid påståendet. Exempelprojekten har ett påstående o
 
 Varje körning innehåller `ro-crate-metadata.json` i det öppna formatet [RO-Crate 1.1](https://w3id.org/ro/crate/1.1) med profilen [Process Run Crate 0.5](https://w3id.org/ro/wfrun/process/0.5). Den beskriver analysen som en körning med underlag, analyskod, resultat, programversioner och isolering, varje upprepning, och påståendena med de källor och filer de bygger på. Andra program som läser RO-Crate kan öppna paketet. CI kontrollerar varje paket med den officiella valideraren `rocrate-validator`.
 
-Licensen anger du i `projekt.json`, till exempel `"licens": "https://creativecommons.org/licenses/by/4.0/"`. ForskarOS väljer ingen licens åt dig. Utan angiven licens säger paketet det, och för ett skyddat projekt står det att materialet inte får spridas utan forskningshuvudmannens tillstånd. Paketet innehåller inga namn på personer.
+Licensen anger du i `projekt.json`, till exempel `"licens": "https://creativecommons.org/licenses/by/4.0/"`. Utan angiven licens säger paketet det. För ett skyddat projekt står det då att materialet kräver forskningshuvudmannens tillstånd för spridning. Citat, referenser och övriga underlag följer med körningen och kan innehålla personnamn.
 
 ## Rapportens utseende
 

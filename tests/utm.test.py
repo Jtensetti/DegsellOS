@@ -47,3 +47,18 @@ with tempfile.TemporaryDirectory() as tmp:
     assert cfg["Backend"] == "QEMU" and cfg["ConfigurationVersion"] == 4
 
 print("OK: UTM-paketering: namn, disk, minne, CPU, ny MAC, övrigt orört")
+
+with tempfile.TemporaryDirectory() as temp_dir:
+    directory = Path(temp_dir)
+    disk = directory / "ForskarOS.qcow2"
+    disk.write_bytes(b"QFI\xfb")
+    out = directory / "ForskarOS.utm.zip"
+    subprocess.run([sys.executable, str(ROOT / "scripts/paketera_utm.py"), str(ROOT / "vm/utm/config.plist"),
+                    str(disk), str(out), "--minne", "4096"], check=True, capture_output=True)
+    with zipfile.ZipFile(out) as archive:
+        cfg = plistlib.loads(archive.read("ForskarOS.utm/config.plist"))
+        assert cfg["System"]["MemorySize"] == 4096 and cfg["QEMU"]["UEFIBoot"]
+        assert cfg["Display"] and cfg["Network"][0]["Mode"] == "Shared"
+        assert cfg["Sharing"]["DirectoryShareMode"] == "VirtFS"
+        assert archive.read("ForskarOS.utm/Data/ForskarOS.qcow2") == disk.read_bytes()
+        assert archive.read("ForskarOS.utm/LICENSE-mall") == (ROOT / "vm/utm/config.LICENSE").read_bytes()

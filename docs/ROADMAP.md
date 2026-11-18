@@ -9,7 +9,7 @@ Den senaste publicerade förhandsversionen är **2027.1-beta4**. `main` innehål
 - [ ] Slutföra en installation med den publicerade `-interaktiv-r2.iso` på två anslutna virtuella diskar. Verifiera vald startdisk och oförändrat innehåll på den andra disken efter omstart.
 - [ ] Upprepa en tidigare skyddad forskningskörning efter systemuppgradering.
 - [ ] Prova arm64-disken i UTM på MacBook Neo, från lösenordsbyte till delad mapp och analys i labbet. [Mac-guide](MAC.md)
-- [ ] Paketera en dubbelklickbar UTM-maskin med en mall från UTM. [Mall och paketering](../vm/utm/README.md)
+- [x] Paketera den publicerade arm64-disken som en dubbelklickbar UTM-maskin. [Mall och paketering](../vm/utm/README.md)
 - [ ] Låta forskare med tre olika forskningsprofiler lösa samma uppgift i ForskarOS och sin vanliga miljö. Mät handgrepp, tid, hjälpbehov och fel.
 - [ ] Prova arbetsmetoden under fyra veckor. Granska om måtten speglar självständigt arbete och om forskaren kan visa fråga, hypotes, motprov, belägg, osäkerhet och slutsats.
 - [ ] Släppa kvartalsversionen 2027.1. [Släpprocess](RELEASE.md)

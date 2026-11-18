@@ -25,7 +25,7 @@ Den första filen, `ForskarOS-2027.1-beta4-amd64.iso`, började partitionera den
 3. Kontrollera tangentbord och tidszon. Vill du hämta grundverktygen vid första inloggningen kan du aktivera nätverkskortet under **Nätverk & värdnamn**. Du kan också skapa ditt lokala konto här.
 4. Välj **Börja Installation** när uppgifterna stämmer. Vid installationsprovets start hade den valda 48 GiB-disken fortfarande noll skrivna gästsektorer. Den separata 32 GiB-disken var identisk med provkopian.
 
-Den publicerade revisionen gick förbi det svenska språkvalet och inväntade bekräftelse. Kontrollen efter installationen på de två anslutna diskarna pågår.
+Den publicerade revisionen gick förbi det svenska språkvalet och inväntade bekräftelse. [Status för installationsprovet med två diskar](ROADMAP.md#inför-20271).
 
 ## Forskarens arbetsprov
 

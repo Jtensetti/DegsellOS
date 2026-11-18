@@ -18,7 +18,7 @@ Status gäller [2027.1-beta4 och installationsprovet](BETA4.md). "Automatiserat"
 
 | Funktion | I ForskarOS | Saknas |
 |---|---|---|
-| **Research Domain** | Projektmapp med `projekt.json` (identitet, titel och skyddsnivå). Skyddsnivån styr hur analysen körs. | Datakällor, projektspecifika program och behörigheter som systemet aktiverar när projektet öppnas |
+| **Research Domain** | Projektmapp med `projekt.json` för identitet, titel, skyddsnivå och valfri licens. Skyddsnivån styr hur analysen körs. | Datakällor, projektspecifika program och behörigheter som systemet aktiverar när projektet öppnas |
 | **Research Ledger** | `korning.json` (SHA-256, miljö, isolering, tider) och `verifieringar.json` | Körningar på externa kluster med körningskvitto och täckningsgrad för ofullständig proveniens |
 | **Evidence Engine** | `belagg.json`, granskningsbeslut, omprövning, källpassager | Ämnesspecifika granskningsmodeller, t.ex. motstridiga tolkningar av historiska källor |
 | **Research Guard** | bubblewrap utan nätverk och hemkatalog för analysen; Podman utan nätverk i labbet | Isolering av skrivbordsprogram, AI-policy som upprätthålls på systemnivå, krypterad lagring per projekt, penetrationstest |

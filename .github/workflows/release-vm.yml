@@ -165,6 +165,12 @@ jobs:
             mv output/bootiso/install.iso "dist/$FILE"
           fi
           rm -rf output
+          if [[ "${{ matrix.arch }}" == arm64 && "${{ matrix.type }}" == qcow2 ]]; then
+            UTM_FILE="$BASE.utm.zip"
+            python3 scripts/paketera_utm.py vm/utm/config.plist "dist/$FILE" "dist/$UTM_FILE" --minne 4096
+            (cd dist && sha256sum "$UTM_FILE" > "$UTM_FILE.sha256")
+            echo "UTM_FILE=$UTM_FILE" >> "$GITHUB_ENV"
+          fi
           (cd dist && sha256sum "$FILE" > "$FILE.sha256")
           echo "FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh dist
@@ -206,16 +212,29 @@ jobs:
             -H "x-archive-meta-licenseurl:https://opensource.org/licenses/MIT" \
             -H "x-archive-meta-source:https://github.com/Jtensetti/researchOS"
           put "dist/$FILE"
+          if [[ -n "${UTM_FILE:-}" ]]; then
+            put "dist/$UTM_FILE.sha256"
+            put "dist/$UTM_FILE"
+          fi
 
-      - name: Kontrollera att filen finns på Internet Archive
+      - name: Kontrollera filer och kontrollsummor på Internet Archive
         run: |
-          SIZE=$(stat -c%s "dist/$FILE")
           for i in $(seq 1 60); do
-            got=$(curl -fsS "https://archive.org/metadata/$ITEM" | jq -r --arg f "$FILE" '.files[]? | select(.name == $f) | .size' || true)
-            if [[ "$got" == "$SIZE" ]]; then echo "OK: $FILE finns ($SIZE byte)"; exit 0; fi
-            echo "Väntar på $FILE (har: ${got:-inget}, väntat: $SIZE)"; sleep 60
+            if curl -fsS "https://archive.org/metadata/$ITEM" > "$RUNNER_TEMP/archive-metadata.json"; then
+              saknas=()
+              for fil in dist/*; do
+                namn=$(basename "$fil")
+                storlek=$(stat -c%s "$fil")
+                if ! jq -e --arg n "$namn" --arg s "$storlek" 'any(.files[]?; .name == $n and (.size | tostring) == $s)' "$RUNNER_TEMP/archive-metadata.json" >/dev/null; then
+                  saknas+=("$namn")
+                fi
+              done
+              if (( ${#saknas[@]} == 0 )); then exit 0; fi
+              echo "Väntar på ${saknas[*]}"
+            fi
+            sleep 60
           done
-          echo "Filen syns inte på Internet Archive efter en timme"; exit 1
+          echo "Alla filer blev inte synliga på Internet Archive inom en timme"; exit 1
 
       - name: Sammanfattning
         run: |
@@ -223,6 +242,10 @@ jobs:
             echo "### ${{ matrix.what }}"
             echo "- Sida: https://archive.org/details/$ITEM"
             echo "- Direktlänk: https://archive.org/download/$ITEM/$FILE"
+            if [[ -n "${UTM_FILE:-}" ]]; then
+              echo "- UTM: https://archive.org/download/$ITEM/$UTM_FILE"
+              echo "- UTM SHA-256: https://archive.org/download/$ITEM/$UTM_FILE.sha256"
+            fi
             echo "- Torrent: https://archive.org/download/$ITEM/${ITEM}_archive.torrent"
             echo "- SHA-256: \`$(cut -d' ' -f1 dist/$FILE.sha256)\`"
           } >> "$GITHUB_STEP_SUMMARY"

@@ -1,14 +1,14 @@
 # Paketera en UTM-maskin
 
-Den publicerade arm64-disken kan importeras direkt enligt [Mac-guiden](../../docs/MAC.md). Med en egen UTM-mall kan du dessutom skapa ett paket som kan öppnas i UTM efter uppackning.
+`vm/utm/config.plist` är en ARM64-mall för UTM:s QEMU-backend. Den har UEFI, VirtIO-disk, bildskärm, delat nätverk och VirtFS för delade mappar. Paketeraren ger varje bygge en ny maskinidentitet och nätverksadress. När du startar maskinen första gången skapar UTM dess EFI-variabler.
 
-1. Skapa en QEMU-baserad ARM64/Linuxmaskin i UTM på Mac. Använd UEFI, VirtIO-disk, bildskärm och delat nätverk. Behåll den inbyggda ikonen. Låt eventuella flyttbara enheter vara tomma.
-2. Spara maskinen, välj **Visa i Finder** och öppna **Visa paketinnehåll** för att hitta `config.plist`.
-3. Kör kommandot nedan från repots rot med sökvägen till den sparade filen och den hämtade ForskarOS-disken.
+Mallen är anpassad från [Homebridges UTM-maskin](https://github.com/homebridge/homebridge-vm-image/blob/49aed1492c2929326ce54e3a980c3ca26dedfca4/assets/template-utm-config.plist). Tredjepartslicensen i `config.LICENSE` följer med i paketet.
+
+Kör från repots rot med ForskarOS-disken för den utgåva du vill paketera.
 
 ```bash
-python3 scripts/paketera_utm.py /sökväg/till/config.plist \
-  ForskarOS-2027.1-beta4-arm64.qcow2 ForskarOS.utm.zip
+python3 scripts/paketera_utm.py vm/utm/config.plist \
+  ForskarOS-2027.1-beta4-arm64.qcow2 ForskarOS-2027.1-beta4-arm64.utm.zip --minne 4096
 ```
 
-Paketet innehåller en ny maskinidentitet och en kopia av ForskarOS-disken. Packa upp det på Macen och öppna `ForskarOS.utm`. Välj eventuell delad mapp i maskinens inställningar på den Mac där maskinen ska köras.
+Packa upp arkivet på Macen och dubbelklicka på `ForskarOS.utm`. Välj eventuell delad mapp i maskinens inställningar. [Mac-guide](../../docs/MAC.md)

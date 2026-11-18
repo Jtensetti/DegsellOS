@@ -8,7 +8,7 @@ Utvecklingsbyggen för amd64 och arm64 publiceras på GHCR som `latest` och med 
 
 1. Välj ett nytt versionsnummer, skriv det i `VERSION` och beskriv ändringarna i [ändringsloggen](../CHANGELOG.md).
 2. Publicera en commit på `main` med prefixet `[release-media] ` i commitmeddelandet. CI testar koden, bygger för båda arkitekturerna, publicerar det versionsmärkta manifestet och signerar det med cosign.
-3. Släppjobbet använder manifestets digest till amd64-ISO:n och båda VM-diskarna. Det startprovar VM-diskarna, kontrollerar installerarens konfiguration och publicerar filerna på Internet Archive med separata SHA-256-summor. [Släpp färdig VM](../.github/workflows/release-vm.yml)
+3. Släppjobbet använder manifestets digest till amd64-ISO:n och båda VM-diskarna. Det startprovar diskarna, kontrollerar installerarens konfiguration och paketerar även arm64-disken som en UTM-maskin. Varje nedladdning får en egen SHA-256-summa på Internet Archive. [Släpp färdig VM](../.github/workflows/release-vm.yml)
 4. Hämta de publicerade medierna, jämför kontrollsummorna med byggkvittot och prova den dokumenterade installationsvägen. Uppdatera nedladdningarna och guiderna för respektive plattform. Återgå sedan till ett utvecklingsnummer i `VERSION`.
 
 ## Enbart installeraren
@@ -17,6 +17,6 @@ Om samma systemavbildning ska paketeras i en rättad ISO, använd en commit med 
 
 ## Övriga byggen
 
-- [Bygg installationsmedia](../.github/workflows/build-disk.yml) gör ISO och qcow2 från en angiven tagg och sparar dem som GitHub Actions-artefakter för prov.
+- [Bygg installationsmedia](../.github/workflows/build-disk.yml) gör ISO, qcow2 och ett UTM-paket från en angiven tagg och sparar dem som GitHub Actions-artefakter för prov.
 - [Återuppta en uppladdning](../.github/workflows/archive-retry.yml) kan inspektera en fördröjd arkivpost och begära omkörning av dess katalogjobb.
 - [Bygg ForskarOS-labbet](../.github/workflows/labb.yml) har ett eget flöde för ändringar av labbet och dess bygginstruktioner. För en upprepningsbar analys sparas labbets digest.

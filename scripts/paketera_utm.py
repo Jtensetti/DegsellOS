@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Paketerar en ForskarOS-disk som en färdig UTM-maskin (.utm.zip).
 
-En .utm är en mapp med config.plist och disken i Data/. Vi skriver inte
-config.plist från grunden: formatet är UTM:s eget. I stället utgår vi från en
-QEMU-mall som UTM själv har skapat och byter bara ut:
+En .utm är en mapp med config.plist och disken i Data/. Paketeringen
+utgår från en befintlig ARM64-mall för UTM:s QEMU-backend och anpassar:
   - namn, beskrivning och UUID
   - disken (första disken av typen Disk)
   - minne och processorer, om nycklarna finns
@@ -74,12 +73,14 @@ def main():
     ap.add_argument("--cpu", type=int, default=4)
     a = ap.parse_args()
 
-    config = plistlib.loads(Path(a.mall).read_bytes())
+    template = Path(a.mall)
+    license_file = template.with_suffix(".LICENSE")
+    config = plistlib.loads(template.read_bytes())
     disk = Path(a.disk)
     config = adapt(config, disk.name, a.minne, a.cpu)
 
     out = Path(a.ut)
-    if out.resolve() in (disk.resolve(), Path(a.mall).resolve()):
+    if out.resolve() in (disk.resolve(), template.resolve(), license_file.resolve()):
         raise SystemExit("Spara zip-paketet under ett annat namn än originalfilerna.")
     # qcow2-filen är redan komprimerad. Strömma den direkt till ZIP64 utan
     # en extra kopia på flera GiB och publicera först när arkivet är stängt.
@@ -88,6 +89,8 @@ def main():
     try:
         with zipfile.ZipFile(pending, "w", allowZip64=True) as z:
             z.writestr("ForskarOS.utm/config.plist", plistlib.dumps(config))
+            if license_file.is_file():
+                z.write(license_file, arcname="ForskarOS.utm/LICENSE-mall")
             z.write(disk, arcname=f"ForskarOS.utm/Data/{disk.name}")
         os.replace(pending, out)
     finally:
