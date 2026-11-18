@@ -247,7 +247,7 @@ def main():
                 if not claims:
                     print("Manuset har inga länkade påståenden.")
     else:
-        # Utan kommando öppnas appen ForskarOS. Allt nedan finns kvar på kommandoraden.
+        # Utan underkommando öppnas skrivbordsappen.
         os.execv(sys.executable, [sys.executable, "-I", str(HERE / "app.py")])
 
 

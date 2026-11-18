@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Körs inne i avbildningen under bygget. Håll den liten: allt som går att
-# installera som Flatpak eller via Homebrew görs i stället av forskaros-setup,
-# så att basavbildningens uppdateringar inte krockar med våra ändringar.
+# Installerar systemkomponenterna i avbildningen. Användarverktyg installeras
+# separat med forskaros-setup via Flatpak, Homebrew eller uv.
 set -euxo pipefail
 
 # Systemfiler (kommandon, tjänster, autostart, programmeny, verktygsprofiler).

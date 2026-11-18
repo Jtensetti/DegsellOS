@@ -6,7 +6,7 @@
 #
 #   forskaros-setup                       interaktivt val av profiler
 #   forskaros-setup --lista               visa profilerna
-#   forskaros-setup --profil skriva,ai    installera valda profiler
+#   forskaros-setup --profil skriva,lokal-ai  installera valda profiler
 #   forskaros-setup --ja                  kör valda profiler; licens och moln bekräftas separat
 #   forskaros-setup --godkänt             licens och moln är redan bekräftade (i appen ForskarOS)
 #   forskaros-setup --torrkörning         visa vad som skulle göras

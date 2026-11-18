@@ -12,6 +12,8 @@ Den här vaulten är en arbetsyta för forskningsprojekt. ForskarOS Core-panelen
 3. Arbeta i faser: Utforska, Kombinera, Välj, Pröva, Utveckla, Ompröva, Dela.
 4. Gör en förmågegranskning en gång i månaden.
 
+Skrivbordsappens projekt med data, analys och rapporter ligger separat i `~/Forskningsprojekt`.
+
 ## Mappar
 
 | Mapp | Innehåll |
@@ -24,9 +26,10 @@ Den här vaulten är en arbetsyta för forskningsprojekt. ForskarOS Core-panelen
 | 06 FÖRÄNDRING | Omprövningar |
 | 07 SAMVERKAN | Forskningsmöten |
 | 08 REFLEKTION | Forskarpass, AI-loggar, övningar, förmågegranskningar |
+| 09 ARKIV | Arkiverade anteckningar |
 
 ## Säkerhetskopior
 
-Anteckningarna finns bara i `~/ForskarOS`. Versionshantera mappen med Git och använd Déjà Dup.
+Säkerhetskopiera både `~/ForskarOS` och `~/Forskningsprojekt`, exempelvis med Déjà Dup. Git kan användas för versionshantering av anteckningar och kod.
 
 Lägg inte personuppgifter eller sekretessbelagt material i molntjänster.

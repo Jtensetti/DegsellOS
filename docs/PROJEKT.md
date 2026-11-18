@@ -1,4 +1,6 @@
-# Ett forskningsprojekt från underlag till granskning
+# Forskningsprojekt
+
+Guiden följer utvecklingsversionen på `main`. Jämförelsen med tidigare granskat underlag, direktimporten av Zotero-markeringar och mallen *Källtolkning* tillkommer efter den publicerade beta4-utgåvan.
 
 Öppna appen **ForskarOS** i dockan eller programmenyn och välj **Nytt forskningsprojekt**. Projektet hamnar i `~/Forskningsprojekt` och får exempeldata, så att du kan prova hela arbetsflödet innan du byter till ditt eget material.
 
@@ -6,7 +8,7 @@ I projektet visar appen ett enda **nästa steg** med en knapp: *granska* påstå
 
 <p align="center"><img src="bilder/app-projekt.png" alt="Projektvyn i appen ForskarOS. Överst stegen Granska, Bygg, Upprepa och Dela, där Granska och Bygg är klara. Nästa steg: Upprepa den senaste körningen, med knappen Upprepa. Under den listan Påståenden med tre påståenden markerade Granskad, och listan Underlag." width="620"></p>
 
-<sub>Appen med ForskarOS typsnitt, i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Accentfärgen är inlagd för hand, eftersom utvecklingsdatorns libadwaita 1.5 saknar GNOME:s accentval.</sub>
+*Projektvyn i utvecklingsversionen.*
 
 | När du vill … | Börja med | Lämna vidare |
 |---|---|---|
@@ -39,6 +41,12 @@ I det kvalitativa exemplet har en tolkning både ett stödjande utdrag och ett m
 
 På terminalen visar `forskaros-projekt belägg "Min studie"` alla länkade påståenden. Lägg till påståendets ID för att läsa underlaget och dess avtryck. Med `forskaros-projekt granska "Min studie" mitt-id --avtryck AVTRYCK` bekräftar du just den versionen. Beslutet sparas i `underlag/granskningar.json` och följer med nästa körning. Appen sparar även den jämförelsetext du har granskat i projektets `granskningsunderlag.json`. Där kan tidigare intervjuutdrag finnas kvar efter en rättelse. Filen ingår bara när du överlämnar hela projektet. Vid omprövning visas det tidigare och det aktuella underlaget, så att du kan ändra meningen i manuset eller bekräfta den. För äldre beslut där enbart avtrycket sparades anger appen att jämförelsetext saknas. Äldre projekt går att köra vidare och kan få egna kopplingar när du behöver dem.
 
+## Jämföra skriftliga källor
+
+Välj **Källtolkning** för ett exempel med ett protokoll och en minnesanteckning som ger olika bilder av samma händelse. Båda texterna är konstruerade. Projektet kopplar tolkningen till citat och visar stöd och motbelägg tillsammans.
+
+Byt ut filerna i `underlag/kallor/`, referenserna i `kallor.bib` och manusets tolkning mot ditt eget material. Registrera kopplingarna med **Koppla underlag**. Granska vilka uppgifter källorna faktiskt stöder innan du bygger rapporten.
+
 ## Skyddat material
 
 Välj **Skyddat material** när projektet skapas om underlaget innehåller intervjuer, personuppgifter eller annat som inte får lämna datorn (`forskaros-projekt skapa kvalitativ "Min studie" --skydd skyddad`). Valet sparas i `projekt.json` i projektmappen.
@@ -46,12 +54,12 @@ Välj **Skyddat material** när projektet skapas om underlaget innehåller inter
 I ett skyddat projekt körs analysen och rapportbygget i en bubblewrap-sandlåda:
 
 - inget nätverk, så analysen kan inte skicka eller hämta något
-- hemkatalogen, `/tmp`, `/run` och monterade diskar är dolda; bara körningens egen mapp går att skriva i
+- hemkataloger, `/tmp`, `/run` och vanliga monteringsplatser är dolda; bara körningens egen mapp går att skriva i
 - inga miljövariabler från din session följer med
 
 Kan sandlådan inte startas kör ForskarOS inte analysen och säger varför. Det versionslåsta labbet (Podman utan nätverk) är ett alternativ. Hur körningen faktiskt isolerades sparas i `korning.json`.
 
-Skyddet gäller analysen och rapporten. Program du själv öppnar, till exempel Calc, Zettlr eller en webbläsare, omfattas inte. Lägg därför inte skyddat material i molntjänster eller AI-tjänster.
+Skyddet gäller analysen och rapporten. Program du själv öppnar, till exempel Calc, Zettlr eller en webbläsare, omfattas inte. [Isoleringens omfattning och begränsningar](SECURITY.md#skyddat-forskningsprojekt).
 
 Skyddsnivån står under projektets namn i rubrikraden.
 
@@ -96,6 +104,8 @@ Licensen anger du i `projekt.json`, till exempel `"licens": "https://creativecom
 
 Rapporten är en läsyta: seriff, smal spalt och lugn papperston, i ljust eller mörkt läge efter läsarens inställning. Beläggen ligger samlade sist, med status i ord. Utseendet styrs av `underlag/rapport.css`, som följer med varje körning. Därför bygger en upprepning exakt samma rapport. Du kan ändra filen; nästa körning använder din version. Projekt som skapades före 2027.1-beta4 saknar filen och byggs som förut.
 
+![Exempelrapport med figur och referenser.](bilder/rapport-lasyta.png)
+
 ## Vad en körning bevarar
 
 Projektets `underlag/` är arbetsmappen. *Bygg rapport* kopierar hela mappen till en ny daterad undermapp i `korningar/` och kör analysen på kopian. Tidigare körningar kan därför återskapas efter att du har ändrat data eller manus. Vid avbruten eller misslyckad analys publiceras ingen färdig körning. Lägg bara filer som ska följa med analysen i `underlag/`. Ett kvalitativt underlag och dess resultattabell innehåller själva citaten.
@@ -104,7 +114,7 @@ I varje körning finns `korning.json` med SHA-256 för underlag, resultat och k�
 
 **På kollegans dator:** kopiera en enskild körningsmapp, läs analyskoden och välj *Upprepa en körning från annan mapp…* i projektets meny. Verktyget kontrollerar det sparade underlaget och resultaten, kör analysen i en ny temporär mapp och jämför de nya filerna byte för byte. Även en redigerad CSV, en borttagen fil eller en annan figur ger ett namngivet fel.
 
-Med lokal körning behövs Python 3 och Pandoc 3. De ingår i utvecklingsavbildningen. På en dator utanför ForskarOS kan kollegan öppna den kopierade mappen och köra `python3 upprepa.py`. Andra programversioner kan ge andra byte för ett numeriskt likvärdigt resultat.
+Med lokal körning behövs Python 3 och Pandoc 3. De ingår i ForskarOS. På en dator utanför ForskarOS kan kollegan öppna den kopierade mappen och köra `python3 upprepa.py`. Andra programversioner kan ge andra byte för ett numeriskt likvärdigt resultat.
 
 För en versionslåst körning, välj *Kör i versionslåst labb* i projektets meny innan du bygger. Första hämtningen kräver nät. Körningen sparar den använda containeravbildningens digest. *Upprepa* på en annan ForskarOS-maskin väljer den avbildningen. Själva analysen körs med containerns nätverk avstängt. Använd kompatibel processorarkitektur för den sparade avbildningen.
 

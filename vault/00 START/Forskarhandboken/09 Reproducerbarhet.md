@@ -3,20 +3,21 @@ typ: handbok
 ---
 # 9. Reproducerbarhet
 
-**ForskarOS-labbet** är en låst analysmiljö (R, tidyverse, RStudio, Python, Pandoc) som körs likadant överallt:
+I skrivbordsappen skapar **Bygg rapport** en körningsmapp med en kopia av underlaget, analyskoden, rapporten och resultaten. **Upprepa** kör analysen på nytt och jämför resultaten byte för byte. Tidigare körningar bevaras när arbetsmaterialet ändras.
+
+Välj **Kör i versionslåst labb** i projektets meny för att använda en bestämd containeravbildning med R och Python. Körningen sparar avbildningens digest och använder den vid upprepning. Den första hämtningen kräver nätåtkomst; projektets analys körs därefter utan nätverk.
+
+För en egen analys utanför projektappen kan du använda labbet direkt:
 
 ```bash
-cd ~/ForskarOS/"04 EXPERIMENT"/min-studie
-forskaros-labb Rscript analys.R      # kör analysen
-forskaros-labb version               # miljöns exakta version
+cd /sökväg/till/min-studie
+forskaros-labb Rscript analys.R
+forskaros-labb version
 ```
 
-Klistra in raden från `forskaros-labb version` under *Analysmiljö* i experimentet. Den innehåller avbildningens digest, som pekar ut exakt samma miljö även efter att nyare versioner släppts. Vem som helst med Podman eller Docker kan köra om analysen.
+Spara miljöns digest tillsammans med kod, data och körinstruktioner. En annan dator behöver Podman eller Docker och kompatibel processorarkitektur. En låst miljö minskar skillnader i programversioner; slump, externa data och hårdvaruberoende beräkningar kan ändå påverka resultatet.
 
-**Mer:**
-- **Git** för kod och vault.
-- **uv** och **renv** låser Python- och R-paket per projekt.
-- **DataLad** och **git-annex** versionshanterar stora datafiler.
+**Versionshantering:** Git kan användas för kod och anteckningar, uv och renv för paketberoenden samt DataLad och git-annex för större datafiler.
 
 ## Övning utan AI
 Kör en liten analys i labbet. Be någon annan köra om den från din experimentanteckning, utan att fråga dig något. Fungerade det?

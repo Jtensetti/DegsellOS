@@ -1,11 +1,5 @@
-# ForskarOS-labbet: en låst analysmiljö för reproducerbar forskning.
-#
-# Bygger på Rocker-projektets tidyverse-avbildning (R, tidyverse, RStudio Server,
-# Pandoc), standard för reproducerbar R, och lägger till Python med uv.
-# Samma avbildning körs likadant på ForskarOS, en Mac, Windows och en server.
-#
-# Avbildningens digest (forskaros-labb version) är analysmiljöns version.
-# Skriv den i experimentanteckningen, så kan en granskare köra om analysen.
+# Analysmiljö med R från Rocker och Python installerat med uv.
+# Avbildningens digest identifierar miljön för en sparad körning.
 ARG R_IMAGE=docker.io/rocker/tidyverse:4.6.2
 ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.13.8
 

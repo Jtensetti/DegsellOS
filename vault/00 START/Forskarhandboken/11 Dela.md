@@ -5,6 +5,8 @@ typ: handbok
 
 **Skriva:** Zettlr för Markdown med citat från Zotero, LibreOffice och ONLYOFFICE när kollegor använder Word, Pandoc för att konvertera mellan format, Typst eller TeXstudio för sättning.
 
+**Dela en körning:** kopiera hela körningsmappen från projektets `korningar/`. Den innehåller rapport, underlag, kod, kontrollsummor och RO-Crate-metadata. En kollega kan läsa rapporten och upprepa analysen. Kontrollera att data och citat får delas och ange projektets licens.
+
 **Förregistrera:** lägg upp hypotes och analysplan på OSF innan data samlas in, så att det går att visa att hypotesen inte anpassats efter resultatet.
 
 **Publicera öppet:**
