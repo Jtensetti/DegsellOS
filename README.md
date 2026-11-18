@@ -6,7 +6,7 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 - **ForskarOS Core**, ett Obsidian-tillägg som strukturerar forskningsprojekt i faser och listar det som saknas.
 - **ForskarOS-labbet**, en containeravbildning med R och Python för analyser som kan köras om i samma miljö.
 
-**2027.1-beta2 är byggd för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
+**ForskarOS 2027.1-beta2 finns att ladda ner för amd64 och arm64.** Båda VM-diskarna har startat i QEMU och svarat från Linux med rätt arkitektur. Installations-ISO:n har en verifierad UEFI-startpost. [Testresultat och publiceringsstatus för beta2](docs/BETA2.md).
 
 <p align="center"><img src="docs/bilder/forskaros-core-031-qemu.png" alt="ForskarOS Core 0.3.1 i Obsidian med den aktiva forskningsfrågan och alla sju faserna i sidopanelen" width="1100"></p>
 
@@ -14,15 +14,15 @@ Linuxdistribution för forskningsarbete, byggd som ett lager ovanpå [Bluefin LT
 
 ## Ladda ner
 
-**Senast verifierade nedladdning från Internet Archive är 2027.1-beta1.** Archive tog emot beta2 den 17 november, men behandlingen stannade i tjänstens kvotkontroll. Tabellen länkar till de fungerande beta1-filerna. Varje arkivpost innehåller även en kontrollsumma och en torrent.
+Båda VM-diskarna och installations-ISO:n hämtades i sin helhet från Internet Archive den 18 november 2026. För alla tre stämde SHA-256 med byggresultatet och med arkivets kontrollsummefil.
 
 Den som redan kör ForskarOS kan hämta beta2 från den publicerade containeravbildningen med `sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta2` och sedan starta om.
 
-| Fil | För |
-|---|---|
-| [ForskarOS-2027.1-beta1-arm64.qcow2](https://archive.org/details/forskaros-2027.1-beta1-arm64-vm) | Apple Silicon-Mac i UTM, se [`docs/MAC.md`](docs/MAC.md) |
-| [ForskarOS-2027.1-beta1-amd64.qcow2](https://archive.org/details/forskaros-2027.1-beta1-amd64-vm) | PC i QEMU eller virt-manager |
-| [ForskarOS-2027.1-beta1-amd64.iso](https://archive.org/details/forskaros-2027.1-beta1-amd64-iso) | Installation på PC och Intel-Mac |
+| Ladda ner | För | SHA-256 |
+|---|---|---|
+| [ForskarOS-2027.1-beta2-arm64.qcow2](https://archive.org/download/forskaros-2027.1-beta2-arm64-vm/ForskarOS-2027.1-beta2-arm64.qcow2) | Apple Silicon-Mac i UTM, se [Mac-guiden](docs/MAC.md) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-arm64-vm/ForskarOS-2027.1-beta2-arm64.qcow2.sha256) |
+| [ForskarOS-2027.1-beta2-amd64.qcow2](https://archive.org/download/forskaros-2027.1-beta2-amd64-vm/ForskarOS-2027.1-beta2-amd64.qcow2) | PC i QEMU eller virt-manager | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-amd64-vm/ForskarOS-2027.1-beta2-amd64.qcow2.sha256) |
+| [ForskarOS-2027.1-beta2-amd64.iso](https://archive.org/download/forskaros-2027.1-beta2-amd64-iso/ForskarOS-2027.1-beta2-amd64.iso) | Installation på PC och Intel-Mac | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-amd64-iso/ForskarOS-2027.1-beta2-amd64.iso.sha256) |
 
 ## ForskarOS Core
 

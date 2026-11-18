@@ -2,7 +2,7 @@
 
 Samtliga tre medier utgår från [samma källkod](https://github.com/Jtensetti/researchOS/commit/751099d6ac0dd275d7c536019e22257ad21b07fd) och samma signerade manifest, `ghcr.io/jtensetti/researchos@sha256:827a5b51be407b9d163881b9eeb39dfdd6f4cef1025bb180b210e91d2d4fb2fa`. [Bygge och medietester i GitHub Actions](https://github.com/Jtensetti/researchOS/actions/runs/44161601161).
 
-| Medium | Prov på beta2 | SHA-256 från uppladdningens kontrollsummefil |
+| Medium | Prov på beta2 | Verifierad SHA-256 för hela originalfilen |
 |---|---|---|
 | amd64 qcow2 | UEFI-start i QEMU, Linux-gästen rapporterade x86_64 och kärnversion | `755784ff18e305eb880bddd78258a9203610802fb724f230378127450d5322c6` |
 | arm64 qcow2 | UEFI-start i QEMU, Linux-gästen rapporterade aarch64 och kärnversion | `bb6c70e9eb058f0b01c5af106d0ea5e0541e899d4c67963622dd6a78db98d6bf` |
@@ -24,12 +24,12 @@ I en 275 pixlar bred sidopanel fick alla sju fasnamn plats över fyra rader. Fys
 
 ## Internet Archive
 
-Den 17 november 2026 accepterade Internet Archive uppladdningen av samtliga tre medier. Vid efterkontrollen gick bara deras kontrollsummefiler att hämta. På varje post stod ett `book_op.php`-jobb i felläge före jobbet som lägger ut avbildningen. Archives Tasks API accepterade en omkörning per post, varefter loggarna åter visade fel i kvotkontrollen. Orsaken bakom kvotfelet och tidpunkten för en eventuell återställning är okända. [Omkörning](https://github.com/Jtensetti/researchOS/actions/runs/44168783298) · [Diagnos](https://github.com/Jtensetti/researchOS/actions/runs/44169257154).
+Den 18 november 2026 hämtades samtliga tre originalfiler i sin helhet från Internet Archive. För varje fil stämde den beräknade SHA-256-summan både med byggresultatet i tabellen ovan och med den `.sha256`-fil som publicerats på samma arkivpost. [Verifiering av de tre nedladdningarna](https://github.com/Jtensetti/researchOS/actions/runs/44221943913).
 
-| Arkivpost | Felande jobb |
-|---|---|
-| [VM för PC](https://archive.org/details/forskaros-2027.1-beta2-amd64-vm) | 5765734181 |
-| [VM för Apple Silicon](https://archive.org/details/forskaros-2027.1-beta2-arm64-vm) | 5765738984 |
-| [Installations-ISO](https://archive.org/details/forskaros-2027.1-beta2-amd64-iso) | 5765734950 |
+| Arkivpost | Originalfil | SHA-256 |
+|---|---|---|
+| [VM för PC](https://archive.org/details/forskaros-2027.1-beta2-amd64-vm) | [ForskarOS-2027.1-beta2-amd64.qcow2](https://archive.org/download/forskaros-2027.1-beta2-amd64-vm/ForskarOS-2027.1-beta2-amd64.qcow2) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-amd64-vm/ForskarOS-2027.1-beta2-amd64.qcow2.sha256) |
+| [VM för Apple Silicon](https://archive.org/details/forskaros-2027.1-beta2-arm64-vm) | [ForskarOS-2027.1-beta2-arm64.qcow2](https://archive.org/download/forskaros-2027.1-beta2-arm64-vm/ForskarOS-2027.1-beta2-arm64.qcow2) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-arm64-vm/ForskarOS-2027.1-beta2-arm64.qcow2.sha256) |
+| [Installations-ISO](https://archive.org/details/forskaros-2027.1-beta2-amd64-iso) | [ForskarOS-2027.1-beta2-amd64.iso](https://archive.org/download/forskaros-2027.1-beta2-amd64-iso/ForskarOS-2027.1-beta2-amd64.iso) | [Kontrollsumma](https://archive.org/download/forskaros-2027.1-beta2-amd64-iso/ForskarOS-2027.1-beta2-amd64.iso.sha256) |
 
-Kontrollsummorna i tabellen ovan identifierar de filer som byggdes. En fullständig nedladdning och jämförelse återstår för varje arkivpost.
+Vid uppladdningen den 17 november fördröjde Archives kvotkontroll publiceringen. De redan uppladdade filerna blev tillgängliga på de tre befintliga posterna. [Tidigare omkörning](https://github.com/Jtensetti/researchOS/actions/runs/44168783298) · [Diagnos](https://github.com/Jtensetti/researchOS/actions/runs/44169257154).
