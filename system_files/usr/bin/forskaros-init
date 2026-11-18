@@ -18,9 +18,9 @@ if [[ ! -e "$TARGET" ]]; then
   cp -R -- "$SEED" "$TARGET"
   chmod -R u+rwX -- "$TARGET"
   echo "forskaros-init: skapade $TARGET"
-  # Första inloggningen: öppna verktygslådan så att forskaren kan välja verktyg.
+  # Första inloggningen: öppna appen ForskarOS med installationens läge och första steg.
   if [[ -z "${FORSKAROS_INGEN_VALKOMST:-}" && -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]] && command -v gtk-launch >/dev/null 2>&1; then
-    gtk-launch forskaros-setup >/dev/null 2>&1 || true
+    gtk-launch io.github.jtensetti.Forskaros >/dev/null 2>&1 || true
   fi
   exit 0
 fi

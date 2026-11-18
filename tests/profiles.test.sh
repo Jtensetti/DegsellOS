@@ -63,6 +63,16 @@ grep -q "flathub md.obsidian.Obsidian" <<<"$out" || fail "Obsidian-profilen inst
 out=$(bash "$SETUP" --profil moln --torrkörning)
 grep -q 'skapa genväg .*forskaros-webb-perplexity.desktop → https://www.perplexity.ai' <<<"$out" || fail "Perplexity-genväg saknas"
 
+# 7b. Utan terminal hoppas aktiva val över; med --godkänt (appens dialog) görs de.
+home=$(mktemp -d)
+out=$(HOME="$home" bash "$SETUP" --profil moln --ja </dev/null)
+grep -q 'Hoppar över' <<<"$out" || fail "moln utan bekräftelse ska hoppas över"
+[[ ! -e "$home/.local/share/applications/forskaros-webb-perplexity.desktop" ]] || fail "molngenväg skapades utan val"
+HOME="$home" bash "$SETUP" --profil moln --ja --godkänt </dev/null >/dev/null
+grep -q 'Exec=xdg-open https://www.perplexity.ai' "$home/.local/share/applications/forskaros-webb-perplexity.desktop" \
+  || fail "--godkänt skapar inte molngenvägen"
+rm -rf "$home"
+
 # 8. Det rekommenderade urvalet har tio verktyg.
 [[ $(grep -cvE '^\s*(#|$)' "$DIR"/*-rekommenderat.profil) -eq 10 ]] || fail "det rekommenderade urvalet ska ha tio verktyg"
 
@@ -70,14 +80,20 @@ grep -q 'skapa genväg .*forskaros-webb-perplexity.desktop → https://www.perpl
 grep -q "name='3 · Välj'" system_files/etc/dconf/db/local.d/02-forskaros-meny || fail "mappen Välj saknas"
 python3 -I scripts/generera.py --kontroll >/dev/null || fail "kör python3 scripts/generera.py"
 
-# 10. Grundtjänsten och dockan pekar på program som finns i profilerna.
+# 10. Grundtjänsten och dockan pekar på program som finns i profilerna eller i ForskarOS.
 grep -q 'ExecStart=/usr/libexec/forskaros-grund' system_files/usr/lib/systemd/system/forskaros-grund.service || fail "tjänsten pekar fel"
 for app in $(grep -o "'[^']*\.desktop'" system_files/etc/dconf/db/local.d/01-forskaros | tr -d "'" | sed 's/\.desktop$//'); do
   case "$app" in
-    org.gnome.*|forskaros-*) continue ;;
+    org.gnome.*|forskaros-*|io.github.jtensetti.Forskaros) continue ;;
     org.libreoffice.LibreOffice.writer) app=org.libreoffice.LibreOffice ;;
   esac
   grep -q "^flatpak *$app " "$DIR"/*.profil || fail "dockan visar $app som inte finns i någon profil"
+done
+
+for own in $(grep -o "'\(forskaros-[^']*\|io\.github\.jtensetti\.Forskaros\)\.desktop'" system_files/etc/dconf/db/local.d/0*-forskaros* | cut -d: -f2 | tr -d "'" | sort -u); do
+  # Genvägar och startare som forskaros-setup skapar vid installation.
+  case "$own" in forskaros-webb-*|forskaros-jupyterlab*|forskaros-taguette*) continue ;; esac
+  [[ -f "system_files/usr/share/applications/$own" ]] || fail "dockan eller menyn pekar på $own som inte finns"
 done
 
 echo "OK: verktygsprofiler, aktivt val, torrkörning, grundtjänst och docka"

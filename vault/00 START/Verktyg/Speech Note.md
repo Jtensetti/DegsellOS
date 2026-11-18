@@ -17,7 +17,7 @@ Transkribering och diktering lokalt, utan att ljudet lämnar datorn.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Kvalitativ forskning**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Kvalitativ forskning**, eller kör:
 
 ```bash
 forskaros-setup --profil kvalitativ

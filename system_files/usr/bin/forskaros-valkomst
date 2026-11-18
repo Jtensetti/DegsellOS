@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Första inloggningen och verktygslådans startvy.
+# Välkomstmenyn i terminalen. I en grafisk session öppnas appen ForskarOS i stället.
+#   forskaros-valkomst              appen, eller terminalmenyn utan grafisk session
+#   forskaros-valkomst --terminal   terminalmenyn
+#   forskaros-valkomst --status     grundverktygens installation
 set -eu
 vault="${FORSKAROS_VAULT:-$HOME/ForskarOS}"
 service=forskaros-grund.service
@@ -20,6 +23,7 @@ status() {
 }
 
 if [[ ${1:-} == --status ]]; then status; exit 0; fi
+if [[ ${1:-} != --terminal && -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then exec forskaros; fi
 [[ -f "$vault/00 START/Hem.md" ]] || FORSKAROS_INGEN_VALKOMST=1 forskaros-init
 while :; do
   echo
@@ -35,7 +39,12 @@ while :; do
   echo 'Enter stänger verktygslådan.'
   read -r -p 'Ditt val: ' choice || exit 0
   case "$choice" in
-    p|P) forskaros-projekt || echo 'Projektfönstret kunde inte öppnas.' ;;
+    p|P)
+      echo 'I en grafisk session: öppna appen ForskarOS. I terminalen:'
+      echo '  forskaros-projekt skapa kvantitativ ~/Forskningsprojekt/Studie'
+      echo '  forskaros-projekt belägg ~/Forskningsprojekt/Studie'
+      echo '  forskaros-projekt kör ~/Forskningsprojekt/Studie'
+      echo 'Alla kommandon: forskaros-projekt --help' ;;
     1)
       if ! flatpak info md.obsidian.Obsidian >/dev/null 2>&1; then
         if ! forskaros-setup --profil obsidian; then

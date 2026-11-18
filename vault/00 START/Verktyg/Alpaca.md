@@ -17,7 +17,7 @@ Chattgränssnitt för lokala modeller via Ollama.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Lokal AI**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Lokal AI**, eller kör:
 
 ```bash
 forskaros-setup --profil lokal-ai

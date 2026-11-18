@@ -31,7 +31,7 @@ FASNAMN = {
 }
 
 # ForskarOS egna program, i en egen mapp först i menyn.
-EGNA = ["forskaros-setup.desktop", "forskaros-handbok.desktop"]
+EGNA = ["io.github.jtensetti.Forskaros.desktop", "forskaros-handbok.desktop"]
 # ForskarOS egna program som hör till en fas. Fokusläget hör till Välj: koncentration.
 EGNA_PER_FAS = {"välj": ["forskaros-fokus.desktop"], "utveckla": ["forskaros-labb.desktop"]}
 
@@ -143,7 +143,7 @@ def generate(out: Path):
             f'**Profil:** {p["namn"]}' + ("  \n**Ingår i det rekommenderade urvalet**" if t.get("rekommenderat") else ""), "",
             "## Vad det används till", "", t["metod"] + moln, "",
             "## Installera", "",
-            f'Öppna *ForskarOS – verktygslåda* och välj **{p["namn"]}**, eller kör:', "",
+            f'Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **{p["namn"]}**, eller kör:', "",
             "```bash", f'forskaros-setup --profil {t["profil"]}', "```", "",
             "## Läs mer", "",
             f'- [Dokumentation]({t["läs_mer"]})',

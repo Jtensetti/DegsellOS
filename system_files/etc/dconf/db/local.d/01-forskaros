@@ -1,6 +1,6 @@
 # ForskarOS: en lugn arbetsyta för forskning.
 [org/gnome/shell]
-favorite-apps=['forskaros-projekt.desktop', 'org.mozilla.firefox.desktop', 'md.obsidian.Obsidian.desktop', 'org.zotero.Zotero.desktop', 'org.libreoffice.LibreOffice.writer.desktop', 'org.jaspstats.JASP.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'forskaros-fokus.desktop', 'forskaros-setup.desktop']
+favorite-apps=['io.github.jtensetti.Forskaros.desktop', 'org.mozilla.firefox.desktop', 'md.obsidian.Obsidian.desktop', 'org.zotero.Zotero.desktop', 'org.libreoffice.LibreOffice.writer.desktop', 'org.jaspstats.JASP.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'forskaros-fokus.desktop']
 
 [org/gnome/desktop/interface]
 show-battery-percentage=true

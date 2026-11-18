@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=ForskarOS
+GenericName=Forskningsmiljö
+Comment=Forskningsprojekt, forskningsmappen och verktyg
+Keywords=forskning;projekt;rapport;granskning;verktyg;verktygslåda;
+Exec=/usr/bin/forskaros
+Icon=forskaros
+Categories=Education;Science;
+Terminal=false
+StartupNotify=true

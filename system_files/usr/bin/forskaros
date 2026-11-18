@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# ForskarOS: forskningsprojekt, forskningsmappen och verktyg i ett fönster.
+#   forskaros                    startvyn
+#   forskaros --projekt MAPP     öppna ett projekt
+#   forskaros --verktyg          välj forskningsverktyg
+# Utan grafisk session (till exempel över SSH) visas välkomstmenyn i terminalen.
+set -eu
+if [[ -z "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+  exec forskaros-valkomst --terminal
+fi
+exec /usr/bin/python3 -I "$(dirname "$0")/../share/forskaros/projekt/app.py" "$@"

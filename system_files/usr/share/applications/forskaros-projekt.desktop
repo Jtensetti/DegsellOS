@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=ForskarOS – forskningsprojekt
-Comment=Bearbeta data, bygg rapporten och upprepa en tidigare körning
-Exec=/usr/bin/forskaros-projekt
-Icon=forskaros
-Categories=Education;Science;
-Terminal=false

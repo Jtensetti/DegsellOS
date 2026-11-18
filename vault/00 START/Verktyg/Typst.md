@@ -16,7 +16,7 @@ Sättningssystem för PDF, enklare än LaTeX.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Skriva och publicera**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Skriva och publicera**, eller kör:
 
 ```bash
 forskaros-setup --profil skriva

@@ -96,6 +96,9 @@ def build(root, with_evidence):
     cmd = ["pandoc", "underlag/manus.md", "--standalone", "--embed-resources",
            "--resource-path=.:underlag", "--citeproc", "--bibliography=underlag/kallor.bib",
            "--fail-if-warnings", "--output=resultat/rapport.html"]
+    if (root / "underlag/rapport.css").is_file():
+        # Nya projekt har en egen läsyta i underlaget. Äldre projekt byggs som förut.
+        cmd.append("--css=underlag/rapport.css")
     if with_evidence:
         sys.dont_write_bytecode = True
         sys.path.insert(0, str(Path(__file__).resolve().parent))

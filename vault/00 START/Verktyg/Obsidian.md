@@ -16,7 +16,7 @@ Gränssnittet för vaulten och ForskarOS Core. Gratis men inte öppen källkod.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Obsidian (krävs för ForskarOS Core)**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Obsidian (krävs för ForskarOS Core)**, eller kör:
 
 ```bash
 forskaros-setup --profil obsidian

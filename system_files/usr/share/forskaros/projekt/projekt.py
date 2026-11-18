@@ -226,8 +226,8 @@ def main():
                 if not claims:
                     print("Manuset har inga länkade påståenden.")
     else:
-        from skrivbord import window
-        window(create, run, verify, domain, coverage, SKYDD)
+        # Utan kommando öppnas appen ForskarOS. Allt nedan finns kvar på kommandoraden.
+        os.execv(sys.executable, [sys.executable, "-I", str(HERE / "app.py")])
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ folder-children=['forskaros-0', 'forskaros-1', 'forskaros-2', 'forskaros-3', 'fo
 [org/gnome/desktop/app-folders/folders/forskaros-0]
 name='ForskarOS'
 translate=false
-apps=['forskaros-setup.desktop', 'forskaros-handbok.desktop']
+apps=['io.github.jtensetti.Forskaros.desktop', 'forskaros-handbok.desktop']
 
 [org/gnome/desktop/app-folders/folders/forskaros-1]
 name='1 · Utforska'

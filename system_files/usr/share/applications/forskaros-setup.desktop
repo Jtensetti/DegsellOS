@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=ForskarOS – verktygslåda
-Comment=Välj forskningsverktyg: kontor, statistik, skrivande, kvalitativ analys, lokal AI
-Exec=/usr/bin/forskaros-valkomst
-Terminal=true
-Icon=forskaros
-Categories=Education;Science;

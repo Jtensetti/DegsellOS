@@ -16,7 +16,7 @@ Hanterar Python-versioner och paket per projekt.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Programmering och reproducerbarhet**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Programmering och reproducerbarhet**, eller kör:
 
 ```bash
 forskaros-setup --profil programmering

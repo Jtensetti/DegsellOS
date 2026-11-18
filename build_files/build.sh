@@ -23,7 +23,8 @@ cp /ctx/VERSION /usr/share/forskaros/RELEASE
 
 # Virtuell maskin: delat urklipp, automatisk skärmstorlek och ren avstängning
 # i UTM/QEMU. Tjänsterna startar bara när motsvarande virtuella enhet finns.
-dnf -y install spice-vdagent qemu-guest-agent gtk3 python3-gobject webkit2gtk4.1
+# Appen ForskarOS använder GTK 4 och libadwaita. Rapportvyn utan webbläsare använder WebKitGTK.
+dnf -y install spice-vdagent qemu-guest-agent gtk3 gtk4 libadwaita python3-gobject webkit2gtk4.1
 dnf clean all
 
 # Projektens rapporter ska gå att bygga redan vid första start utan nät.
@@ -38,7 +39,8 @@ if ! command -v pandoc >/dev/null; then
   tar xzf /tmp/pandoc.tar.gz -C /usr/bin --strip-components=2 pandoc-3.8.3/bin/pandoc
 fi
 pandoc --version
-/usr/bin/python3 -c 'import gi; gi.require_version("Gtk", "3.0"); from gi.repository import Gtk'
+/usr/bin/python3 -c 'import gi; gi.require_version("Gtk", "3.0"); gi.require_version("WebKit2", "4.1")'
+/usr/bin/python3 -c 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); from gi.repository import Adw, Gtk'
 
 # Skyddade forskningsprojekt kör sin analys i en bubblewrap-sandlåda.
 # Utan bwrap vägrar ForskarOS köra dem, så den måste finnas i avbildningen.

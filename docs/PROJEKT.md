@@ -1,30 +1,38 @@
 # Ett forskningsprojekt från underlag till granskning
 
-Från 2027.1-beta3 finns **ForskarOS – forskningsprojekt** i programmenyn och i välkomstguiden (val **P**). Du kan arbeta med färdiga exempel första gången och sedan skapa en separat mapp för din studie.
+Öppna appen **ForskarOS** i dockan eller programmenyn och välj **Nytt forskningsprojekt**. Projektet hamnar i `~/Forskningsprojekt` och får exempeldata, så att du kan prova hela arbetsflödet innan du byter till ditt eget material.
+
+I projektet visar appen ett enda **nästa steg** med en knapp: *granska* påståendena, *bygg* rapporten, *upprepa* körningen och till sist *dela*. Stegraden överst visar var du är. Allt annat (underlag, körningar, äldre rapporter, labbet, upprepning från en annan mapp) finns i listorna och i menyn uppe till höger. Kommandoraden `forskaros-projekt` gör samma sak, se slutet av sidan.
+
+<p align="center"><img src="bilder/app-projekt.png" alt="Projektvyn i appen ForskarOS. Överst stegen Granska, Bygg, Upprepa och Dela, där Granska och Bygg är klara. Nästa steg: Upprepa den senaste körningen, med knappen Upprepa. Under den listan Påståenden med tre påståenden markerade Granskad, och listan Underlag." width="620"></p>
+
+<sub>Appen i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Typsnitt och accentfärg följer systemet och ser något annorlunda ut i ForskarOS.</sub>
 
 | När du vill … | Börja med | Lämna vidare |
 |---|---|---|
 | Jämföra observationer mellan villkor | Välj *Kvantitativ*. Redigera CSV i Calc eller exportera en tabell till UTF-8. | Importera CSV med kolumnerna `villkor` och `bytte_hypotes` (0 eller 1). Exempelanalysen ger antal observationer, antal byten och andel per villkor. |
 | Undersöka hur deltagare beskriver något | Välj *Kvalitativ*. Koda dokument i Taguette och exportera de markerade utdragen som CSV. | Importera exporten med `id,document,tag,content`. Tabellen kopplar varje kod och citat till dokument och utdrags-ID. Figuren räknar distinkta utdrag per kod. |
 | Skriva om resultatet | Exportera relevanta poster från Zotero som BibTeX. Importera filen och öppna manuset i din Markdown-editor, exempelvis Zettlr. | Använd posternas nycklar i texten, exempelvis `[@ovning]` för exempelkällan. Pandoc sätter citaten, referenslistan och figuren i rapporten. |
-| Granska och dela | Välj *Bygg rapport* och sedan *Öppna rapport*. | HTML-filen innehåller figuren och källhänvisningarna. Behåll `resultat.csv` bredvid HTML-filen om läsaren ska kunna öppna tabellen. För omkörning behövs hela körningsmappen. |
+| Granska och dela | Följ nästa steg: *Granska*, *Bygg rapport*, *Upprepa* och *Öppna rapporten*. | HTML-filen innehåller figuren och källhänvisningarna. Behåll `resultat.csv` bredvid HTML-filen om läsaren ska kunna öppna tabellen. För omkörning behövs hela körningsmappen. |
 
 En CSV kan använda komma eller semikolon och UTF-8 med eller utan byteordningsmärke. För andra undersökningar ändrar du analysen och kolumnnamnen i `underlag/analys.py`. Beskriv frågan, din förutsägelse och tolkningen i `underlag/manus.md`. De medföljande observationerna, intervjuerna och referensen är övningsmaterial.
 
-Om ingen webbläsare har installerats ännu visar projektfönstret rapporten med GNOME:s inbyggda webbkomponent.
+Om ingen webbläsare har installerats ännu visar appen rapporten med GNOME:s inbyggda webbkomponent. Data, manus och källor importeras med **Importera…** på respektive rad under *Underlag*. Appen läser om projektet när du kommer tillbaka från Calc eller din editor.
 
 ## Pröva en rättelse
 
-1. Skapa ett kvantitativt exempelprojekt. Välj **Granska påståenden** och läs de båda påståendena, observationsraderna och vilken analysfil de bygger på. Bekräfta granskningen för vart och ett. Bygg en rapport.
-2. Öppna `data.csv` i Calc. Ändra en etta till en nolla i gruppen *Saklig respons* och spara som CSV. Välj **Granska påståenden** igen. Påståendet om saklig respons får status **Ompröva**. Påståendet om neutral respons står kvar som **Granskad**. Bygg rapporten igen. Den nya figuren visar en av tre i bägge grupperna, medan manusets tidigare formulering fortfarande går att granska.
-3. Klicka på den länkade meningen i rapporten för att se det sparade urvalet. Öppna analysfilen för att se hur andelen beräknades. Rätta själv meningen i manus och bekräfta granskningen när du har bedömt den. Även ändrad lydelse kräver ny granskning.
+1. Skapa ett kvantitativt exempelprojekt. Nästa steg är **Granska**. Appen visar påståendena ett i taget med observationsraderna och analysfilen de bygger på. Välj **Bekräfta granskning** för vart och ett. Bygg sedan rapporten.
+2. Öppna *Data* i Calc. Ändra en etta till en nolla i gruppen *Saklig respons* och spara som CSV. När du går tillbaka till ForskarOS är nästa steg **1 påstående att ompröva**. Påståendet om saklig respons har status **Ompröva** och visar vad som ändrats. Påståendet om neutral respons står kvar som **Granskad**.
+3. Håller inte meningen längre väljer du **Ändra meningen i manus**. Även ändrad lydelse kräver ny granskning. Bygg rapporten igen. Klicka på den länkade meningen i rapporten för att se det sparade urvalet och öppna analysfilen för att se hur andelen beräknades.
+
+<p align="center"><img src="bilder/app-omprova.png" alt="Påståendet I gruppen med saklig respons bytte två av tre elever hypotes, med status Ompröva och texten Ändrat sedan granskningen: Stöd · data.csv · villkor=Saklig respons. Under det de matchande raderna, analysfilen och knapparna Bekräfta granskning och Ändra meningen i manus." width="620"></p>
 
 I det kvalitativa exemplet har en tolkning både ett stödjande utdrag och ett motbelägg. Ta bort raden med koden `auktoritet` ur din arbetskopia. **Underlag saknas** visar vilka tolkningar som förlorat ett angivet utdrag. Du kan öppna den tidigare körningens rapport för att läsa det citat som var tillgängligt då.
 
 ### Koppla ditt eget material
 
-- Skriv meningen i din vanliga Markdown-editor. I projektfönstret väljer du **Koppla underlag**, anger ett eget kort ID och meningen som länktext. Välj ett villkor från din tabell, ett dokument och utdrags-ID från Taguette eller en hel projektfil. Ange rollen *stöd*, *motbelägg* eller *metod*. Klistra in den kopierade länken över meningen i manuset. Återanvänd samma ID för fler underlag till samma påstående.
-- **Granska påståenden** läser arbetsmappen på nytt när du öppnar vyn. En granskning gäller den lydelse och de underlag som visades. När underlag saknas behöver kopplingen repareras innan du kan bekräfta en ny granskning. **Öppna sparad rapport** visar senaste färdiga körning. Bygg om rapporten när du vill dela en ny bedömning.
+- Skriv meningen i din vanliga Markdown-editor. I projektet väljer du **Koppla underlag** och klistrar in meningen. Välj ett villkor från din tabell, ett dokument och utdrags-ID från Taguette, en källpassage eller en hel projektfil, och rollen *stöd*, *motbelägg* eller *metod*. Appen föreslår ett ID ur meningens ord. **Spara och kopiera länk** kopierar länken; klistra in den över meningen i manuset. Skriv ett befintligt ID för att lägga till fler underlag till samma påstående.
+- Ett påstående visar alltid underlaget som det ser ut nu. En granskning gäller den lydelse och de underlag som visades. När underlag saknas behöver kopplingen repareras innan du kan bekräfta en ny granskning. Varje körning under *Körningar* har sin egen **Rapport**. Bygg om rapporten när du vill dela en ny bedömning.
 - En koppling är en vanlig Markdown-länk, exempelvis `[Min tolkning](#belagg-min-tolkning)`. Reglerna finns i `underlag/belagg.json`. Där kan du ändra eller ta bort en koppling, skriva en kommentar och välja andra CSV-filer, matchningsvillkor och kolumner. En fil utan angivet urval följs i sin helhet, exempelvis ett analysskript. Koppla även hjälpskript eller en hel datafil om analysen beror på dem.
 - Programmet kontrollerar alla träffar, inklusive dubbletter. Vyn visar högst 40 rader per urval. Ett byte av radordning påverkar inte urvalet. När ordningen är en del av metoden kan du välja hela filen. En Taguette-export innehåller de exporterade utdragen. Lägg till originaltexten separat om läsaren ska kunna kontrollera hela sammanhanget.
 - I rapporten följer läsbara utdrag med i HTML-filen. Länkar till källfiler och analyskod fungerar när körningsmappen hålls samman. En människa väljer vilka samband som ska följas och avgör vad förändringen betyder för slutsatsen.
@@ -45,13 +53,11 @@ Kan sandlådan inte startas kör ForskarOS inte analysen och säger varför. Det
 
 Skyddet gäller analysen och rapporten. Program du själv öppnar, till exempel Calc, Zettlr eller en webbläsare, omfattas inte. Lägg därför inte skyddat material i molntjänster eller AI-tjänster.
 
-<p align="center"><img src="bilder/beta4-projektfonster-xvfb.png" alt="Projektfönstret visar Skyddad studie, skyddat material, att den senaste körningen är återkörbar och att rapporten är klar." width="620"></p>
-
-<sub>Projektfönstret i en virtuell bildskärm (Xvfb) på utvecklingsdatorn, inte i en ForskarOS-VM. Rapporten byggdes i sandlådan med knappen Bygg rapport.</sub>
+Skyddsnivån står under projektets namn i rubrikraden.
 
 ## Hur säker är en körning?
 
-Varje körning har en täckningsgrad som visas i projektfönstret och med `forskaros-projekt status "Min studie"`:
+Varje körning har en täckningsgrad som visas under *Körningar* i appen och med `forskaros-projekt status "Min studie"`:
 
 | Nivå | Betyder |
 |---|---|
@@ -65,7 +71,7 @@ Varje upprepning loggas i körningens `verifieringar.json` med tid, miljö och u
 
 Ett påstående kan bygga på en passage i litteraturen, inte bara på data. Exportera källan från Zotero som BibTeX och importera den. Välj **Koppla underlag**, välj *Källpassage* och klistra in citatet och sidan. Zoteros PDF-läsare kopierar en markerad annotering med citat.
 
-<p align="center"><img src="bilder/beta4-kallpassage-xvfb.png" alt="Dialogen Koppla underlag med fälten Påståendets ID, Länktext, Underlag, Roll, Citat och Sida." width="520"></p>
+<p align="center"><img src="bilder/app-koppla-underlag.png" alt="Vyn Koppla underlag med fälten Meningen i manuset, Underlag (Källpassage · ovning), Roll, Citat ur källan, Sida och det föreslagna ID:t aven-intervjuerna-exemplet." width="620"></p>
 
 ForskarOS kontrollerar:
 
@@ -81,17 +87,21 @@ Varje körning innehåller `ro-crate-metadata.json` i det öppna formatet [RO-Cr
 
 Licensen anger du i `projekt.json`, till exempel `"licens": "https://creativecommons.org/licenses/by/4.0/"`. ForskarOS väljer ingen licens åt dig. Utan angiven licens säger paketet det, och för ett skyddat projekt står det att materialet inte får spridas utan forskningshuvudmannens tillstånd. Paketet innehåller inga namn på personer.
 
+## Rapportens utseende
+
+Rapporten är en läsyta: seriff, smal spalt och lugn papperston, i ljust eller mörkt läge efter läsarens inställning. Beläggen ligger samlade sist, med status i ord. Utseendet styrs av `underlag/rapport.css`, som följer med varje körning. Därför bygger en upprepning exakt samma rapport. Du kan ändra filen; nästa körning använder din version. Projekt som skapades före 2027.1-beta4 saknar filen och byggs som förut.
+
 ## Vad en körning bevarar
 
 Projektets `underlag/` är arbetsmappen. *Bygg rapport* kopierar hela mappen till en ny daterad undermapp i `korningar/` och kör analysen på kopian. Tidigare körningar kan därför återskapas efter att du har ändrat data eller manus. Vid avbruten eller misslyckad analys publiceras ingen färdig körning. Lägg bara filer som ska följa med analysen i `underlag/`. Ett kvalitativt underlag och dess resultattabell innehåller själva citaten.
 
 I varje körning finns `korning.json` med SHA-256 för underlag, resultat och körprogram samt versionerna av Python och Pandoc och maskinens arkitektur. Figurfilen och rapporten kan öppnas oberoende av analysmiljön. En SHA-256-jämförelse visar om filerna matchar den sparade förteckningen. När förutsägelsen registrerades måste beläggas separat om studien kräver förregistrering.
 
-**På kollegans dator:** kopiera en enskild körningsmapp, läs analyskoden och välj *Upprepa från annan mapp*. Verktyget kontrollerar det sparade underlaget och resultaten, kör analysen i en ny temporär mapp och jämför de nya filerna byte för byte. Även en redigerad CSV, en borttagen fil eller en annan figur ger ett namngivet fel.
+**På kollegans dator:** kopiera en enskild körningsmapp, läs analyskoden och välj *Upprepa en körning från annan mapp…* i projektets meny. Verktyget kontrollerar det sparade underlaget och resultaten, kör analysen i en ny temporär mapp och jämför de nya filerna byte för byte. Även en redigerad CSV, en borttagen fil eller en annan figur ger ett namngivet fel.
 
 Med lokal körning behövs Python 3 och Pandoc 3. De ingår i utvecklingsavbildningen. På en dator utanför ForskarOS kan kollegan öppna den kopierade mappen och köra `python3 upprepa.py`. Andra programversioner kan ge andra byte för ett numeriskt likvärdigt resultat.
 
-För en versionslåst körning, kryssa i *Kör i versionslåst labb (Podman)*. Första hämtningen kräver nät. Körningen sparar den använda containeravbildningens digest. *Upprepa* på en annan ForskarOS-maskin väljer den avbildningen. Själva analysen körs med containerns nätverk avstängt. Använd kompatibel processorarkitektur för den sparade avbildningen.
+För en versionslåst körning, välj *Kör i versionslåst labb* i projektets meny innan du bygger. Första hämtningen kräver nät. Körningen sparar den använda containeravbildningens digest. *Upprepa* på en annan ForskarOS-maskin väljer den avbildningen. Själva analysen körs med containerns nätverk avstängt. Använd kompatibel processorarkitektur för den sparade avbildningen.
 
 ```bash
 forskaros-projekt skapa kvantitativ "Min studie"

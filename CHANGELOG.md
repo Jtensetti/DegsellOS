@@ -4,6 +4,24 @@ Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har stan
 
 ## 2027.1-beta4 (under arbete)
 
+### Appen ForskarOS
+
+Ett fönster för forskningsprojekt, forskningsmappen och verktygen, byggt med GTK 4 och libadwaita. Den ersätter välkomstmenyn i terminalen, verktygslådan i terminalen och projektfönstret. [Designspråk](docs/DESIGN.md)
+
+- **Ett nästa steg i taget.** Projektet visar ett steg med en knapp: granska, bygga, upprepa eller dela. Stegraden visar var du är. Det som är fel eller ändrat kommer först.
+- **Granska i serie.** *Granska* visar påståendena ett i taget med underlaget och går vidare efter varje bekräftelse. Ett påstående att ompröva visar vad som ändrats och kan öppna manuset direkt.
+- **Koppla underlag** föreslår ID ur meningen, visar citat och sida bara för källpassager och kopierar länken.
+- **Verktyg** installeras från appen. Obsidian (licens) och molntjänsterna kräver ett aktivt val i en dialog (`forskaros-setup --godkänt`). Installerade profiler visas som installerade.
+- Grundinstallationens läge visas överst på startsidan och uppdateras av sig själv.
+- Projektet läses om när du kommer tillbaka från Calc eller editorn. Senaste projekt visas på startsidan.
+- Allt finns kvar på kommandoraden. `forskaros-projekt` utan kommando öppnar appen. Utan grafisk session visar `forskaros` välkomstmenyn i terminalen.
+- **Rapportens läsyta:** seriff, smal spalt, papperston, ljust och mörkt läge, mobil och utskrift. Status står i ord i beläggen. Utseendet följer med i `underlag/rapport.css`, så upprepningar ger samma rapport. Äldre projekt byggs som förut.
+- Appens självtest går igenom alla vyer med ett riktigt projekt under Xvfb i CI.
+
+<p align="center"><img src="docs/bilder/app-start.png" alt="Startsidan i appen ForskarOS: rubriken Vad vill du arbeta med?, knappen Nytt forskningsprojekt, listorna Senaste projekt, Forskningsmappen och Verktyg." width="480"> <img src="docs/bilder/rapport-lasyta.png" alt="Rapporten med rubriken Hypotesbyten efter återkoppling i seriff på papperston, med frågan, förutsägelsen och resultatet." width="380"></p>
+
+### Forskningsdomänen
+
 Forskningsprojektet blir en forskningsdomän, enligt [ForskarOS 3.0](docs/FORSKAROS-3.md). Acceptanstest 1–4 körs i CI.
 
 - **Skyddat material:** välj skyddsnivå när projektet skapas. I ett skyddat projekt körs analysen och rapporten utan nätverk och utan åtkomst till hemkatalogen. Kan skyddet inte upprättas körs analysen inte alls. [Skyddat material](docs/PROJEKT.md#skyddat-material)

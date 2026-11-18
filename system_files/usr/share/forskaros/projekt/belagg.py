@@ -304,7 +304,7 @@ def source_choices(folder):
         choices.append((f"Källpassage · {key}" + (f" · {title}" if title else ""), {"källa": key}))
     for file in sorted(folder.rglob("*")):
         name = file.relative_to(folder).as_posix()
-        if file.is_file() and not file.is_symlink() and name not in ("belagg.json", "granskningar.json"):
+        if file.is_file() and not file.is_symlink() and name not in ("belagg.json", "granskningar.json", "rapport.css"):
             choices.append((f"Hela filen · {name}", {"fil": name}))
     return choices
 
@@ -358,12 +358,16 @@ def detail(claim):
     return "\n".join(lines)
 
 
+STATUSKLASS = {"Granskad": "granskad", "Ompröva": "ompröva", "Underlag saknas": "saknas"}
+
+
 def appendix(claims):
     parts = ['<section aria-label="Belägg"><h2>Belägg och omprövning</h2>',
              '<p>Bedömningarna gäller det underlag som sparades i den här körningen.</p>']
     for key, claim in claims.items():
+        style = STATUSKLASS.get(claim["status"], "")
         parts.append(f'<section id="belagg-{key}"><h3>{escape(claim["text"])}</h3>'
-                     f'<p><strong>{escape(claim["status"])}</strong></p>')
+                     f'<p class="status {style}"><strong>{escape(claim["status"])}</strong></p>')
         if claim["tidigare"]:
             parts.append(f'<p>Senast granskat: {escape(claim["tidigare"]["tid"])}</p>')
         if claim["ändrat"]:

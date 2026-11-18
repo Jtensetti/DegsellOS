@@ -31,11 +31,22 @@ jobs:
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           python3 -m venv "$RUNNER_TEMP/rocrate" && "$RUNNER_TEMP/rocrate/bin/pip" install -q roc-validator==0.14.0
           echo "FORSKAROS_ROCRATE_VALIDATOR=$RUNNER_TEMP/rocrate/bin/rocrate-validator" >> "$GITHUB_ENV"
-      - name: Kontroller och acceptanstest (sandlåda och RO-Crate krävs)
+      - name: Installera GTK 4, libadwaita och Xvfb för appens självtest
+        run: sudo apt-get install -y python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 xvfb
+      - name: Kontroller och acceptanstest (sandlåda, RO-Crate och appen krävs)
         env:
           FORSKAROS_KRAV_SANDLADA: "1"
           FORSKAROS_KRAV_ROCRATE: "1"
+          FORSKAROS_KRAV_APP: "1"
+          FORSKAROS_SKARMDUMPAR: ${{ runner.temp }}/skarmdumpar
         run: bash scripts/check.sh
+      - name: Spara appens skärmdumpar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-skarmdumpar
+          path: ${{ runner.temp }}/skarmdumpar
+          if-no-files-found: ignore
       - name: Kontrollera att alla verktyg finns för amd64 och arm64
         run: bash tests/verify-apps.sh
 

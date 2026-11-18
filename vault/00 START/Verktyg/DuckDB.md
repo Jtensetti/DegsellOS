@@ -16,7 +16,7 @@ SQL direkt på CSV- och Parquet-filer, utan databasserver.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Statistik och data**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Statistik och data**, eller kör:
 
 ```bash
 forskaros-setup --profil statistik

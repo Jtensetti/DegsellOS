@@ -16,7 +16,7 @@ AI-sök med källhänvisningar. Molntjänst. Det du skriver skickas till tjänst
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **AI-tjänster i molnet (tillval)**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **AI-tjänster i molnet (tillval)**, eller kör:
 
 ```bash
 forskaros-setup --profil moln

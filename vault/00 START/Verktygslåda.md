@@ -1,6 +1,6 @@
 # Verktygslåda och forskningsportal
 
-> Installera program med **ForskarOS – verktygslåda** i programmenyn.
+> Installera program i appen **ForskarOS** under **Välj forskningsverktyg**.
 > Programmenyn har en mapp per fas. Alla verktyg med beskrivning: [[00 START/Verktyg/Översikt|Verktygen per fas]].
 > = öppen källkod eller öppen tjänst · = molntjänst, din fråga lämnar datorn
 

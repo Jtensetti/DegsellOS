@@ -16,7 +16,7 @@ Kontorspaket med god kompatibilitet med Word-filer.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Skriva och publicera**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Skriva och publicera**, eller kör:
 
 ```bash
 forskaros-setup --profil skriva

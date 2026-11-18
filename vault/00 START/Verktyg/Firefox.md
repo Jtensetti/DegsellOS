@@ -17,7 +17,7 @@ Webbläsare för litteratursök och öppna databaser (se Verktygslåda).
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Grund**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Grund**, eller kör:
 
 ```bash
 forskaros-setup --profil grund

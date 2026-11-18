@@ -8,6 +8,7 @@
 #   forskaros-setup --lista               visa profilerna
 #   forskaros-setup --profil skriva,ai    installera valda profiler
 #   forskaros-setup --ja                  kör valda profiler; licens och moln bekräftas separat
+#   forskaros-setup --godkänt             licens och moln är redan bekräftade (i appen ForskarOS)
 #   forskaros-setup --torrkörning         visa vad som skulle göras
 set -euo pipefail
 
@@ -18,15 +19,17 @@ YES=0
 LIST=0
 WANT=""
 SYSTEM=0
+AGREED=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --lista) LIST=1 ;;
     --profil) WANT="$2"; shift ;;
     --ja) YES=1 ;;
+    --godkänt) AGREED=1 ;;
     --torrkörning) DRY=1 ;;
     --system) SYSTEM=1 ;;
-    -h|--hjälp) sed -n '2,12p' "$0"; exit 0 ;;
+    -h|--hjälp) sed -n '2,13p' "$0"; exit 0 ;;
     *) echo "Okänt argument: $1" >&2; exit 2 ;;
   esac
   shift
@@ -126,12 +129,12 @@ for p in "${SELECTED[@]}"; do
   case "$(meta "$p" aktivt-val)" in
     licens)
       echo "$(meta "$p" beskrivning)"
-      if [[ $DRY -eq 0 ]] && ! ask "Installera? Du godkänner programmets licensvillkor."; then echo "Hoppar över."; continue; fi ;;
+      if [[ $DRY -eq 0 && $AGREED -eq 0 ]] && ! ask "Installera? Du godkänner programmets licensvillkor."; then echo "Hoppar över."; continue; fi ;;
     moln)
       echo "$(meta "$p" beskrivning)"
       echo "Lägg inte in personuppgifter eller sekretessbelagt material."
       confirm="jag väljer"
-      [[ $DRY -eq 1 ]] || read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm
+      [[ $DRY -eq 1 || $AGREED -eq 1 ]] || read -r -p "Skriv 'jag väljer' för att fortsätta: " confirm || confirm=""
       [[ "$confirm" == "jag väljer" ]] || { echo "Hoppar över."; continue; } ;;
   esac
   while read -r kind id desc; do

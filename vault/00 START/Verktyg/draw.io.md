@@ -17,7 +17,7 @@ Diagram, flödesscheman och modeller.
 
 ## Installera
 
-Öppna *ForskarOS – verktygslåda* och välj **Idéer och modeller**, eller kör:
+Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Idéer och modeller**, eller kör:
 
 ```bash
 forskaros-setup --profil ideer
