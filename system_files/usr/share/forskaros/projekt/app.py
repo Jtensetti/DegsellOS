@@ -264,7 +264,14 @@ class Window(Adw.ApplicationWindow):
         if not path.exists():
             self.toast(f"{path.name} finns inte.")
             return
-        Gtk.FileLauncher.new(Gio.File.new_for_path(str(path))).launch(self, None, None)
+
+        def launched(launcher, result):
+            try:
+                launcher.launch_finish(result)
+            except GLib.Error as error:
+                if not error.matches(Gtk.dialog_error_quark(), Gtk.DialogError.DISMISSED):
+                    self.toast(f"Inget program kunde öppna {path.name}. Installera verktyg under Verktyg.")
+        Gtk.FileLauncher.new(Gio.File.new_for_path(str(path))).launch(self, None, launched)
 
     def alert(self, heading, body, responses, on_response, appearance=None):
         dialog = Adw.AlertDialog(heading=heading, body=body)
@@ -876,8 +883,9 @@ class Window(Adw.ApplicationWindow):
                     button.set_sensitive(True)
                     button.set_label("Installera")
                 if error or result.returncode:
-                    detail = error or (result.stderr or result.stdout).strip().splitlines()[-1:] or ["okänt fel"]
-                    self.toast(f'{profile["namn"]} kunde inte installeras: {detail if isinstance(detail, str) else detail[0]}')
+                    lines = [] if error else (result.stderr or result.stdout).strip().splitlines()
+                    detail = error or (lines[-1] if lines else "okänt fel")
+                    self.toast(f'{profile["namn"]} kunde inte installeras: {detail}')
                     return
                 if button:
                     button.set_label("Installerat")
@@ -885,6 +893,7 @@ class Window(Adw.ApplicationWindow):
                 self.toast(f'{profile["namn"]} är installerat.')
                 if then:
                     then()
+            self.toast(f'Installerar {profile["namn"]}. Det kan ta några minuter; du kan arbeta under tiden.')
             self.in_background(lambda: subprocess.run(argv, capture_output=True, text=True, stdin=subprocess.DEVNULL), done)
 
         tools = ", ".join(t["namn"].split(" – ")[0] for t in profile["verktyg"])
