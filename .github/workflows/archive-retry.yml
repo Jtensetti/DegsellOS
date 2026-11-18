@@ -7,6 +7,10 @@ on:
         description: Be Archive köra om felande jobb efter diagnos
         type: boolean
         default: false
+      verify:
+        description: Hämta och kontrollera alla tre publicerade originalfiler
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths: [.github/workflows/archive-retry.yml]
@@ -65,3 +69,57 @@ jobs:
             fi
           done
           exit "$failed"
+
+
+  verify:
+    if: github.ref == 'refs/heads/main' && (inputs.verify == true || (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[archive-verify] ')))
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - item: forskaros-2027.1-beta2-amd64-vm
+            file: ForskarOS-2027.1-beta2-amd64.qcow2
+            sha256: 755784ff18e305eb880bddd78258a9203610802fb724f230378127450d5322c6
+          - item: forskaros-2027.1-beta2-arm64-vm
+            file: ForskarOS-2027.1-beta2-arm64.qcow2
+            sha256: bb6c70e9eb058f0b01c5af106d0ea5e0541e899d4c67963622dd6a78db98d6bf
+          - item: forskaros-2027.1-beta2-amd64-iso
+            file: ForskarOS-2027.1-beta2-amd64.iso
+            sha256: 504ccca93bf106a35084102f36a89158d4a468c5ecaa1ad721a8c2483fbf8f8d
+    steps:
+      - name: Kontrollera publicerad kontrollsumma
+        env:
+          ITEM: ${{ matrix.item }}
+          FILE: ${{ matrix.file }}
+          EXPECTED: ${{ matrix.sha256 }}
+        run: |
+          set -euo pipefail
+          base="https://archive.org/download/$ITEM"
+          published=$(curl --fail --location --silent --show-error --max-time 60 "$base/$FILE.sha256" | awk 'NF {print $1; exit}')
+          [[ "$published" == "$EXPECTED" ]]
+          echo "Publicerad kontrollsumma stämmer: $published"
+
+      - name: Hämta hela originalfilen och kontrollera SHA-256
+        env:
+          ITEM: ${{ matrix.item }}
+          FILE: ${{ matrix.file }}
+          EXPECTED: ${{ matrix.sha256 }}
+        run: |
+          set -euo pipefail
+          base="https://archive.org/download/$ITEM"
+          got=$(curl --fail --location --silent --show-error --max-time 10800 "$base/$FILE" | sha256sum | awk '{print $1}')
+          [[ "$got" == "$EXPECTED" ]]
+          echo "Fullständig nedladdning verifierad: $got"
+
+      - name: Sammanfattning
+        env:
+          ITEM: ${{ matrix.item }}
+          FILE: ${{ matrix.file }}
+          EXPECTED: ${{ matrix.sha256 }}
+        run: |
+          {
+            echo "### $FILE"
+            echo "- Direktlänk: https://archive.org/download/$ITEM/$FILE"
+            echo "- SHA-256: `$EXPECTED`"
+          } >> "$GITHUB_STEP_SUMMARY"
