@@ -3,7 +3,7 @@
 
 En .utm är en mapp med config.plist och disken i Data/. Vi skriver inte
 config.plist från grunden: formatet är UTM:s eget. I stället utgår vi från en
-mall som UTM själv skapat (vm/utm/config.plist) och byter bara ut:
+QEMU-mall som UTM själv har skapat och byter bara ut:
   - namn, beskrivning och UUID
   - disken (första disken av typen Disk)
   - minne och processorer, om nycklarna finns
@@ -13,8 +13,8 @@ mall som UTM själv skapat (vm/utm/config.plist) och byter bara ut:
 """
 import argparse
 import plistlib
-import random
-import shutil
+import secrets
+import os
 import tempfile
 import uuid
 import zipfile
@@ -23,11 +23,19 @@ from pathlib import Path
 
 def random_mac():
     # Lokalt administrerad unicast-adress.
-    b = [0x02] + [random.randint(0, 255) for _ in range(5)]
+    b = [0x02] + [secrets.randbelow(256) for _ in range(5)]
     return ":".join(f"{x:02X}" for x in b)
 
 
 def adapt(config: dict, disk_name: str, memory: int, cpus: int) -> dict:
+    if config.get("Backend") != "QEMU" or config.get("System", {}).get("Architecture") != "aarch64":
+        raise SystemExit("Välj en QEMU-maskin för ARM64 i UTM.")
+    if config.get("ConfigurationVersion") != 4:
+        raise SystemExit("Välj en QEMU-mall med ConfigurationVersion 4.")
+    if min(memory, cpus) < 1:
+        raise SystemExit("Ange positivt minne och minst en processorkärna.")
+    if config.get("Information", {}).get("IconCustom") or config.get("QEMU", {}).get("TPMDevice"):
+        raise SystemExit("Välj en mall med inbyggd ikon och utan TPM. Båda kan kräva extra filer.")
     info = config.setdefault("Information", {})
     info["Name"] = "ForskarOS"
     info["UUID"] = str(uuid.uuid4()).upper()
@@ -35,13 +43,13 @@ def adapt(config: dict, disk_name: str, memory: int, cpus: int) -> dict:
                      "Inloggning: forskare / forskare (lösenordet måste bytas vid första inloggningen).")
 
     drives = config.get("Drive", [])
-    disks = [d for d in drives if d.get("ImageType", "Disk") == "Disk" and not d.get("ReadOnly", False)]
-    if not disks:
-        raise SystemExit("Mallen har ingen disk. Skapa mallen med en hårddisk i UTM.")
+    disks = [d for d in drives if d.get("ImageType") == "Disk" and d.get("ImageName") and not d.get("ReadOnly", False)]
+    if len(disks) != 1 or any(d is not disks[0] and d.get("ImageType") != "CD" for d in drives):
+        raise SystemExit("Mallen måste ha en skrivbar hårddisk och får bara ha cd-enheter därutöver.")
     disks[0]["ImageName"] = disk_name
     disks[0]["Identifier"] = str(uuid.uuid4()).upper()
     # Andra diskar (t.ex. installations-ISO) tas bort.
-    config["Drive"] = [d for d in drives if d is disks[0]]
+    config["Drive"] = disks
 
     system = config.get("System", {})
     for key in ("MemorySize", "Memory"):
@@ -70,15 +78,20 @@ def main():
     disk = Path(a.disk)
     config = adapt(config, disk.name, a.minne, a.cpu)
 
-    with tempfile.TemporaryDirectory() as tmp:
-        bundle = Path(tmp) / "ForskarOS.utm"
-        (bundle / "Data").mkdir(parents=True)
-        (bundle / "config.plist").write_bytes(plistlib.dumps(config))
-        shutil.copy(disk, bundle / "Data" / disk.name)
-        out = Path(a.ut)
-        with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as z:
-            for f in sorted(bundle.rglob("*")):
-                z.write(f, f.relative_to(tmp))
+    out = Path(a.ut)
+    if out.resolve() in (disk.resolve(), Path(a.mall).resolve()):
+        raise SystemExit("Spara zip-paketet under ett annat namn än originalfilerna.")
+    # qcow2-filen är redan komprimerad. Strömma den direkt till ZIP64 utan
+    # en extra kopia på flera GiB och publicera först när arkivet är stängt.
+    with tempfile.NamedTemporaryFile(dir=out.parent, suffix=".zip", delete=False) as tmp:
+        pending = Path(tmp.name)
+    try:
+        with zipfile.ZipFile(pending, "w", allowZip64=True) as z:
+            z.writestr("ForskarOS.utm/config.plist", plistlib.dumps(config))
+            z.write(disk, arcname=f"ForskarOS.utm/Data/{disk.name}")
+        os.replace(pending, out)
+    finally:
+        pending.unlink(missing_ok=True)
     print(f"Skapade {a.ut}")
 
 

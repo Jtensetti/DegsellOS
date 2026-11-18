@@ -51,7 +51,7 @@ dconf = Path("system_files/etc/dconf/db/local.d/03-forskaros-utseende").read_tex
 assert f"accent-color='{design['accent']['gnome']}'" in dconf
 # Färger i rapportens exempelfigur och i appen ska finnas bland designvärdena.
 values = json.dumps(design).lower()
-figure = Path("system_files/usr/share/forskaros/projekt/mallar/gemensamt/diagram.py").read_text()
+figure = Path("system_files/usr/share/forskaros/projekt/mallar/tabell/diagram.py").read_text()
 for color in set(re.findall(r"#[0-9a-fA-F]{6}", figure)):
     assert color.lower() in values, f"diagram.py använder {color} som inte finns i katalog/design.json"
 # All text i rapporten klarar WCAG AA (4,5:1) mot papperet och de upphöjda ytorna, i båda lägena.

@@ -20,6 +20,7 @@ bash tests/identitet.test.sh
 bash tests/labb.test.sh
 python3 -I tests/projekt.test.py
 python3 -I tests/belagg.test.py
+python3 -I tests/zotero.test.py
 python3 -I tests/doman.test.py
 python3 -I tests/oversikt.test.py
 bash tests/app.test.sh

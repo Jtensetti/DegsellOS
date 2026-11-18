@@ -25,7 +25,7 @@ Om ingen webbläsare har installerats ännu visar appen rapporten med GNOME:s in
 2. Öppna *Data* i Calc. Ändra en etta till en nolla i gruppen *Saklig respons* och spara som CSV. När du går tillbaka till ForskarOS är nästa steg **1 påstående att ompröva**. Påståendet om saklig respons har status **Ompröva** och visar vad som ändrats. Påståendet om neutral respons står kvar som **Granskad**.
 3. Håller inte meningen längre väljer du **Ändra meningen i manus**. Även ändrad lydelse kräver ny granskning. Bygg rapporten igen. Klicka på den länkade meningen i rapporten för att se det sparade urvalet och öppna analysfilen för att se hur andelen beräknades.
 
-<p align="center"><img src="bilder/app-omprova.png" alt="Påståendet I gruppen med saklig respons bytte två av tre elever hypotes, med status Ompröva och texten Ändrat sedan granskningen: Stöd · data.csv · villkor=Saklig respons. Under det de matchande raderna, analysfilen och knapparna Bekräfta granskning och Ändra meningen i manus." width="620"></p>
+<p align="center"><img src="bilder/app-omprova.png" alt="Vid förra granskningen bytte två av tre elever hypotes. Efter rättelsen är det en av tre. Appen visar båda urvalen och knappar för att ändra meningen och bekräfta granskningen." width="620"></p>
 
 I det kvalitativa exemplet har en tolkning både ett stödjande utdrag och ett motbelägg. Ta bort raden med koden `auktoritet` ur din arbetskopia. **Underlag saknas** visar vilka tolkningar som förlorat ett angivet utdrag. Du kan öppna den tidigare körningens rapport för att läsa det citat som var tillgängligt då.
 
@@ -37,7 +37,7 @@ I det kvalitativa exemplet har en tolkning både ett stödjande utdrag och ett m
 - Programmet kontrollerar alla träffar, inklusive dubbletter. Vyn visar högst 40 rader per urval. Ett byte av radordning påverkar inte urvalet. När ordningen är en del av metoden kan du välja hela filen. En Taguette-export innehåller de exporterade utdragen. Lägg till originaltexten separat om läsaren ska kunna kontrollera hela sammanhanget.
 - I rapporten följer läsbara utdrag med i HTML-filen. Länkar till källfiler och analyskod fungerar när körningsmappen hålls samman. En människa väljer vilka samband som ska följas och avgör vad förändringen betyder för slutsatsen.
 
-På terminalen visar `forskaros-projekt belägg "Min studie"` alla länkade påståenden. Lägg till påståendets ID för att läsa underlaget och dess avtryck. Med `forskaros-projekt granska "Min studie" mitt-id --avtryck AVTRYCK` bekräftar du just den versionen. Beslutet sparas i `underlag/granskningar.json` och följer med nästa körning. Äldre projekt går att köra vidare och kan få egna kopplingar när du behöver dem.
+På terminalen visar `forskaros-projekt belägg "Min studie"` alla länkade påståenden. Lägg till påståendets ID för att läsa underlaget och dess avtryck. Med `forskaros-projekt granska "Min studie" mitt-id --avtryck AVTRYCK` bekräftar du just den versionen. Beslutet sparas i `underlag/granskningar.json` och följer med nästa körning. Appen sparar även den jämförelsetext du har granskat i projektets `granskningsunderlag.json`. Där kan tidigare intervjuutdrag finnas kvar efter en rättelse. Filen ingår bara när du överlämnar hela projektet. Vid omprövning visas det tidigare och det aktuella underlaget, så att du kan ändra meningen i manuset eller bekräfta den. För äldre beslut där enbart avtrycket sparades anger appen att jämförelsetext saknas. Äldre projekt går att köra vidare och kan få egna kopplingar när du behöver dem.
 
 ## Skyddat material
 
@@ -62,14 +62,19 @@ Varje körning har en täckningsgrad som visas under *Körningar* i appen och me
 | Nivå | Betyder |
 |---|---|
 | **Dokumenterad** | Underlag, resultat och programversioner är registrerade med SHA-256. |
-| **Återkörbar** | Körningen gjordes utan nätverk och utan åtkomst utanför körningsmappen, så allt den behöver finns i mappen. |
-| **Återkörd** | Minst en upprepning har gett samma SHA-256 för alla resultat. |
+| **Återkörbar** | Körningen gjordes i en isolerad miljö med nätverket avstängt. |
+| **Återkörd** | Den senaste upprepningen gav samma SHA-256 för alla resultat. |
+| **Avviker** | Den senaste kontrollen fann en avvikelse. Projektvyn visar orsaken och föreslår en ny kontroll. |
 
 Varje upprepning loggas i körningens `verifieringar.json` med tid, miljö och utfall, även när resultaten avviker. En upprepning av en skyddad körning görs i sandlådan. På en dator utan bubblewrap vägrar `python3 upprepa.py` och föreslår `--utan-skydd`; en sådan upprepning loggas som oskyddad.
 
 ## Koppla ett påstående till en källpassage
 
-Ett påstående kan bygga på en passage i litteraturen, inte bara på data. Exportera källan från Zotero som BibTeX och importera den. Välj **Koppla underlag**, välj *Källpassage* och klistra in citatet och sidan. Zoteros PDF-läsare kopierar en markerad annotering med citat.
+Kopiera en textmarkering i Zoteros PDF-läsare. Välj **Koppla underlag → Hämta markering från Zotero** och klistra in markeringen. Kontrollera titel, citat och sida i förhandsvisningen. När du väljer **Lägg till källa och använd citat** läggs referensen i projektets `kallor.bib`. Välj mening och roll och spara länken. Projektet behåller en kopia av markeringen som går att läsa när Zotero är stängt.
+
+Zotero behöver vara öppet och tillåta lokala program under **Inställningar → Avancerat**. Aktivera Zotero-länkar för Markdown under **Export** om den kopierade markeringen saknar länk. [Zoteros lokala API](https://www.zotero.org/support/dev/web_api/v3/local_api).
+
+För en källa som redan finns i projektets BibTeX-fil kan du också välja **Källpassage** och skriva in citat och sida.
 
 <p align="center"><img src="bilder/app-koppla-underlag.png" alt="Vyn Koppla underlag med fälten Meningen i manuset, Underlag (Källpassage · ovning), Roll, Citat ur källan, Sida och det föreslagna ID:t aven-intervjuerna-exemplet." width="620"></p>
 

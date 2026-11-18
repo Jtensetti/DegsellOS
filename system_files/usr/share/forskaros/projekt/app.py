@@ -28,10 +28,11 @@ from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk  # noqa: E402
 HERE = Path(__file__).resolve().parent
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(HERE))
-from belagg import add_source, approve, source_choices, source_label  # noqa: E402
+from belagg import add_source, approve, review_changes, source_choices, source_label  # noqa: E402
 from oversikt import (PROJEKTMAPP, STATUS_STYLE, next_step, overview, pending_claims, progress,  # noqa: E402
                       recent_projects, remember_project, suggest_key)
-from projekt import create, domain, run, verify  # noqa: E402
+from projekt import METODER, create, domain, run, verify  # noqa: E402
+from zotero import import_reference, read_annotation  # noqa: E402
 
 APP_ID = "io.github.jtensetti.Forskaros"
 PROFILES = Path(os.environ.get("FORSKAROS_PROFILDIR") or HERE.parent / "profiler")
@@ -424,12 +425,18 @@ class Window(Adw.ApplicationWindow):
         body.append(names)
 
         methods = Adw.PreferencesGroup(title="Metod")
-        quantitative = Gtk.CheckButton(active=True)
-        qualitative = Gtk.CheckButton(group=quantitative)
-        for check, title, subtitle in [
-                (quantitative, "Kvantitativ", "Observationer i en tabell, till exempel från Calc. Jämför grupper eller villkor."),
-                (qualitative, "Kvalitativ", "Kodade utdrag ur intervjuer eller dokument, till exempel från Taguette.")]:
-            item = Adw.ActionRow(title=title, subtitle=subtitle, use_markup=False, activatable_widget=check)
+        method_buttons = {}
+        first = None
+        for method, description in METODER.items():
+            check = Gtk.CheckButton()
+            if first is None:
+                first = check
+                check.set_active(True)
+            else:
+                check.set_group(first)
+            method_buttons[method] = check
+            item = Adw.ActionRow(title=method.capitalize(), subtitle=description, use_markup=False,
+                                 activatable_widget=check)
             item.add_prefix(check)
             methods.add(item)
         body.append(methods)
@@ -484,7 +491,7 @@ class Window(Adw.ApplicationWindow):
             if not valid():
                 return
             path = target()
-            method = "kvantitativ" if quantitative.get_active() else "kvalitativ"
+            method = next(key for key, button in method_buttons.items() if button.get_active())
             path.parent.mkdir(parents=True, exist_ok=True)
             create(method, path, "skyddad" if protected.get_active() else "öppen")
             self.nav.pop()
@@ -547,9 +554,13 @@ class Window(Adw.ApplicationWindow):
 
         inputs = Adw.PreferencesGroup(title="Underlag")
         folder = self.project / "underlag"
-        inputs.add(row("Data", "data.csv · öppnas i kalkylprogrammet", on_activate=lambda: self.open_path(folder / "data.csv"),
-                       suffixes=[flat_button("Importera…", lambda: self.import_file("data.csv", "Välj en CSV-fil"))],
-                       icon="x-office-spreadsheet-symbolic"))
+        if domain(self.project).get("metod") == "källtolkning":
+            inputs.add(row("Källtexter", "Öppna mappen med originaltexterna för att läsa citaten i sitt sammanhang.",
+                           on_activate=lambda: self.open_path(folder / "kallor"), icon="folder-symbolic"))
+        else:
+            inputs.add(row("Data", "data.csv · öppnas i kalkylprogrammet", on_activate=lambda: self.open_path(folder / "data.csv"),
+                           suffixes=[flat_button("Importera…", lambda: self.import_file("data.csv", "Välj en CSV-fil"))],
+                           icon="x-office-spreadsheet-symbolic"))
         inputs.add(row("Manus", "manus.md · frågan, förutsägelsen och tolkningen", on_activate=lambda: self.open_path(folder / "manus.md"),
                        icon="x-office-document-symbolic"))
         inputs.add(row("Källor", "kallor.bib · exporterad från Zotero", on_activate=lambda: self.open_path(folder / "kallor.bib"),
@@ -560,7 +571,7 @@ class Window(Adw.ApplicationWindow):
         body.append(inputs)
 
         runs = Adw.PreferencesGroup(title="Körningar",
-                                    description="Varje körning sparar underlag, resultat och rapport. Dokumenterad, återkörbar eller återkörd visar hur körningen har kontrollerats.")
+                                    description="Varje körning sparar underlag, resultat och rapport. Efter en upprepning visas utfallet av den senaste kontrollen.")
         if not state["körningar"]:
             runs.add(row("Inga körningar än", "Bygg rapporten för att skapa den första."))
         newest = list(reversed(state["körningar"]))
@@ -709,15 +720,35 @@ class Window(Adw.ApplicationWindow):
         if claim["tidigare"]:
             pill_row.append(label(f'Senast granskat {claim["tidigare"]["tid"][:16].replace("T", " ")} UTC', "caption", "dim-label"))
         head.append(pill_row)
-        if claim["ändrat"]:
-            head.append(label("Ändrat sedan granskningen: " + "; ".join(claim["ändrat"])))
         if claim["kommentar"]:
             head.append(label(claim["kommentar"], "dim-label"))
         body.append(head)
 
+        folder = self.project / "underlag"
+        changes = review_changes(folder, claim)
+        for name, (old, new) in changes.items():
+            role, _, source = name.partition(" · ")
+            if role in ("Stöd", "Motbelägg", "Metod"):
+                group = Adw.PreferencesGroup(title=source, description=f'Angiven roll i kopplingen: {role.lower()}.')
+            else:
+                group = Adw.PreferencesGroup(title=name)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            box.add_css_class("card")
+            box.add_css_class("evidence")
+            for heading, text in (("Vid förra granskningen", old), ("Nu", new)):
+                box.append(label(heading, "caption-heading"))
+                box.append(label(text or "(tomt)", selectable=True))
+            if old == new:
+                box.append(label("Avtrycken skiljer sig. Kontrollera hela underlaget för att se ändringen.", "caption"))
+            group.add(box)
+            body.append(group)
+
         for item in claim["underlag"]:
             spec = item["spec"]
-            group = Adw.PreferencesGroup(title=source_label(spec))
+            name = source_label(spec)
+            if name in changes:
+                continue
+            group = Adw.PreferencesGroup(title=name)
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
             box.add_css_class("card")
             box.add_css_class("evidence")
@@ -736,18 +767,28 @@ class Window(Adw.ApplicationWindow):
             body.append(group)
 
         can_confirm = claim["status"] in ("Ej granskad", "Ompröva")
-        confirm = primary_button("Bekräfta granskning", lambda: self.guarded(lambda: confirm_review()))
-        confirm.set_sensitive(can_confirm)
         buttons = Gtk.Box(spacing=12)
-        buttons.append(confirm)
-        folder = self.project / "underlag"
         if claim["status"] == "Ompröva":
-            # Håller inte påståendet längre ändrar forskaren meningen i stället för att bekräfta.
-            buttons.append(flat_button("Ändra meningen i manus", lambda: self.open_path(folder / "manus.md")))
-        elif claim["status"] == "Underlag saknas":
+            # Två likvärdiga beslut när underlaget har ändrats.
+            buttons.set_homogeneous(True)
+            def edit_manus(*_):
+                self.nav.pop()
+                self.open_path(folder / "manus.md")
+
+            edit = Gtk.Button(label="Ändra meningen i manus")
+            edit.connect("clicked", edit_manus)
+            buttons.append(edit)
+            confirm = Gtk.Button(label="Bekräfta granskning")
+            confirm.connect("clicked", lambda *_: self.guarded(confirm_review))
+        else:
+            confirm = primary_button("Bekräfta granskning", lambda: self.guarded(confirm_review))
+        confirm.set_sensitive(can_confirm)
+        buttons.append(confirm)
+        if claim["status"] == "Underlag saknas":
             buttons.append(flat_button("Öppna belagg.json", lambda: self.open_path(folder / "belagg.json")))
         body.append(buttons)
         hint = {"Granskad": "Granskningen gäller det underlag som visas här.",
+                "Ompröva": "Bekräfta om meningen fortfarande håller. Annars kan du ändra den och granska igen.",
                 "Underlag saknas": "Laga kopplingen i belagg.json eller lägg tillbaka underlaget. Sedan kan påståendet granskas."}
         body.append(label(hint.get(claim["status"], "Du bekräftar att underlaget ovan stöder meningen. "
                           "Ändras underlaget senare visas påståendet som Ompröva."), "caption", "dim-label"))
@@ -763,7 +804,7 @@ class Window(Adw.ApplicationWindow):
                 self.toast("Granskningen är sparad.", "Nästa", lambda: self.nav.push(self.claim_page(remaining[0])))
             else:
                 self.toast("Alla påståenden är granskade.")
-        self.claim_widgets = {"confirm": confirm_review}
+        self.claim_widgets = {"confirm": confirm_review, "buttons": buttons}
         place = f"{pending.index(key) + 1} av {len(pending)} att granska" if series and key in pending else "Påstående"
         return page(key, body, subtitle=place)
 
@@ -809,8 +850,51 @@ class Window(Adw.ApplicationWindow):
             is_source = "källa" in choices[source.get_selected()][1]
             quote.set_visible(is_source)
             where.set_visible(is_source)
+            selected = choices[source.get_selected()][1]
+            quote.set_text(selected.get("citat", ""))
+            where.set_text(selected.get("sida", ""))
         source.connect("notify::selected", passage)
         passage()
+
+        def use_annotation(annotation):
+            bibkey = import_reference(folder, annotation)
+            title = annotation["titel"]
+            sheet = annotation["sida"]
+            summary = f"Zotero · {title}" + (f" · s. {sheet}" if sheet else "")
+            choices.append((summary, {"källa": bibkey, "citat": annotation["citat"],
+                                      "sida": f"s. {sheet}" if sheet else ""}))
+            source.get_model().append(summary)
+            source.set_selected(len(choices) - 1)
+
+        def preview(annotation, error):
+            if self.nav.get_visible_page() is not link_view:
+                return
+            if error:
+                self.toast(error)
+                return
+            summary = annotation["titel"]
+            if annotation["sida"]:
+                summary += " · s. " + annotation["sida"]
+            self.alert("Lägg till källan i projektet?", f'{summary}\n\n»{annotation["citat"]}«',
+                       [("avbryt", "Avbryt"), ("välj", "Lägg till källa och använd citat")],
+                       lambda response: self.guarded(lambda: use_annotation(annotation)) if response == "välj" else None)
+
+        def fetch_annotation():
+            link = Adw.EntryRow(title="Kopierad markering eller Zotero-länk")
+            dialog = self.alert("Hämta en markering från Zotero",
+                                "Kopiera markeringen i Zoteros PDF-läsare och klistra in den här. "
+                                "ForskarOS läser markeringen och referensen från Zotero på den här datorn.",
+                                [("avbryt", "Avbryt"), ("hämta", "Läs markering")],
+                                lambda response: self.in_background(lambda value=link.get_text(): read_annotation(value),
+                                                                    preview) if response == "hämta" else None)
+            entry_group = Adw.PreferencesGroup()
+            entry_group.add(link)
+            dialog.set_extra_child(entry_group)
+            dialog.set_response_enabled("hämta", False)
+            link.connect("changed", lambda *_: dialog.set_response_enabled("hämta", bool(link.get_text().strip())))
+            link.grab_focus()
+
+        group.add(row("Hämta markering från Zotero…", on_activate=fetch_annotation, icon="document-open-symbolic"))
 
         def store():
             name, sentence = key.get_text().strip(), text.get_text().strip()
@@ -819,6 +903,7 @@ class Window(Adw.ApplicationWindow):
             spec = dict(choices[source.get_selected()][1], roll=roles[role.get_selected()])
             if "källa" in spec:
                 spec["citat"] = quote.get_text().strip()
+                spec.pop("sida", None)
                 if where.get_text().strip():
                     spec["sida"] = where.get_text().strip()
                 for suffix in (".md", ".txt"):
@@ -836,7 +921,8 @@ class Window(Adw.ApplicationWindow):
                        lambda: self.open_path(folder / "manus.md"))
         self.link_widgets = {"key": key, "text": text, "source": source, "quote": quote, "where": where,
                              "choices": choices, "store": store}
-        return page("Koppla underlag", body)
+        link_view = page("Koppla underlag", body)
+        return link_view
 
     # ---- verktyg ---------------------------------------------------------
     def tools_page(self):
@@ -1006,6 +1092,18 @@ def selftest(window, app):
     def reconsider():
         window.do("granska")
         assert window.state["påståenden"]["saklig"]["status"] == "Ompröva"
+        buttons = window.claim_widgets["buttons"]
+        actions = list(buttons)
+        assert buttons.get_homogeneous()
+        assert [b.get_label() for b in actions] == ["Ändra meningen i manus", "Bekräfta granskning"]
+        assert not any(b.has_css_class("suggested-action") for b in actions)
+        def labels(widget):
+            if isinstance(widget, Gtk.Label):
+                yield widget.get_text()
+            for child in widget:
+                yield from labels(child)
+        shown = set(labels(window.nav.get_visible_page()))
+        assert {"Vid förra granskningen", "Nu"} <= shown
 
     steps = [("1-start", start), (None, fill_new), ("2-nytt-projekt", create_project),
              ("3-projekt", review_first), ("4-pastaende", confirm), (None, review_rest), (None, wait_build),

@@ -2,6 +2,13 @@
 
 Versioner släpps kvartalsvis (`2027.1`, `2027.2` …). Mellan släppen har standardgrenen versionen `ÅÅÅÅ.N-dev`. Se `docs/RELEASE.md`.
 
+## Under utveckling
+
+- Projektöversikten visar utfallet av den senaste upprepningen. När resultatet avviker går nästa steg till körningen som behöver granskas. En flyttad körning behåller sin licens vid upprepning.
+- I granskningsvyn går det att jämföra den tidigare granskade passagen med den aktuella och ändra meningen i manuset.
+- Projekt kan använda källor med motstridiga uppgifter och hämta valda PDF-markeringar från Zotero på samma dator.
+- Nya systemavbildningar använder ForskarOS som produktnamn. Den som redan har en monterad delad mapp i sin VM får genvägen vid första inloggningen.
+
 ## 2027.1-beta4
 
 ### Appen ForskarOS

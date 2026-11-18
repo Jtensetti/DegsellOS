@@ -38,8 +38,10 @@ jobs:
       - name: Hämta avbildningen
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
         run: |
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:${{ inputs.tag }}"
+          [[ "$TAG" =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{0,127}$ ]]
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:$TAG"
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
           echo "$TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           sudo podman pull --arch ${{ matrix.arch }} "$IMAGE"
@@ -57,6 +59,14 @@ jobs:
             "$IMAGE"
           sudo chown -R "$USER" output
           find output -type f -exec ls -lh {} \;
+
+      - name: Kontrollera diskval och startmeny i färdig ISO
+        if: matrix.type == 'anaconda-iso'
+        run: |
+          sudo apt-get install -y xorriso
+          product=$(sudo podman run --rm --entrypoint sh "$IMAGE" -c '. /etc/os-release && echo "$NAME"')
+          test -n "$product"
+          bash scripts/kontrollera-iso.sh output/bootiso/install.iso "$product"
 
       - name: Komprimera och paketera för UTM
         if: matrix.type == 'qcow2'

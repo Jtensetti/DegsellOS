@@ -1,2 +1,8 @@
 __pycache__/
-*.pyc
+*.py[cod]
+.DS_Store
+/output/
+/dist/
+*.qcow2
+*.iso
+*.utm.zip

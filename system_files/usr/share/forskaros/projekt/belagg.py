@@ -262,6 +262,55 @@ def save_json(path, value):
             tmp.unlink(missing_ok=True)
 
 
+def review_preview(claim):
+    """Den text forskaren kan jämföra vid nästa granskning, grupperad som avtrycken."""
+    groups = {"Påståendets lydelse": [claim["text"]], "Forskarens kommentar": [claim["kommentar"]]}
+    for item in claim["underlag"]:
+        spec = item["spec"]
+        if item["fel"]:
+            text = item["fel"]
+        elif "källa" in spec:
+            fields = " · ".join(value for name, value in item["post"].items() if name != "typ")
+            text = f'»{normalized(spec["citat"])}«\n{fields}'
+        elif "sha256" in item:
+            text = "SHA-256 " + item["sha256"]
+        else:
+            rows = item["rader"]
+            columns = spec["kolumner"]
+            if {"document", "id", "content"} <= set(columns):
+                lines = []
+                for row in rows[:40]:
+                    values = dict(zip(columns, row))
+                    context = " · ".join(value for key, value in values.items() if key != "content")
+                    lines.append(f'»{values["content"]}«\n{context}')
+            else:
+                lines = [" · ".join(columns)] + [" · ".join(row) for row in rows[:40]]
+            if len(rows) > 40:
+                lines.append(f"Visar de första 40 av {len(rows)} rader.")
+            text = "\n".join(lines)
+        groups.setdefault(source_label(spec), []).append(text)
+    return {name: "\n\n".join(values) for name, values in groups.items()}
+
+
+def review_changes(folder, claim):
+    """Hämta jämförelsetext endast för delar som avviker från det godkända beslutet."""
+    if not claim["ändrat"]:
+        return {}
+    prior = claim["tidigare"]
+    path = folder.parent / "granskningsunderlag.json"
+    saved = read_json(path).get(claim["id"], {}) if path.exists() else {}
+    previous = saved.get("texter", {}) if saved.get("avtryck") == digest(prior["delar"]) else {}
+    current = review_preview(claim)
+    changes = {}
+    for name in claim["ändrat"]:
+        if name not in prior["delar"]:
+            old = "Kopplingen tillkom efter granskningen."
+        else:
+            old = previous.get(name, "Den tidigare granskningen saknar sparad jämförelsetext.")
+        changes[name] = (old, current.get(name, "Kopplingen har tagits bort."))
+    return changes
+
+
 def approve(folder, key, stamp):
     with locked(folder):
         claims = inspect(folder)
@@ -276,6 +325,12 @@ def approve(folder, key, stamp):
         reviews = read_json(path) if path.exists() else {}
         reviews[key] = {"tid": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         "delar": claim["delar"]}
+        # Spara den granskade texten lokalt i projektet. Äldre intervjuutdrag ska inte
+        # följa med när någon delar nästa körningsmapp efter att ha rättat ett citat.
+        snapshots = folder.parent / "granskningsunderlag.json"
+        stored = read_json(snapshots) if snapshots.exists() else {}
+        stored[key] = {"avtryck": stamp, "texter": review_preview(claim)}
+        save_json(snapshots, stored)
         save_json(path, reviews)
 
 

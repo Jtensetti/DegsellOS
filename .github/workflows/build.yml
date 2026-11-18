@@ -83,7 +83,7 @@ jobs:
             -t localhost/forskaros:${{ matrix.arch }} .
 
       - name: Publicera arkitekturspecifik tagg
-        if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
+        if: github.ref_name == 'main' && github.event_name != 'pull_request'
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -93,7 +93,7 @@ jobs:
           sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:build-$GITHUB_RUN_ID-${{ matrix.arch }}"
 
   publish:
-    if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
+    if: github.ref_name == 'main' && github.event_name != 'pull_request'
     needs: build
     outputs:
       digest: ${{ steps.manifest.outputs.digest }}
@@ -110,6 +110,7 @@ jobs:
       - name: Skapa och publicera flerarkitekturs-manifest
         id: manifest
         env:
+          RELEASE_MEDIA: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[release-media] ') }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
@@ -120,9 +121,10 @@ jobs:
             forskaros-manifest "docker://$IMAGE:latest"
           podman manifest push --all \
             forskaros-manifest "docker://$IMAGE:$(date -u +%Y%m%d)"
-          # Kvartalsversion (t.ex. 2027.1) när VERSION inte slutar på -dev.
+          # En vanlig push eller schemalagd ombyggnad får inte flytta en släppt version.
           VERSION=$(cat VERSION)
-          if [[ "$VERSION" != *-dev ]]; then
+          if [[ "$RELEASE_MEDIA" == true ]]; then
+            [[ "$VERSION" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ && "$VERSION" != *-dev ]]
             podman manifest push --all forskaros-manifest "docker://$IMAGE:$VERSION"
           fi
           echo "digest=$(cat /tmp/digest)" >> "$GITHUB_OUTPUT"

@@ -1,58 +1,22 @@
 # ForskarOS på Mac
 
-## Apple Silicon (M1–M5, MacBook Neo)
+## Apple Silicon
 
-Linux kan i dag inte startas direkt på en MacBook Neo. Dess A18 Pro-chip har bara
-[mycket tidigt stöd](https://asahilinux.org/docs/platform/feature-support/m4/) i
-Asahi Linux. Därför kör vi ForskarOS i en **virtuell maskin**, vilket fungerar på
-alla Apple Silicon-Macar.
+Importera beta4:s arm64-disk i en virtuell Linuxmaskin. Du behöver [UTM](https://mac.getutm.app/) och [arm64-filen med tillhörande kontrollsumma](../README.md#ladda-ner).
 
-1. Installera [UTM](https://mac.getutm.app/).
-2. Ladda ner `ForskarOS-<version>-arm64.qcow2` från Internet Archive
-   (länkar under *Ladda ner* i README). Välj direktlänken, eller torrenten
-   om du har en torrentklient. Kontrollera gärna filen mot `.sha256`.
-3. I UTM: **Create a New Virtual Machine → Virtualize → Linux**.
-   Hoppa över ISO-steget, och lägg sedan till qcow2-filen under *Drives*
-   som en befintlig disk (*Import*). Ta bort den tomma disken UTM skapade.
-4. Ge maskinen minst **4 GB RAM** (8 GB rekommenderas om du ska köra lokal AI)
-   och 4 CPU-kärnor.
-5. Starta och logga in som **forskare** med lösenordet **forskare**. Du måste
-   byta lösenord direkt. Vid första
-   inloggningen öppnas appen **ForskarOS**. Välj **Nytt forskningsprojekt** för att prova ett exempel eller **Verktyg** för att välja fler program.
+1. Hämta både `.qcow2` och `.sha256` till samma mapp. Kontrollera nedladdningen där med `shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.qcow2.sha256`.
+2. Välj **Create a New Virtual Machine → Virtualize → Linux** i UTM. Använd QEMU som backend och välj ARM64 som arkitektur. Hoppa över ISO-steget. Ge maskinen 4 CPU-kärnor och minst 4 GB minne.
+3. Öppna maskinens inställningar. Välj **Drives → New… → Import** och välj den hämtade qcow2-filen. Om UTM skapade en extra tom disk tar du bort den från den nya virtuella maskinen. Flytta den importerade disken överst i startordningen. [UTM:s diskguide](https://docs.getutm.app/settings-qemu/drive/drive/)
+4. Logga in som **forskare** med lösenordet **forskare** och välj ett nytt lösenord. Öppna **ForskarOS → Nytt forskningsprojekt**. Exempelprojekten fungerar medan grundverktygen hämtas.
 
-Beta4 för Apple Silicon levereras som en qcow2-disk för import i UTM.
+Den publicerade arm64-disken har startprovats i QEMU. Första inloggningen, delad mapp och labbet på en fysisk MacBook Neo återstår att verifiera. [Färdplan](ROADMAP.md)
 
-## Dela filer mellan Mac och ForskarOS
+## Dela filer med Macen
 
-- **Apple Virtualization-läget** i UTM delar mappar via virtiofs. ForskarOS
-  monterar den delade mappen automatiskt, och den syns som `~/Delad`.
-- **QEMU-läget** delar via 9p, som basens kärna troligen saknar. Använd då
-  nätverksdelning: på Macen, *Systeminställningar → Allmänt → Delning →
-  Fildelning*. I ForskarOS: *Filer → Andra platser → Anslut till server* och
-  skriv `smb://192.168.64.1` (Macens adress i UTM:s delade nätverk).
-- Zotero, e-post och molnlagring fungerar som vanligt via nätverket.
+Välj en mapp att dela i UTM:s inställningar. ForskarOS försöker montera den vid `/var/mnt/delad` via virtiofs eller 9p. När den är monterad kan du öppna sökvägen i **Filer**. Vid inloggning kan en genväg även visas som `~/Delad`.
 
-Grundverktygen installeras i bakgrunden när det finns nät. Du kan skapa ett
-projekt och prova den medföljande analysen under tiden. Delat urklipp och automatisk skärmstorlek fungerar i
-UTM:s QEMU-läge tack vare `spice-vdagent`.
-
-> **Ej verifierat än:** att disken startar i UTM, inloggningen med
-> lösenordsbyte och den delade mappen. Det är det första vi testar på din
-> MacBook Neo.
-
-## Varför inte direkt uppstart?
-
-| Chip | Asahi Linux-stöd |
-|---|---|
-| M1, M2 | Moget. Installeras från macOS med Asahis installerare (dual boot) |
-| M3 | Nyligen officiellt stöd, men utan GPU-acceleration |
-| M4, M5, A18 Pro (Neo) | Tidigt utvecklingsarbete, går inte att installera |
-
-När Asahi stödjer Neo kan vi lägga till en Asahi-baserad avbildning. Vaulten och
-tillägget följer med oförändrade.
+För nätverksdelning kan du aktivera **Fildelning** under **Systeminställningar → Allmänt → Delning** i macOS. Öppna sedan **Filer → Andra platser → Anslut till server** i ForskarOS och ange Macens SMB-adress.
 
 ## Intel-Mac
 
-Använd installations-ISO:n för amd64 (`forskaros-amd64-anaconda-iso`).
-Macar med T2-chip (2018–2020) kan behöva [t2linux](https://t2linux.org/)-patchar
-för tangentbord, styrplatta och wifi.
+För installation på en Intel-Mac används amd64-ISO:n med ändelsen `-interaktiv-r2.iso`. Kontrollera diskvalet innan du startar installationen. T2-modeller kan behöva särskilda drivrutiner för tangentbord, styrplatta och wifi. [Installationsguide](BETA4.md#installera-på-pc) · [t2linux](https://t2linux.org/)

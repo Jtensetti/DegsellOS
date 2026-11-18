@@ -95,6 +95,9 @@ def next_step(state):
         return ("bygg", "Bygg rapporten igen",
                 "Underlaget har ändrats sedan senaste körningen. Den gamla körningen finns kvar.")
     last = state["körningar"][-1]
+    if last["nivå"] == "Avviker":
+        return ("upprepa", "Senaste upprepningen avviker",
+                f'{last["varför"]} Kontrollera körningens filer och upprepa kontrollen.')
     if last["nivå"] != "Återkörd":
         return ("upprepa", "Upprepa den senaste körningen",
                 "Upprepningen bygger om resultaten från underlaget och kontrollerar att de blir exakt desamma.")
@@ -123,7 +126,7 @@ def progress(state):
              "saknas" if key == "granska" and not state["påståenden"] else "senare") for key, name in STEG]
 
 
-STATUS_STYLE = {"Granskad": "success", "Återkörd": "success", "Ompröva": "warning",
+STATUS_STYLE = {"Granskad": "success", "Återkörd": "success", "Avviker": "error", "Ompröva": "warning",
                 "Underlag saknas": "error", "Ej granskad": "", "Dokumenterad": "", "Återkörbar": ""}
 
 

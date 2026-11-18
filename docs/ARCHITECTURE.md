@@ -1,27 +1,27 @@
 # Arkitektur
 
-```
-ForskarOS Core (Obsidian-tillägg)      faser, granskning, mallar, AI-logg
-Vault ~/ForskarOS                      Markdown med YAML-frontmatter
-Verktyg                                Flatpak, Homebrew och uv, i profiler
-ForskarOS-lagret                       forskaros-* kommandon, systemd-tjänster, dconf
-Bluefin LTS                            GNOME, bootc, CentOS Stream 10, amd64 + arm64
-```
+ForskarOS bygger en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. Forskaren arbetar i två slags mappar. Skrivbordsappen hanterar projekt med underlag och sparade körningar. ForskarOS Core hanterar forskningsfrågor och arbetsmetod i en separat Markdown-vault för Obsidian.
 
-## Beslut
+| Del | Ansvar | Källkod |
+|---|---|---|
+| Skrivbordsapp och projektkommando | Skapa projekt, granska belägg, bygga rapporter och upprepa körningar | [Projektmoduler och mallar](../system_files/usr/share/forskaros/projekt), [systemkommandon](../system_files/usr/bin) |
+| ForskarOS Core | Frågor, faser och beslutslogg i lokala anteckningar | [Tillägg](../vault/.obsidian/plugins/forskaros-core), [forskningsmapp](../vault) |
+| ForskarOS-labbet | Versionsbunden R- och Pythonmiljö i en container | [labb](../labb) |
+| Verktyg och utseende | Verktygsprofiler, programmeny, typsnitt och färger | [Katalog](../katalog), [generatorer](../scripts) |
+| System och installation | Bootc-avbildning, systemtjänster, GNOME-inställningar samt ISO- och VM-diskar | [Containerfile](../Containerfile), [byggskript](../build_files/build.sh), [systemfiler](../system_files), [diskinställningar](../disk_config) |
 
-**Bluefin LTS som bas.** Ger hårdvarustöd, säkerhetsuppdateringar och atomära uppdateringar med rollback för både amd64 och arm64. ForskarOS lägger bara till det som är specifikt för projektet. Nix var första förslaget men byggdes aldrig, och NixOS har svagt stöd för Apple Silicon.
+## Projektets filer
 
-**Program bakas inte in i avbildningen.** Grundprofilen installeras som Flatpak vid första start (`forskaros-grund.service`), övriga profiler med `forskaros-setup`. Det håller avbildningen liten och undviker konflikter med basens uppdateringar.
+`projekt.json` identifierar projektet och dess skyddsnivå. I `underlag/` finns arbetsmaterial, manus och kopplingar mellan påståenden och källor. Appen och kommandot `forskaros-projekt` använder samma filer och projektlogik. Varje lyckad analys sparas i en egen mapp under `korningar/` med en kopia av underlaget, resultaten och deras kontrollsummor. [Projektens filformat och arbetsgång](PROJEKT.md) · [Forskningsdomänen](FORSKAROS-3.md)
 
-**En källa för verktygen.** `katalog/verktyg.json` genererar profiler, programmenyns mappar och verktygssidorna i vaulten. Ett test kontrollerar att de genererade filerna är i synk.
+## Verktyg och första inloggning
 
-**Obsidian ingår inte.** Obsidian är proprietärt och får inte distribueras. Vaultformatet är öppet (Markdown, wikilänkar, frontmatter), så en egen editor kan byggas senare utan att röra Obsidians kod.
+`forskaros-grund.service` hämtar grundprofilens program från Flathub när nätåtkomst finns. Fler profiler installeras från appen eller med `forskaros-setup`. Obsidian installeras separat. Skrivbordsappen och Pandoc ingår i systemavbildningen.
 
-**Vaulten skrivs inte över.** `forskaros-init` skapar `~/ForskarOS` en gång. Därefter uppdateras bara tilläggets filer och systemets egna mappar (`00 START/Verktyg`, `00 START/Forskarhandboken`).
+`forskaros-init` skapar `~/ForskarOS` från vaultens mall vid första inloggningen. Vid senare inloggningar uppdateras de medföljande verktygskorten, handbokssidorna och ett befintligt Core-tillägg. Forskarens egna anteckningar ligger kvar.
 
-**Tillägget gör inga nätverksanrop.** AI-konsultationer blir text som användaren kopierar. Ett test kontrollerar att källkoden saknar nätverksanrop.
+## Ändra och bygga
 
-## Tillägget
+Ändra verktyg i `katalog/verktyg.json` och generera profiler, programmenyer och verktygskort med `python3 scripts/generera.py`. Ändra färger och typografi i `katalog/design.json` och kör `python3 scripts/identitet.py`. [Designsystem](DESIGN.md)
 
-`main.js` har två delar: regler och mallar som rena funktioner (testas i `tests/engine.test.js`) och Obsidian-gränssnittet (testas mot ett simulerat API i `tests/plugin.test.js`). All data läses från anteckningarnas frontmatter, främst `typ`, `fas`, `status`, `fråga` och `datum`.
+Kör `bash scripts/check.sh` för projekttesterna. Bygg systemavbildningen från repots rot med `podman build -t localhost/forskaros .` på en Linuxvärd med Podman. CI bygger varje arkitektur på en separat värd. [Byggflöden](../.github/workflows) · [Släpprocess](RELEASE.md)

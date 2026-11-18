@@ -143,22 +143,13 @@ jobs:
           fi
           sudo bash scripts/testa-vmstart.sh output/qcow2/disk.qcow2 "${{ matrix.arch }}"
 
-      - name: Kontrollera ISO-mediets startkatalog
+      - name: Kontrollera diskval och startmeny i färdig ISO
         if: matrix.type == 'anaconda-iso'
         run: |
           sudo apt-get install -y xorriso
-          xorriso -indev output/bootiso/install.iso -report_el_torito plain > /tmp/boot-catalog
-          grep -E 'El Torito boot img.*UEFI' /tmp/boot-catalog
-          mkdir -p /tmp/forskaros-kickstart
-          for ks in osbuild.ks osbuild-base.ks; do
-            xorriso -osirrox on -indev output/bootiso/install.iso -extract "/$ks" "/tmp/forskaros-kickstart/$ks"
-          done
-          grep -Eq '^graphical([[:space:]]|$)' /tmp/forskaros-kickstart/osbuild.ks
-          grep -Eq '^ostreecontainer ' /tmp/forskaros-kickstart/osbuild-base.ks
-          if grep -Ein '^[[:space:]]*(clearpart|autopart|zerombr|reqpart|part|partition|ignoredisk|raid|logvol|volgroup|mount|reboot)([[:space:]]|$)' /tmp/forskaros-kickstart/*.ks; then
-            echo 'Installationsmediet får inte välja eller ändra diskar utan användarens bekräftelse.' >&2
-            exit 1
-          fi
+          product=$(sudo podman run --rm --entrypoint sh "$IMAGE" -c '. /etc/os-release && echo "$NAME"')
+          test -n "$product"
+          bash scripts/kontrollera-iso.sh output/bootiso/install.iso "$product"
 
       - name: Förbered filer
         run: |
@@ -174,12 +165,6 @@ jobs:
             mv output/bootiso/install.iso "dist/$FILE"
           fi
           rm -rf output
-          # Apple Silicon: färdigt UTM-paket om mallen finns (vm/utm/config.plist).
-          if [[ "${{ matrix.arch }}" == arm64 && -f vm/utm/config.plist ]]; then
-            python3 scripts/paketera_utm.py vm/utm/config.plist "dist/$FILE" "dist/$BASE.utm.zip"
-            rm "dist/$FILE"
-            FILE="$BASE.utm.zip"
-          fi
           (cd dist && sha256sum "$FILE" > "$FILE.sha256")
           echo "FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh dist

@@ -1,4 +1,5 @@
 """Nästa steg genom ett projekts hela livscykel."""
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -53,6 +54,24 @@ with tempfile.TemporaryDirectory() as tmp:
     call("upprepa", run)
     assert step(project)[:2] == ("rapport", "Läs och dela rapporten")
     assert steps(project) == ["klar", "klar", "klar", "nu"]
+
+    # En ny avvikelse måste synas även efter en tidigare lyckad verifiering.
+    result_file = run / "resultat/resultat.csv"
+    original = result_file.read_bytes()
+    result_file.write_text("rättelse\n")
+    failed = subprocess.run([cmd, "upprepa", run], text=True, capture_output=True)
+    assert failed.returncode and "resultat.csv" in failed.stderr
+    assert " · Avviker · " in call("status", project)
+    action, title, why = step(project)
+    assert (action, title) == ("upprepa", "Senaste upprepningen avviker") and "resultat.csv" in why
+    assert steps(project) == ["klar", "klar", "nu", "senare"]
+    crate = json.loads((run / "ro-crate-metadata.json").read_text())
+    history = [node for node in crate["@graph"] if node["@id"].startswith("#upprepning-")]
+    assert len(history) == 2 and history[-1]["actionStatus"]["@id"].endswith("/FailedActionStatus")
+    result_file.write_bytes(original)
+    call("upprepa", run)
+    assert step(project)[:2] == ("rapport", "Läs och dela rapporten")
+    assert [e["utfall"] for e in json.loads((run / "verifieringar.json").read_text())] == ["samma", "avviker", "samma"]
 
     done = overview(project, domain)
     assert next_step(dict(done, skydd="skyddad"))[1] == "Läs rapporten lokalt"

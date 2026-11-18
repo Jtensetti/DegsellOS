@@ -155,18 +155,19 @@ def log_verification(root, outcome, detail):
 
 
 def coverage(root):
-    """Dokumenterad, återkörbar eller återkörd, med det som visar nivån."""
+    """Visa den senaste verifieringen, eller hur den ursprungliga körningen gjordes."""
     manifest = json.loads((root / "korning.json").read_text(encoding="utf-8"))
     path = root / "verifieringar.json"
     entries = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
-    same = [e for e in entries if e["utfall"] == "samma"]
-    if same:
-        when = same[-1]["tid"][:16].replace("T", " ") + " UTC"
-        count = "1 upprepning" if len(same) == 1 else f"{len(same)} upprepningar"
-        return "Återkörd", f"{count} gav samma SHA-256, senast {when}"
+    if entries:
+        latest = entries[-1]
+        when = latest["tid"][:16].replace("T", " ") + " UTC"
+        if latest["utfall"] == "samma":
+            return "Återkörd", f"Senaste upprepningen gav samma SHA-256 ({when})."
+        return "Avviker", f'{latest["detalj"]} ({when})'
     shield = manifest.get("skydd") or {}
     if manifest.get("labb") or shield.get("nätverk") == "avstängt":
-        return "Återkörbar", "Körd utan nätverk och utan åtkomst utanför körningsmappen"
+        return "Återkörbar", "Körd i en isolerad miljö med nätverket avstängt."
     return "Dokumenterad", "Underlag, resultat och programversioner är registrerade"
 
 

@@ -24,7 +24,7 @@ Till det kommer en princip som är vår egen:
 
 ## Enkelt utan att bli svagare
 
-1. **Visa nästa steg, inte alla steg.** Projektvyn räknar ut ett enda nästa steg ur projektets läge (påståenden att granska, underlag som ändrats, körningar som inte upprepats) och erbjuder det som den primära knappen. Stegraden *Granska › Bygg › Upprepa › Dela* visar var i arbetsflödet projektet är. Logiken finns i `oversikt.py` och testas utan gränssnitt.
+1. **Visa nästa steg, inte alla steg.** Projektvyn räknar ut ett enda nästa steg ur projektets läge (påståenden att granska, underlag som ändrats, körningar som inte upprepats) och erbjuder det som den primära knappen. Stegraden *Granska › Bygg › Upprepa › Läs* visar var i arbetsflödet projektet är. Logiken finns i `oversikt.py` och testas utan gränssnitt.
 2. **Kraften ligger ett klick bort.** Allt som kommandoraden kan göra finns kvar: i raderna, i rubrikradens meny och i `forskaros-projekt`. Inget tas bort för att göra det enklare.
 3. **Ingen terminal för vanligt arbete.** Välkomst, verktygsval, projekt, granskning och upprepning görs i appen. Terminalen är ett tillval för den som vill.
 4. **Säg vad som händer, i ord.** Status står alltid i ord (*Granskad*, *Ompröva*, *Underlag saknas*), aldrig bara i färg. Ett fel säger vad som gick fel och vad du kan göra.

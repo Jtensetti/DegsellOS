@@ -15,10 +15,20 @@ export XDG_CONFIG_HOME="$HOME/.config"  # CI-miljöer sätter ofta en egen
 mkdir -p "$HOME"
 PLUGIN=".obsidian/plugins/forskaros-core"
 
-# 1. Första inloggning skapar vaulten.
+# I en VM kan delningen redan vara monterad vid första inloggningen.
+mkdir "$TMP/bin"
+cat > "$TMP/bin/mountpoint" <<'SH'
+#!/bin/sh
+test "$1" = "-q" && test "$2" = "/var/mnt/delad"
+SH
+chmod +x "$TMP/bin/mountpoint"
+export PATH="$TMP/bin:$PATH"
+
+# 1. Första inloggning skapar vaulten och genvägen till den monterade mappen.
 "$INIT" >/dev/null
 test -f "$HOME/ForskarOS/00 START/Hem.md"
 test -f "$HOME/ForskarOS/$PLUGIN/main.js"
+test "$(readlink "$HOME/Delad")" = /var/mnt/delad
 
 # 2. Forskarens anteckningar och ändringar finns kvar efter ny inloggning.
 echo "min hypotes" > "$HOME/ForskarOS/02 HYPOTESER/Min.md"
@@ -43,7 +53,7 @@ echo "gammalt" > "$HOME/ForskarOS/00 START/Verktyg/JASP.md"
 cmp -s "vault/00 START/Verktyg/JASP.md" "$HOME/ForskarOS/00 START/Verktyg/JASP.md"
 grep -q "min hypotes" "$HOME/ForskarOS/02 HYPOTESER/Min.md"
 
-# 5. Typsnitten för Flatpak-program läggs i användarens fontconfig en gång.
+# 6. Typsnitten för Flatpak-program läggs i användarens fontconfig en gång.
 CONF="$HOME/.config/fontconfig/conf.d/52-forskaros-typsnitt.conf"
 FORSKAROS_TYPSNITT="$PWD/system_files/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf" "$INIT" >/dev/null
 cmp -s system_files/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf "$CONF"

@@ -1,17 +1,14 @@
-# UTM-mall
+# Paketera en UTM-maskin
 
-`config.plist` här blir mallen för det färdiga UTM-paketet (`ForskarOS.utm.zip`).
-Den ska skapas av UTM självt, så att formatet alltid stämmer med UTM:s version.
+Den publicerade arm64-disken kan importeras direkt enligt [Mac-guiden](../../docs/MAC.md). Med en egen UTM-mall kan du dessutom skapa ett paket som kan öppnas i UTM efter uppackning.
 
-## Så skapar du mallen (en gång, cirka två minuter)
+1. Skapa en QEMU-baserad ARM64/Linuxmaskin i UTM på Mac. Använd UEFI, VirtIO-disk, bildskärm och delat nätverk. Behåll den inbyggda ikonen. Låt eventuella flyttbara enheter vara tomma.
+2. Spara maskinen, välj **Visa i Finder** och öppna **Visa paketinnehåll** för att hitta `config.plist`.
+3. Kör kommandot nedan från repots rot med sökvägen till den sparade filen och den hämtade ForskarOS-disken.
 
-1. Öppna UTM → **Create a New Virtual Machine → Virtualize → Linux**.
-2. Välj **QEMU** (inte Apple Virtualization), hoppa över ISO-bilden.
-3. Minne 8192 MB, 4 CPU-kärnor, disk valfri storlek (den byts ut).
-4. Under *Shared Directory*: välj en mapp på din Mac om du vill dela filer.
-5. Spara. Högerklicka på maskinen → **Show in Finder** → högerklicka på
-   `.utm`-filen → **Visa paketinnehåll** → kopiera `config.plist`.
-6. Lägg filen här som `vm/utm/config.plist`.
+```bash
+python3 scripts/paketera_utm.py /sökväg/till/config.plist \
+  ForskarOS-2027.1-beta4-arm64.qcow2 ForskarOS.utm.zip
+```
 
-Byggskriptet `scripts/paketera_utm.py` byter namn, disk, minne, CPU och
-MAC-adress och behåller resten av UTM:s inställningar.
+Paketet innehåller en ny maskinidentitet och en kopia av ForskarOS-disken. Packa upp det på Macen och öppna `ForskarOS.utm`. Välj eventuell delad mapp i maskinens inställningar på den Mac där maskinen ska köras.

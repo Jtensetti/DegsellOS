@@ -1,6 +1,7 @@
 """Från ett länkat påstående till rättat underlag, mänsklig omprövning och fryst rapport."""
 from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -10,7 +11,7 @@ import tempfile
 root = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
-from belagg import add_source, inspect, source_choices
+from belagg import add_source, inspect, review_changes, source_choices
 cmd = root / "system_files/usr/bin/forskaros-projekt"
 
 
@@ -71,6 +72,20 @@ with tempfile.TemporaryDirectory() as temp:
         current = inspect(folder)
         assert current[affected]["status"] == "Ompröva" and current[other]["status"] == "Granskad"
         assert current[affected]["ändrat"][0].startswith("Stöd · data.csv")
+        views = review_changes(folder, current[affected])
+        old, new = views[current[affected]["ändrat"][0]]
+        assert old != new
+        if method == "kvalitativ":
+            assert before in old and after not in old
+            assert after in new and before not in new
+        assert not (first / "underlag/granskningsunderlag.json").exists()
+        # Äldre beslut utan visningstext går fortfarande att ompröva.
+        sidecar = project / "granskningsunderlag.json"
+        saved = sidecar.read_bytes()
+        sidecar.unlink()
+        legacy_old, legacy_new = review_changes(folder, current[affected])[current[affected]["ändrat"][0]]
+        assert "saknar sparad jämförelsetext" in legacy_old and legacy_new == new
+        sidecar.write_bytes(saved)
         assert "ändrats sedan visningen" in call("granska", project, affected, "--avtryck", fingerprint, fail=True)
         second = Path(call("kör", project))
         assert "Ompröva" in (second / "resultat/rapport.html").read_text()
@@ -85,6 +100,16 @@ with tempfile.TemporaryDirectory() as temp:
             assert all(c["status"] == "Ompröva" for k, c in changed.items() if k != "material")
             assert changed["material"]["status"] == "Granskad", "en ändrad intervju berör inte källpassagen"
             assert changed[affected]["ändrat"][0].startswith("Motbelägg")
+            # En rättad passage jämförs mot precis det citat som godkändes.
+            config = folder / "belagg.json"
+            settings = json.loads(config.read_text())
+            spec = settings["påståenden"]["material"]["underlag"][0]
+            old_quote = spec["citat"]
+            spec["citat"] = "De beskriver inga verkliga elever."
+            config.write_text(json.dumps(settings, ensure_ascii=False))
+            c = inspect(folder)["material"]
+            previous, current_text = review_changes(folder, c)[c["ändrat"][0]]
+            assert old_quote in previous and spec["citat"] in current_text
             data.write_text("\n".join(line for line in data.read_text().splitlines() if ",auktoritet," not in line) + "\n")
             assert inspect(folder)[affected]["status"] == "Underlag saknas"
             now = inspect(folder)[affected]["avtryck"]

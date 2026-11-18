@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "påståenden": {
+    "initiativ": {
+      "kommentar": "Pröva om källorna avser samma tidpunkt. Formellt beslut och tidigare överenskommelse kan vara olika saker.",
+      "underlag": [
+        {
+          "roll": "stöd",
+          "källa": "protokoll",
+          "sida": "s. 3",
+          "citat": "På läsecirkelns begäran beslöts att hålla läsestugan öppen på fredagskvällarna.",
+          "fil": "kallor/protokoll.md"
+        },
+        {
+          "roll": "motbelägg",
+          "källa": "minnen",
+          "sida": "s. 12",
+          "citat": "Kvällsöppet hade styrelsen redan bestämt när läsecirkeln kom med sitt brev.",
+          "fil": "kallor/minnen.md"
+        }
+      ]
+    },
+    "forsokstid": {
+      "underlag": [
+        {
+          "roll": "stöd",
+          "källa": "protokoll",
+          "sida": "s. 3",
+          "citat": "Försöket gäller från den 5 december till årsskiftet.",
+          "fil": "kallor/protokoll.md"
+        }
+      ]
+    }
+  }
+}

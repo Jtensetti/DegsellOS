@@ -1,27 +1,22 @@
 # Så släpps ForskarOS
 
-ForskarOS släpps **kvartalsvis**: `2027.1` (mars), `2027.2` (juni), `2027.3` (september), `2027.4` (december).
+Kvartalsversioner följer formen `2027.1` (mars), `2027.2` (juni), `2027.3` (september) och `2027.4` (december). En beta har ett suffix som `-beta4`. Mellan släpp innehåller [VERSION](../VERSION) ett utvecklingsnummer som `2027.1-dev`.
 
-| Fil | Innehåll |
-|---|---|
-| `VERSION` | `2027.1-dev` mellan släpp, `2027.1-beta1` för förhandsversioner, `2027.1` vid släpp |
-| `CHANGELOG.md` | Vad som är nytt, skrivet för forskare, inte för utvecklare |
+## Systemavbildning och installationsmedier
 
-## Mellan släpp
-Varje push till `main` bygger och publicerar `latest` och en datumtagg. Installerade system får uppdateringarna via bootc.
+Utvecklingsbyggen för amd64 och arm64 publiceras på GHCR som `latest` och med en datumtagg. Versionsmärkta utgåvor har en separat släpprocess. [Byggflöde](../.github/workflows/build.yml)
 
-## Vid släpp
-1. Sätt `VERSION` till t.ex. `2027.1` (eller `2027.1-beta1` för en otestad förhandsversion) och skriv avsnittet i `CHANGELOG.md`.
-2. Pusha. CI publicerar då även taggen `2027.1` för OS:et och labbet.
-3. Testa diskarna med *Bygg installationsmedia*: start i UTM på Mac, ISO i en virtuell PC, inloggning, verktygslåda, labbet.
-4. Först när testerna är gjorda: kör *Släpp färdig VM* med versionen. Den laddar upp till Internet Archive.
-5. Sätt `VERSION` till nästa `-dev`.
+1. Välj ett nytt versionsnummer, skriv det i `VERSION` och beskriv ändringarna i [ändringsloggen](../CHANGELOG.md).
+2. Publicera en commit på `main` med prefixet `[release-media] ` i commitmeddelandet. CI testar koden, bygger för båda arkitekturerna, publicerar det versionsmärkta manifestet och signerar det med cosign.
+3. Släppjobbet använder manifestets digest till amd64-ISO:n och båda VM-diskarna. Det startprovar VM-diskarna, kontrollerar installerarens konfiguration och publicerar filerna på Internet Archive med separata SHA-256-summor. [Släpp färdig VM](../.github/workflows/release-vm.yml)
+4. Hämta de publicerade medierna, jämför kontrollsummorna med byggkvittot och prova den dokumenterade installationsvägen. Uppdatera nedladdningarna och guiderna för respektive plattform. Återgå sedan till ett utvecklingsnummer i `VERSION`.
 
-En release kan också startas genom en push till `main` där commitmeddelandet börjar med `[release-media] `. Då publiceras alla tre medier från det signerade manifestets digest efter godkänt bygge.
+## Enbart installeraren
 
-Om bara installeraren behöver rättas, behåll den publicerade versionssiffran och använd `[release-iso] ` på `main`. CI hämtar versionsmanifestet och bygger bara den interaktiva ISO:n. För beta4 ligger den i samma arkivpost som det äldre, obevakade installationsmediet och har ett eget filnamn och en egen kontrollsumma.
+Om samma systemavbildning ska paketeras i en rättad ISO, använd en commit med prefixet `[release-iso] ` på `main`. `VERSION` ska då identifiera den tidigare publicerade utgåvan. Ge en ersättande revision ett eget filnamn så att den kan skiljas från äldre nedladdningar. För beta4 heter den aktuella ISO:n `ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso`.
 
-Om Archive rapporterar ett fel före den publika nedladdningen, kontrollera postens jobb med *Återuppta en uppladdning till Internet Archive*. Arbetsflödet kan inspektera ett kvotfel eller begära en omkörning av ett befintligt katalogjobb.
+## Övriga byggen
 
-> Labbet får en ny version bara när `labb/` ändras. Gamla versioner tas inte bort,
-> så att analyser kan köras om i exakt samma miljö.
+- [Bygg installationsmedia](../.github/workflows/build-disk.yml) gör ISO och qcow2 från en angiven tagg och sparar dem som GitHub Actions-artefakter för prov.
+- [Återuppta en uppladdning](../.github/workflows/archive-retry.yml) kan inspektera en fördröjd arkivpost och begära omkörning av dess katalogjobb.
+- [Bygg ForskarOS-labbet](../.github/workflows/labb.yml) har ett eget flöde för ändringar av labbet och dess bygginstruktioner. För en upprepningsbar analys sparas labbets digest.

@@ -56,10 +56,43 @@ def _license(domain):
     return {"@id": "#licens", "@type": "CreativeWork", "name": "Användningsvillkor", "description": text}
 
 
+def _update_verifications(crate, folder):
+    """Uppdatera verifieringshistoriken och bevara paketets ursprungliga metadata."""
+    verifications = _read(folder / "verifieringar.json", [])
+    if not verifications:
+        return
+    graph = crate["@graph"]
+    dataset = next(node for node in graph if node["@id"] == "./")
+    inputs = next(node["object"] for node in graph if node["@id"] == "#korning")
+    actions = []
+    for i, entry in enumerate(verifications):
+        ok = entry["utfall"] == "samma"
+        actions.append({"@id": f"#upprepning-{i}", "@type": "CreateAction",
+                      "name": f'Upprepning {entry["tid"]}', "description": entry["detalj"],
+                      "instrument": {"@id": "upprepa.py"}, "object": inputs,
+                      "endTime": entry["tid"],
+                      "actionStatus": {"@id": "http://schema.org/CompletedActionStatus" if ok
+                                       else "http://schema.org/FailedActionStatus"},
+                      **({} if ok else {"error": entry["detalj"]})})
+
+    def previous_action(node):
+        return node["@id"].startswith("#upprepning-")
+
+    graph[:] = [node for node in graph if not previous_action(node)]
+    graph.extend(actions)
+    dataset["mentions"] = [node for node in dataset.get("mentions", []) if not previous_action(node)]
+    dataset["mentions"].extend({"@id": action["@id"]} for action in actions)
+    log = {"@id": "verifieringar.json"}
+    if log not in dataset["hasPart"]:
+        dataset["hasPart"].append(log)
+    if not any(node["@id"] == log["@id"] for node in graph):
+        graph.append({**log, "@type": "File", "name": "verifieringar.json", "encodingFormat": "application/json",
+                      "description": "Logg över upprepningar av körningen, även misslyckade."})
+
+
 def build_crate(folder, domain=None):
     folder = Path(folder)
     manifest = json.loads((folder / "korning.json").read_text(encoding="utf-8"))
-    verifications = _read(folder / "verifieringar.json", [])
     inputs = {f"underlag/{k}": v for k, v in manifest["underlag"].items()}
     outputs = {f"resultat/{k}": v for k, v in manifest["resultat"].items()}
     programs = {name: manifest[name] for name in ("upprepa.py", "belagg.py") if name in manifest}
@@ -67,11 +100,6 @@ def build_crate(folder, domain=None):
     files.append({"@id": "korning.json", "@type": "File", "name": "korning.json",
                   "encodingFormat": "application/json",
                   "description": "ForskarOS förteckning: SHA-256 för underlag och resultat, programversioner och isolering."})
-    if verifications:
-        files.append({"@id": "verifieringar.json", "@type": "File", "name": "verifieringar.json",
-                      "encodingFormat": "application/json",
-                      "description": "Logg över upprepningar av körningen, även misslyckade."})
-
     env = manifest.get("miljö", {})
     shield = manifest.get("skydd") or {}
     title = (domain or {}).get("titel") or folder.parent.parent.name
@@ -87,7 +115,7 @@ def build_crate(folder, domain=None):
          "conformsTo": {"@id": PROCESS_RUN},
          "license": {"@id": license["@id"]},
          "hasPart": [{"@id": f["@id"]} for f in files],
-         "mentions": [{"@id": "#korning"}] + [{"@id": f"#upprepning-{i}"} for i in range(len(verifications))]},
+         "mentions": [{"@id": "#korning"}]},
         {"@id": PROCESS_RUN, "@type": "CreativeWork", "name": "Process Run Crate", "version": "0.5"},
         license,
         {"@id": "https://www.python.org/", "@type": "SoftwareApplication", "name": "Python",
@@ -126,16 +154,6 @@ def build_crate(folder, domain=None):
         run["containerImage"] = {"@id": "#labb"}
     graph.append(run)
 
-    for i, entry in enumerate(verifications):
-        ok = entry["utfall"] == "samma"
-        graph.append({"@id": f"#upprepning-{i}", "@type": "CreateAction",
-                      "name": f'Upprepning {entry["tid"]}', "description": entry["detalj"],
-                      "instrument": {"@id": "upprepa.py"}, "object": [{"@id": k} for k in inputs],
-                      "endTime": entry["tid"],
-                      "actionStatus": {"@id": "http://schema.org/CompletedActionStatus" if ok
-                                       else "http://schema.org/FailedActionStatus"},
-                      **({} if ok else {"error": entry["detalj"]})})
-
     for key, claim in _claims(folder).items():
         based = []
         for item in claim["underlag"]:
@@ -153,13 +171,20 @@ def build_crate(folder, domain=None):
                       "description": f'Påstående i manus.md. Status vid körningen: {claim["status"]}.',
                       "isBasedOn": based})
         graph[1]["mentions"].append({"@id": f"#belagg-{key}"})
-    return {"@context": CONTEXT, "@graph": graph}
+    crate = {"@context": CONTEXT, "@graph": graph}
+    _update_verifications(crate, folder)
+    return crate
 
 
-def write_crate(folder, domain=None):
+def write_crate(folder, domain=None, *, verification_only=False):
     folder = Path(folder)
     path = folder / "ro-crate-metadata.json"
+    if verification_only:
+        crate = json.loads(path.read_text(encoding="utf-8"))
+        _update_verifications(crate, folder)
+    else:
+        crate = build_crate(folder, domain)
     tmp = folder / ".ro-crate-metadata.json.tmp"
-    tmp.write_text(json.dumps(build_crate(folder, domain), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    tmp.write_text(json.dumps(crate, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp.replace(path)
     return path

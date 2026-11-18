@@ -26,6 +26,11 @@ if [[ ! -d "$SEED" ]]; then
   exit 1
 fi
 
+# Delad mapp från värddatorn (virtuell maskin) som genväg i hemkatalogen.
+if mountpoint -q /var/mnt/delad 2>/dev/null && [[ ! -e "$HOME/Delad" && ! -L "$HOME/Delad" ]]; then
+  ln -s /var/mnt/delad "$HOME/Delad"
+fi
+
 if [[ ! -e "$TARGET" ]]; then
   cp -R -- "$SEED" "$TARGET"
   chmod -R u+rwX -- "$TARGET"
@@ -46,11 +51,6 @@ if [[ -d "$TARGET/$PLUGIN_REL" ]]; then
       echo "forskaros-init: uppdaterade $PLUGIN_REL/$f"
     fi
   done
-fi
-
-# Delad mapp från värddatorn (virtuell maskin) som genväg i hemkatalogen.
-if mountpoint -q /var/mnt/delad 2>/dev/null && [[ ! -e "$HOME/Delad" ]]; then
-  ln -s /var/mnt/delad "$HOME/Delad"
 fi
 
 # Systemets egna sidor (verktygskort, Forskarhandboken) hålls uppdaterade.

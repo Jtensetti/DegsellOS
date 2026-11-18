@@ -14,9 +14,15 @@ from uuid import uuid4
 HERE = Path(__file__).resolve().parent
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(HERE))
-from belagg import approve, detail, inspect
-from upprepa import checksum, coverage, inventory, record, sandbox, sandbox_probe
+from belagg import approve, detail, inspect, locked
+from upprepa import checksum, coverage, inventory, log_verification, record, sandbox, sandbox_probe
 from paket import write_crate
+
+METODER = {
+    "kvantitativ": "Observationer i en tabell, till exempel från Calc. Jämför grupper eller villkor.",
+    "kvalitativ": "Kodade utdrag ur intervjuer eller dokument, till exempel från Taguette.",
+    "källtolkning": "Jämför vad två skriftliga källor säger om samma händelse.",
+}
 
 SKYDD = {
     "öppen": "Öppet material. Analysen körs som vanligt.",
@@ -39,14 +45,18 @@ def domain(project):
 
 
 def create(method, project, protection="öppen"):
-    if method not in ("kvantitativ", "kvalitativ"):
-        raise ValueError("Välj kvantitativ eller kvalitativ.")
+    if method not in METODER:
+        raise ValueError("Välj en av metoderna " + ", ".join(METODER) + ".")
     if protection not in SKYDD:
         raise ValueError("Välj skyddsnivå öppen eller skyddad.")
     project.mkdir()  # Ett befintligt projekt får aldrig skrivas över.
     try:
-        shutil.copytree(HERE / "mallar" / "gemensamt", project / "underlag")
-        shutil.copytree(HERE / "mallar" / method, project / "underlag", dirs_exist_ok=True)
+        templates = HERE / "mallar"
+        inputs = project / "underlag"
+        shutil.copytree(templates / "gemensamt", inputs)
+        if method in ("kvantitativ", "kvalitativ"):
+            shutil.copytree(templates / "tabell", inputs, dirs_exist_ok=True)
+        shutil.copytree(templates / method, inputs, dirs_exist_ok=True)
         (project / "korningar").mkdir()
         manifest = {"format": 1, "id": str(uuid4()), "titel": project.name, "metod": method,
                     "skydd": protection, "skapad": datetime.now(timezone.utc).isoformat(timespec="seconds")}
@@ -141,20 +151,30 @@ def run(project, lab=False):
 
 
 def verify(folder):
+    # Även äldre körprogram uppdaterar loggen och paketet en i taget.
+    with locked(folder):
+        _verify_locked(folder)
+
+
+def _verify_locked(folder):
     manifest = json.loads((folder / "korning.json").read_text(encoding="utf-8"))
-    if checksum(folder / "upprepa.py") != manifest["upprepa.py"]:
-        raise ValueError("Körprogram avviker: upprepa.py")
-    if manifest.get("labb"):
-        container(folder, manifest["labb"])
-    else:
-        # upprepa.py startar själv sandlådan för körningar från skyddade projekt.
-        result = subprocess.run([sys.executable, "-IB", str(folder / "upprepa.py")], capture_output=True, text=True)
-        print(result.stdout, end="")
-        if result.returncode:
-            raise ValueError((result.stderr.strip() or "Upprepningen misslyckades.").splitlines()[-1])
-    project = folder.parent.parent
-    if (folder / "ro-crate-metadata.json").exists() and os.access(folder, os.W_OK):
-        write_crate(folder, domain(project) if (project / "underlag").is_dir() else None)
+    try:
+        runner = folder / "upprepa.py"
+        if not runner.is_file() or checksum(runner) != manifest["upprepa.py"]:
+            detail = "Körprogram avviker: upprepa.py"
+            log_verification(folder, "avviker", detail)
+            raise ValueError(detail)
+        if manifest.get("labb"):
+            container(folder, manifest["labb"])
+        else:
+            # upprepa.py startar själv sandlådan för körningar från skyddade projekt.
+            result = subprocess.run([sys.executable, "-IB", str(runner)], capture_output=True, text=True)
+            print(result.stdout, end="")
+            if result.returncode:
+                raise ValueError((result.stderr.strip() or "Upprepningen misslyckades.").splitlines()[-1])
+    finally:
+        if (folder / "ro-crate-metadata.json").exists() and os.access(folder, os.W_OK):
+            write_crate(folder, verification_only=True)
 
 
 def status(project):
@@ -174,7 +194,7 @@ def main():
     parser = argparse.ArgumentParser(description="Forskningsprojekt med flyttbara körningar.")
     commands = parser.add_subparsers(dest="command")
     new = commands.add_parser("skapa")
-    new.add_argument("metod", choices=["kvantitativ", "kvalitativ"])
+    new.add_argument("metod", choices=METODER)
     new.add_argument("mapp", type=Path)
     new.add_argument("--skydd", choices=list(SKYDD), default="öppen",
                      help="skyddad: analysen körs utan nätverk och utan hemkatalog, annars inte alls.")
@@ -200,7 +220,8 @@ def main():
     elif args.command == "paketera":
         folder = args.mapp.resolve()
         project = folder.parent.parent
-        print(write_crate(folder, domain(project) if (project / "underlag").is_dir() else None))
+        with locked(folder):
+            print(write_crate(folder, domain(project) if (project / "underlag").is_dir() else None))
     elif args.command == "kör":
         print(run(args.mapp.resolve(), args.labb))
     elif args.command == "upprepa":

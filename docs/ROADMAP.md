@@ -1,102 +1,36 @@
-# ForskarOS – färdplan
+# Färdplan
 
-## 0.1 – Prototyp
+Den senaste publicerade förhandsversionen är **2027.1-beta4**. `main` innehåller utvecklingen mot nästa utgåva. Tidigare leveranser beskrivs i [ändringsloggen](../CHANGELOG.md). [Forskningsdomänens mål och acceptanskriterier](FORSKAROS-3.md)
 
-- [x] Vault, principer, arbetsmetod och tillitskontrakt
-- [x] ForskarOS Core med sju arbetsprov
-- [x] Test av tillägget mot simulerat Obsidian-API
-- [x] ~~NixOS-ISO~~ ersatt av Bluefin-baserad avbildning i 0.2
+## Inför 2027.1
 
-## 0.2 – Avbildning på Bluefin LTS
+- [x] Publicera en signerad systemavbildning för amd64 och arm64 samt installationsmedier för beta4. [Versioner och nedladdningar](../README.md#ladda-ner)
+- [x] Starta båda VM-diskarna och genomföra ett forskningsprojekt på ett nyinstallerat beta4-system i en virtuell PC. [Installationsprov](BETA4.md)
+- [ ] Slutföra en installation med den publicerade `-interaktiv-r2.iso` på två anslutna virtuella diskar. Verifiera vald startdisk och oförändrat innehåll på den andra disken efter omstart.
+- [ ] Upprepa en tidigare skyddad forskningskörning efter systemuppgradering.
+- [ ] Prova arm64-disken i UTM på MacBook Neo, från lösenordsbyte till delad mapp och analys i labbet. [Mac-guide](MAC.md)
+- [ ] Paketera en dubbelklickbar UTM-maskin med en mall från UTM. [Mall och paketering](../vm/utm/README.md)
+- [ ] Låta forskare med tre olika forskningsprofiler lösa samma uppgift i ForskarOS och sin vanliga miljö. Mät handgrepp, tid, hjälpbehov och fel.
+- [ ] Prova arbetsmetoden under fyra veckor. Granska om måtten speglar självständigt arbete och om forskaren kan visa fråga, hypotes, motprov, belägg, osäkerhet och slutsats.
+- [ ] Släppa kvartalsversionen 2027.1. [Släpprocess](RELEASE.md)
 
-- [x] Containerfile ovanpå Bluefin LTS (amd64 + arm64)
-- [x] `forskaros-init`: skapar vault och uppdaterar tillägget säkert, med tester
-- [x] `forskaros-setup`: Obsidian, Zotero, Pandoc, ripgrep, Ollama efter aktivt val
-- [x] CI: bygg, publicera till ghcr.io, signera; manuellt bygge av ISO och qcow2
-- [x] Första lyckade bygget i GitHub Actions (amd64 + arm64, publicerat till ghcr.io)
-- [ ] Starta arm64-disken i UTM på MacBook Neo
-- [ ] Installera amd64-ISO:n i en virtuell maskin
-- [ ] Verifiera att GNOME:s välkomstguide skapar konto i qcow2-disken
+## Forskningsprojekt på main
 
-## 0.3 – Arbetsmetoden i tillägget
+- [x] Koppla manusets påståenden till data, källpassager och analys. Visa berörda påståenden när ett underlag ändras.
+- [x] Köra skyddade analyser och rapportbyggen i sandlåda och spara körningen i RO-Crate-format.
+- [x] Hantera en kvalitativ studie och en observationstabell från projektstart till en rapport som kan köras om.
+- [x] Visa senaste verifieringens utfall när en upprepning avviker.
+- [x] Jämföra gammalt och nytt belägg i granskningsvyn.
+- [x] Läsa användarvalda passager från Zoteros lokala API med källa, sida och citat.
+- [x] Erbjuda en projektmall för källtolkning med motstridiga källor.
+- [x] Sätta ForskarOS som visningsnamn i systemavbildningens metadata.
+- [ ] Bekräfta namnet i nästa utgåvas startmeny och välkomstguide.
 
-- [x] Den kreativa forskningscykeln i sju faser med faskrav och öppen fasbeslutslogg
-- [x] Regelbaserad granskning (*Att åtgärda*)
-- [x] AI-konsultationer med uppgifter, lägen och logg
-- [x] Självständighetsmått och månatlig förmågegranskning
-- [x] Epistemisk märkning, idéparkering, vila
-- [x] Bakgrund och exempelfråga i vaulten
-- [ ] Prova metoden på riktigt i fyra veckor och justera reglerna efter erfarenheten
-- [ ] Undersöka om måtten mäter det de ska
+## Fortsatt utveckling
 
-## 0.3.1 – Verktyg och VM
+Följande förslag har ännu ingen planerad utgåva.
 
-- [x] Verktygsprofiler: grund, skriva, statistik, programmering, kvalitativ, idéer, lokal AI, proprietärt/moln
-- [x] Grundverktygen installeras automatiskt vid första start (systemtjänst, försöker igen utan nätverk)
-- [x] Verktygslådan öppnas vid första inloggningen
-- [x] Forskningsportal per fas i vaulten, med svenska resurser
-- [x] Panelen visar verktyg för fasen
-- [x] UTM/QEMU: spice-vdagent och qemu-guest-agent
-- [x] Docka med forskningsverktygen
-- [x] CI kontrollerar att alla verktyg finns för amd64 och arm64
-- [ ] Delad mapp mellan Mac och VM (virtiofs/9p)
-- [ ] Öppen självhostad AI-sök som alternativ till Perplexity (t.ex. Perplexica)
-- [ ] Färdig `.utm`-paketering med inställningar för RAM, CPU och skärm
-
-## ForskarOS 3.0: forskningsdomänen
-
-Målarkitektur och status: [`FORSKAROS-3.md`](FORSKAROS-3.md).
-
-- [x] Forskningsprojekt med data, analys, referenser och rapport (beta3)
-- [x] Påståenden kopplade till underlag, riktad omprövning (beta3)
-- [x] Projektmanifest med skyddsnivå och licens (beta4)
-- [x] Skyddade körningar i sandlåda, eller ingen körning (beta4, acceptanstest 1)
-- [x] Täckningsgrad och upprepningslogg (beta4, acceptanstest 2)
-- [x] Källpassager som belägg (beta4, acceptanstest 3)
-- [x] Körningar som RO-Crate / Process Run Crate (beta4)
-- [ ] Beta4 provad i en ForskarOS-VM
-- [ ] Zoteros annoteringar via lokalt API
-- [ ] Tolkande arbetsflöde med motstridiga källor
-- [ ] Användartester (acceptanstest 5)
-
-## 2027.1
-
-- [x] Appmappar per fas, verktygskatalog, verktygssidor, rekommenderat urval
-- [x] VM: forskare/forskare med lösenordsbyte, delad mapp, UTM-paketering från mall
-- [x] Logotyp och bakgrund
-- [x] Fokusläge med fokuslogg
-- [x] ForskarOS-labbet (R, tidyverse, RStudio, Python) för amd64 och arm64
-- [x] Forskarhandboken, tolv kapitel med övningar utan AI
-- [x] Kvartalsversioner, CHANGELOG och släppprocess
-- [ ] UTM-mall från en riktig UTM (`vm/utm/config.plist`)
-- [ ] Testa på MacBook Neo: start, inloggning, verktygslåda, delad mapp, labbet
-- [ ] Släpp 2027.1
-
-
-
-- [x] GNOME-standardinställningar (fokusläge, favoriter, bakgrund)
-- [ ] Egen os-release och namn i uppstartsmenyn (logotypen finns)
-- [ ] Verifiering av signaturer på klienten (bootc/containers-policy)
-- [ ] Automatisk, krypterad säkerhetskopiering av vaulten
-
-## 0.5 – Kunskapsytan, en egen öppen editor
-
-- [ ] Öppna vault, redigera Markdown (CodeMirror 6), wikilänkar, bakåtlänkar, frontmatter
-- [ ] Tilläggsladdare med det urval av API:t som ForskarOS Core använder
-- [ ] Paketeras som Flatpak och ingår i avbildningen
-
-## 0.6 – Lokal AI och forskningsmotorer
-
-- [ ] AI-konsultationer direkt mot lokal Ollama, med samma logg och krav
-- [ ] Zotero/BibTeX-koppling, källspårning
-- [ ] Månatlig förmågegranskning: det du kan förklara utan AI
-
-## Senare
-
-- [ ] Asahi-baserad avbildning när Apple Silicon (inkl. Neo) kan starta Linux direkt
-- [ ] Experimentmiljöer med Nix eller Guix per studie
-
-## Acceptanskriterium
-
-Efter fyra veckor ska forskaren kunna visa ett självständigt arbetsprov med fråga,
-hypotes, motprov, kontrollerbara belägg, redovisad osäkerhet och slutsats.
+- **Dataskydd.** Automatisk krypterad säkerhetskopiering och klientpolicy för verifiering av systemavbildningens signatur.
+- **Lokal AI.** Koppla Core:s konsultationslägen till Ollama och utvärdera självhostad sökning.
+- **Öppen editor.** Redigera Markdown med frontmatter, wikilänkar och bakåtlänkar, och utreda stöd för Core i en egen Flatpak-app.
+- **Körmiljöer.** Utvärdera Nix eller Guix per studie och en avbildning för direkt uppstart på Apple Silicon när den aktuella hårdvaran stöds.

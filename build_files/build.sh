@@ -21,6 +21,19 @@ sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' \
 test -s /usr/share/forskaros/VERSION
 cp /ctx/VERSION /usr/share/forskaros/RELEASE
 
+# GNOME och ISO-byggaren läser produktnamnet från os-release.
+# Behåll basens ID, VERSION_ID och PLATFORM_ID för drivrutiner och pakethantering.
+release=$(cat /ctx/VERSION)
+[[ "$release" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ ]]
+for metadata in /usr/lib/os-release /etc/os-release; do
+  sed --follow-symlinks -i \
+    -e 's/^NAME=.*/NAME="ForskarOS"/' \
+    -e "s/^PRETTY_NAME=.*/PRETTY_NAME=\"ForskarOS $release\"/" \
+    -e 's/^LOGO=.*/LOGO=forskaros/' "$metadata"
+  grep -Fxq 'NAME="ForskarOS"' "$metadata"
+  grep -Fxq "PRETTY_NAME=\"ForskarOS $release\"" "$metadata"
+done
+
 # Virtuell maskin: delat urklipp, automatisk skärmstorlek och ren avstängning
 # i UTM/QEMU. Tjänsterna startar bara när motsvarande virtuella enhet finns.
 # Appen ForskarOS använder GTK 4 och libadwaita. Rapportvyn utan webbläsare använder WebKitGTK.

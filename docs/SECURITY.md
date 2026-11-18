@@ -1,23 +1,19 @@
 # Säkerhet och integritet
 
-## Skydd i dag
+## Skyddat forskningsprojekt
 
-- ForskarOS Core gör inga nätverksanrop. Det kontrolleras av ett test.
-- Vaulten skapas lokalt och skrivs aldrig över. Bara tilläggets egna filer uppdateras.
-- Avbildningarna byggs öppet i GitHub Actions och signeras med sigstore/cosign.
-- Basen (Bluefin LTS) får säkerhetsuppdateringar. Vi bygger om varje vecka.
-- Obsidian, Zotero och verktyg installeras först efter ett aktivt val.
+Skyddsnivån styr de processer ForskarOS startar för analys och rapportbygge. De körs med nätverket avstängt och hemkatalogen dold. Om isoleringen misslyckas avbryts körningen. Program som öppnas separat på skrivbordet har sina vanliga behörigheter. Det gäller även webbläsaren och dess AI-tjänster. [Forskningsdomänens hotmodell](FORSKAROS-3.md#hotmodell-för-skyddade-projekt)
 
-## Kvarstående risker
+## Data på datorn
 
-- Obsidian och tillägg från andra har egen nätverks- och filåtkomst.
-- Ingen automatisk säkerhetskopiering av vaulten än.
-- Diskkryptering (LUKS) väljs i installeraren och är inte påtvingad.
-- Signaturerna verifieras inte automatiskt av klienten än (policy för bootc saknas).
-- Hantera inte sekretessbelagda uppgifter eller personuppgifter från arbetet i
-  ForskarOS utan en egen riskbedömning.
+Anteckningar och forskningsprojekt lagras som lokala filer. Vid uppdatering ersätts de medföljande filerna för Core, verktygskorten och Forskarhandboken. Lägg egna anteckningar utanför dessa systemunderhållna mappar. Forskaren ansvarar för säkerhetskopiering. En automatisk krypterad säkerhetskopia ingår ännu inte.
 
-## Lokal AI (planerad)
+En exporterad körning kan innehålla ursprungliga data och citat. Kontrollera vad mappen innehåller och vem som får ta del av materialet före delning.
 
-Moln-AI ska aldrig få läsa vaulten utan att forskaren aktivt valt det och sett
-exakt vad som skickas. Standard är lokal körning via Ollama.
+## Program och externa tjänster
+
+Grundprofilen hämtas från Flathub och innehåller bland annat Zotero och LibreOffice. Obsidian och genvägar till molntjänster kräver ett separat val. Andra program och tillägg har egna villkor och behörigheter. ForskarOS Core gör inga nätverksanrop. Vid en AI-konsultation väljer forskaren själv vilken text som kopieras till en annan tjänst.
+
+## Avbildningar
+
+Systemet bygger på Bluefin LTS. GitHub Actions bygger avbildningen och signerar dess manifest med sigstore/cosign. Kontrollsummorna för installationsmedierna publiceras tillsammans med nedladdningarna. En automatiskt upprätthållen signaturpolicy i bootc-klienten återstår. [Nedladdningar och kontrollsummor](../README.md#ladda-ner)
