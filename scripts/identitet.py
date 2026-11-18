@@ -29,7 +29,7 @@ GENERERAD = "Genererad av scripts/identitet.py från katalog/design.json. Ändra
 FASER = [f["namn"] for f in DESIGN["faser"]]
 FASFÄRGER = [f["färg"] for f in DESIGN["faser"]]
 YTOR, TYP = DESIGN["ytor"], DESIGN["typsnitt"]
-# GNOME:s accentfärger (libadwaita 1.6). Bara dessa namn går att välja i Inställningar.
+# GNOME:s accentfärger (libadwaita 1.6 och senare). Bara dessa namn går att välja i Inställningar.
 GNOME_ACCENTER = {"blue", "teal", "green", "yellow", "orange", "red", "pink", "purple", "slate"}
 
 

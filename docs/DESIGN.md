@@ -20,7 +20,7 @@ Fem referenser jämfördes (utbildningsplattform, konsumentapp, två AI-labb, pr
 
 Till det kommer en princip som är vår egen:
 
-**Native först.** ForskarOS körs i GNOME. Appen byggs med GTK 4 och libadwaita och följer GNOME:s riktlinjer, mörkt läge och systemets textstorlek. Typsnitten är GNOME:s egna eller vanliga öppna typsnitt från distributionen. Att se ut och bete sig som resten av skrivbordet är den största förenklingen. ForskarOS identitet syns i innehållet: forskningscykeln, statusraderna och rapporten.
+**Native först.** ForskarOS körs i GNOME; avbildningen har GTK 4.22 och libadwaita 1.9 från Bluefin LTS. Appen byggs med GTK 4 och libadwaita och följer GNOME:s riktlinjer, mörkt läge och systemets textstorlek. Typsnitten är GNOME:s egna eller vanliga öppna typsnitt från distributionen. Att se ut och bete sig som resten av skrivbordet är den största förenklingen. ForskarOS identitet syns i innehållet: forskningscykeln, statusraderna och rapporten.
 
 ## Enkelt utan att bli svagare
 
