@@ -121,6 +121,17 @@ pre { background: var(--yta); padding: 1em; border-radius: 8px; overflow-x: auto
 
 hr { border: 0; border-top: 1px solid var(--linje); margin: 3rem 0; }
 
+/* Hypotesen som prövas: det som förutsades innan resultatet fanns, först i rapporten. */
+.forutsagelse {
+  margin: 0 0 3rem;
+  padding: 1.25rem 1.5rem 0.25rem;
+  background: var(--yta);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+}
+.forutsagelse h2 { margin-top: 0; font-size: 1.15rem; }
+.forutsagelse > p:first-of-type { font-family: var(--granssnitt); font-size: 0.85rem; color: var(--dampad); hyphens: manual; }
+
 /* Referenser */
 #refs { font-size: 0.95rem; }
 /* Hängande indrag. Ersätter Pandocs egna regler, som skiljer sig mellan versioner. */

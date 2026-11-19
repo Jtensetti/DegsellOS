@@ -93,7 +93,9 @@ def build(root, with_evidence):
     output.mkdir()
     # Analysen får arbeta i sin egen kopia av underlaget.
     execute([sys.executable, "-IB", "analys.py", str(output)], root / "underlag")
-    cmd = ["pandoc", "underlag/manus.md", "--standalone", "--embed-resources",
+    # Förutsägelsen, hämtad ur forskningsmappen när analysen kördes, står först i rapporten.
+    sources = (["forutsagelse.md"] if (root / "forutsagelse.md").is_file() else []) + ["underlag/manus.md"]
+    cmd = ["pandoc", *sources, "--standalone", "--embed-resources",
            "--resource-path=.:underlag", "--citeproc", "--bibliography=underlag/kallor.bib",
            "--fail-if-warnings", "--output=resultat/rapport.html"]
     if (root / "underlag/rapport.css").is_file():
@@ -136,6 +138,8 @@ def record(root, image=None):
                 "start": started, "slut": now(), "skydd": protection()}
     if with_evidence:
         manifest["belagg.py"] = checksum(root / "belagg.py")
+    if (root / "forutsagelse.md").is_file():
+        manifest["forutsagelse.md"] = checksum(root / "forutsagelse.md")
     (root / "korning.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
@@ -188,6 +192,9 @@ def _repeat(root):
     if "belagg.py" in manifest:
         compare("Beläggsprogram", {"belagg.py": manifest["belagg.py"]}, {"belagg.py": checksum(root / "belagg.py")})
     compare("Underlag", manifest["underlag"], inventory(root / "underlag"))
+    if "forutsagelse.md" in manifest:
+        compare("Förutsägelse", {"forutsagelse.md": manifest["forutsagelse.md"]},
+                {"forutsagelse.md": checksum(root / "forutsagelse.md")})
     compare("Sparade resultat", manifest["resultat"], inventory(root / "resultat"))
     env = environment()
     if env != manifest["miljö"]:
@@ -195,6 +202,8 @@ def _repeat(root):
     with tempfile.TemporaryDirectory() as tmp:
         work = Path(tmp)
         shutil.copytree(root / "underlag", work / "underlag", symlinks=True)
+        if "forutsagelse.md" in manifest:
+            shutil.copyfile(root / "forutsagelse.md", work / "forutsagelse.md")
         build(work, "belagg.py" in manifest)
         compare("Återskapade resultat", manifest["resultat"], inventory(work / "resultat"))
     print("Återskapad från underlaget. Alla resultat har samma SHA-256.")

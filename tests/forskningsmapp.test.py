@@ -56,7 +56,13 @@ with tempfile.TemporaryDirectory() as tmp:
         "---\ntyp: forskningsfråga\nstatus: aktiv\nfas: utveckla\ndatum: 2026-11-19\n---\n"
         "# Byter elever hypotes efter saklig respons?\n\n## Medarbetare\n\n", encoding="utf-8")
     (vault / "02 HYPOTESER/Saklig respons.md").write_text(
-        '---\ntyp: hypotes\nfråga: "[[01 RIKTNING/Hypotesbyten]]"\n---\n# Hypotes\n', encoding="utf-8")
+        '---\ntyp: hypotes\nfråga: "[[01 RIKTNING/Hypotesbyten]]"\n---\n# Hypotes\n\n'
+        "## Hypotes (min formulering)\nSaklig respons får fler elever att byta hypotes.\n\n"
+        "## Vilket etablerat antagande utmanar hypotesen?\n\n"
+        "## Prediktioner\n1. Högre andel byten efter saklig respons (se @smith2020).\n2.\n\n"
+        "## Falsifiering: vilken observation skulle tala emot hypotesen?\n"
+        "> Mallens hjälptext.\nLika stor andel byten i båda grupperna, jfr [[03 EVIDENS/Karta|kartan]].\n",
+        encoding="utf-8")
     (vault / "01 RIKTNING/Avslutad.md").write_text("---\ntyp: forskningsfråga\nstatus: avslutad\n---\n# Gammal\n")
     os.environ["FORSKAROS_VAULT"] = str(vault)
 
@@ -88,6 +94,18 @@ with tempfile.TemporaryDirectory() as tmp:
 
     accept_all(project)
     run = Path(call("kör", project))
+    # Rapporten börjar med hypotesen och förutsägelsen som de stod när analysen kördes.
+    prediction = (run / "forutsagelse.md").read_text()
+    assert "Saklig respons får fler elever att byta hypotes." in prediction and "Byter elever hypotes" in prediction
+    assert "Mallens hjälptext" not in prediction and "Antagandet som utmanas" not in prediction, "tomma avsnitt visas inte"
+    assert "jfr kartan" in prediction and "\\@smith2020" in prediction
+    report = " ".join((run / "resultat/rapport.html").read_text().split())
+    assert report.index("Hypotesen som prövas") < report.index("Fråga"), "förutsägelsen står först"
+    assert "Lika stor andel byten i båda grupperna" in report
+    assert "forutsagelse.md" in json.loads((run / "korning.json").read_text())
+    crate = json.loads((run / "ro-crate-metadata.json").read_text())
+    assert {"@id": "forutsagelse.md"} in next(e for e in crate["@graph"] if e["@id"] == "./")["hasPart"]
+
     fields, body = fm.split_frontmatter(experiment.read_text())
     assert fields["status"] == "genomfört" and fields["nivå"] == "Dokumenterad" and fields["körning"] == run.name
     assert "- Granskad: I gruppen med saklig respons bytte två av tre elever hypotes." in body
@@ -103,6 +121,17 @@ with tempfile.TemporaryDirectory() as tmp:
     fields, body = fm.split_frontmatter(experiment.read_text())
     assert fields["nivå"] == "Återkörd" and fields["etikett"] == "pilot"
     assert "Bara tre elever per grupp." in body
+
+    # Ändras hypotesen efteråt följer den sparade förutsägelsen med körningen, och en ändrad kopia upptäcks.
+    hyp = vault / "02 HYPOTESER/Saklig respons.md"
+    hyp.write_text(hyp.read_text().replace("fler elever", "många elever"))
+    call("upprepa", run)
+    saved = (run / "forutsagelse.md").read_text()
+    (run / "forutsagelse.md").write_text(saved.replace("fler elever", "alla elever"))
+    assert "Förutsägelse avviker" in call("upprepa", run, ok=False) + subprocess.run(
+        [str(cmd), "upprepa", str(run)], capture_output=True, text=True).stderr
+    (run / "forutsagelse.md").write_text(saved)
+    call("upprepa", run)
 
     dela = dict(q, fm=dict(q["fm"], fas="dela"))
     krav = {k["text"]: k["ok"] for k in core(dela, [note(experiment, vault)])["krav"]}

@@ -97,6 +97,12 @@ def build_crate(folder, domain=None):
     outputs = {f"resultat/{k}": v for k, v in manifest["resultat"].items()}
     programs = {name: manifest[name] for name in ("upprepa.py", "belagg.py") if name in manifest}
     files = [_file(folder, name, digest) for name, digest in {**inputs, **outputs, **programs}.items()]
+    if "forutsagelse.md" in manifest:
+        prediction = _file(folder, "forutsagelse.md", manifest["forutsagelse.md"])
+        prediction["description"] = ("Hypotesen, förutsägelsen och vad som skulle tala emot den, som de stod "
+                                     "i forskningsmappen när analysen kördes.")
+        files.append(prediction)
+        inputs["forutsagelse.md"] = manifest["forutsagelse.md"]
     files.append({"@id": "korning.json", "@type": "File", "name": "korning.json",
                   "encodingFormat": "application/json",
                   "description": "ForskarOS förteckning: SHA-256 för underlag och resultat, programversioner och isolering."})

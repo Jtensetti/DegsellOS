@@ -15,7 +15,7 @@ ForskarOS bygger på 25 begrepp. Inget av dem är en knapp. De bärs av samspele
 | **Lekfullhet** | Panelen säger till efter 60 dagar utan nya idéer eller perspektiv. Ett perspektiv ska komma från ett oväntat fält. |
 | **Ifrågasättande** | Varje hypotes ska ha ett motprov. Appen markerar påståenden vars underlag har ändrats. |
 | **Respektlöshet** | En hypotes anger vilket etablerat antagande den utmanar och vem som företräder det. |
-| **Mod** | Konfidens och falsifieringskriterium skrivs ned innan du prövar. I Pröva möter du någon som företräder det antagande du utmanar. En förkastad hypotes är ett resultat. |
+| **Mod** | Konfidens och falsifieringskriterium skrivs ned innan du prövar. Rapporten börjar med det du förutsade, så att läsaren ser det före resultatet. I Pröva möter du någon som företräder det antagande du utmanar. En förkastad hypotes är ett resultat. |
 | **Att vara bekväm med att vara obekväm** | Perspektivkartan visar var perspektiven motsäger varandra. Forskarpass utan något oklart märks. |
 | **Att se både detaljerna och helheten** | Appen visar varje påstående med sitt underlag och projektets plats i forskningsfrågan. Startsidan visar frågorna med sina projekt. Panelen visar frågans fas, projekten som prövar den och vilka påståenden som behöver omprövas. |
 

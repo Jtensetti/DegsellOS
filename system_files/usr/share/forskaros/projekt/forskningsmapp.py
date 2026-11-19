@@ -229,6 +229,73 @@ def sync(project, state, manifest, root=None):
     return True
 
 
+# Avsnitt ur hypotesen som visas i rapporten, i den ordning läsaren behöver dem.
+FÖRUTSÄGELSE = [
+    ("Hypotes (min formulering)", "Hypotesen"),
+    ("Vilket etablerat antagande", "Antagandet som utmanas"),
+    ("Prediktioner", "Förutsägelsen"),
+    ("Falsifiering", "Det som skulle tala emot hypotesen"),
+]
+
+
+def _sections(body):
+    out, current = {}, None
+    for line in body.splitlines():
+        m = re.match(r"^##\s+(.*)$", line)
+        if m:
+            current = m.group(1).strip()
+            out[current] = []
+        elif current is not None:
+            out[current].append(line)
+    return out
+
+
+def _clean(lines):
+    """Forskarens egen text: utan mallens hjälprader, tomma punkter och wikilänkar."""
+    kept = []
+    for line in lines:
+        if line.lstrip().startswith(">") or re.fullmatch(r"\s*(?:[-*]|\d+\.)\s*", line):
+            continue
+        line = re.sub(r"\[\[([^\]|]+)\|([^\]]+)\]\]", r"\2", line)
+        line = re.sub(r"\[\[([^\]]+)\]\]", lambda m: m.group(1).rsplit("/", 1)[-1], line)
+        kept.append(line.replace("@", "\\@"))  # inga oavsiktliga källhänvisningar
+    return "\n".join(kept).strip()
+
+
+def prediction(manifest, root=None, when=None):
+    """Hypotesen och förutsägelsen som de står i forskningsmappen nu, som Markdown för rapporten."""
+    root = Path(root or vault_root())
+    ref = manifest.get("hypotes")
+    if not ref:
+        return None
+    path = root / f"{ref}.md"
+    try:
+        fields, body = split_frontmatter(path.read_text(encoding="utf-8"))
+        changed = datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)
+    except OSError:
+        return None
+    sections = _sections(body)
+    parts = []
+    for prefix, heading in FÖRUTSÄGELSE:
+        name = next((k for k in sections if k.startswith(prefix)), None)
+        text = _clean(sections[name]) if name else ""
+        if text and "\n" not in text:
+            text = re.sub(r"^(?:[-*]|\d+\.)\s+", "", text)  # en ensam punkt läses som en mening
+        if text:
+            parts.append(f"**{heading}.** {text}" if "\n" not in text else f"**{heading}.**\n\n{text}")
+    if not parts:
+        return None
+    q = question(manifest.get("fråga"), root)
+    when = when or datetime.now(timezone.utc)
+    title = q["titel"].rstrip(".") if q else ""
+    stop = "" if title.endswith(("?", "!")) else "."
+    origin = (f"Ur forskningsfrågan ”{title}”{stop} " if q else "") + (
+        f"Hämtad ur forskningsmappen när analysen kördes {when:%Y-%m-%d %H:%M} UTC. "
+        f"Hypotesen ändrades senast {changed:%Y-%m-%d %H:%M} UTC.")
+    return ("::: {.forutsagelse}\n## Hypotesen som prövas {#forutsagelse}\n\n" + f"{origin}\n\n"
+            + "\n\n".join(parts) + "\n:::\n")
+
+
 def parse_app_uri(uri):
     """forskaros://projekt?mapp=… eller forskaros://nytt-projekt?fråga=…&hypotes=… som startval för appen."""
     from urllib.parse import parse_qs, urlsplit

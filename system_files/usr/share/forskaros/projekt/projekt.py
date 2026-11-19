@@ -163,6 +163,10 @@ def run(project, lab=False):
         inventory(work / "underlag")
         for program in ("upprepa.py", "belagg.py"):
             shutil.copyfile(HERE / program, work / program)
+        from forskningsmapp import prediction
+        text = prediction(manifest)
+        if text:
+            (work / "forutsagelse.md").write_text(text, encoding="utf-8")
         shield = shield_for(manifest, lab)
         if lab:
             container(work, pinned_image(), build=True, shield=shield)
