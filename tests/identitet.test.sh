@@ -21,15 +21,20 @@ grep -qE '^- [0-9-]+ [0-9:]+–[0-9:]+ \(0 av 25 min\)' "$TMP/home/DegsellOS/08 
 grep -q 'typ: fokuslogg' "$TMP/home/DegsellOS/08 REFLEKTION/Fokuslogg.md" || fail "fokusloggen saknar typ"
 ! bash system_files/usr/bin/degsellos-fokus 1000 >/dev/null 2>&1 || fail "orimlig längd accepterades"
 
-# 4. Logotyp och bakgrunder är giltig SVG med sju faser, och dconf pekar rätt.
+# 4. Logotypen, symbolen och bakgrunderna kommer ur katalog/logotyp.svg och är giltig SVG.
 python3 -I - <<'PY'
+import json
 import xml.etree.ElementTree as ET
 from pathlib import Path
+NS = "{http://www.w3.org/2000/svg}"
 d = Path("system_files/usr/share/degsellos/identitet")
-for f in ["degsellos-logotyp.svg", "degsellos-bakgrund-ljus.svg", "degsellos-bakgrund-mork.svg"]:
+logo = json.loads(Path("katalog/design.json").read_text())["logotyp"]
+for f, paths in [("degsellos-logotyp.svg", 11), ("degsellos-logotyp-mork.svg", 11), ("degsellos-symbol.svg", 2),
+                 ("degsellos-bakgrund-ljus.svg", 11), ("degsellos-bakgrund-mork.svg", 11)]:
     root = ET.parse(d / f).getroot()
-    arcs = root.findall(".//{http://www.w3.org/2000/svg}path")
-    assert len(arcs) == 7, f"{f}: {len(arcs)} bågar"
+    assert len(root.findall(f".//{NS}path")) == paths, f"{f}: symbolens två delar och ordmärkets nio bokstäver"
+    assert any(g.get("fill") == logo["symbol"] for g in root.iter(f"{NS}g")), f"{f}: symbolen i logotypens färg"
+assert logo["ordmärke"]["mörk"] in (d / "degsellos-bakgrund-mork.svg").read_text(), "ordmärket syns på mörk bakgrund"
 PY
 # 5. Utseendet kommer ur katalog/design.json och är i synk.
 python3 -I scripts/identitet.py --kontroll >/dev/null || fail "kör python3 scripts/identitet.py"

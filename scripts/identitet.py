@@ -5,15 +5,16 @@
   python3 scripts/identitet.py --kontroll   kontrollera att filerna är i synk
 
 Skapar:
-  - logotypen: forskningscykeln, sju bågar (en per fas) runt frågan
-  - skrivbordsbakgrunder, ljus och mörk
+  - logotypen för ljus och mörk bakgrund, ur katalog/logotyp.svg
+  - symbolen: programikon och menyknappen uppe till vänster
+  - skrivbordsbakgrunder, ljus och mörk, med logotypen
   - typsnittsinställningar (fontconfig) för gränssnitt, läsning och kod
   - GNOME-inställningar: accentfärg, typsnitt och bakgrund (dconf)
   - Obsidians utseende i forskningsmappen
   - färger och typsnitt överst i rapportens stilmall
 """
 import json
-import math
+import re
 from pathlib import Path
 import sys
 
@@ -26,52 +27,60 @@ RAPPORT = "system_files/usr/share/degsellos/projekt/mallar/gemensamt/rapport.css
 START, SLUT = "/* designvärden: början */", "/* designvärden: slut */"
 GENERERAD = "Genererad av scripts/identitet.py från katalog/design.json. Ändra inte för hand."
 
-FASER = [f["namn"] for f in DESIGN["faser"]]
-FASFÄRGER = [f["färg"] for f in DESIGN["faser"]]
-YTOR, TYP = DESIGN["ytor"], DESIGN["typsnitt"]
+YTOR, TYP, LOGO = DESIGN["ytor"], DESIGN["typsnitt"], DESIGN["logotyp"]
 # GNOME:s accentfärger (libadwaita 1.6 och senare). Bara dessa namn går att välja i Inställningar.
 GNOME_ACCENTER = {"blue", "teal", "green", "yellow", "orange", "red", "pink", "purple", "slate"}
 
-
-def arc(cx, cy, r, a0, a1):
-    p0 = (cx + r * math.cos(a0), cy + r * math.sin(a0))
-    p1 = (cx + r * math.cos(a1), cy + r * math.sin(a1))
-    large = 1 if (a1 - a0) > math.pi else 0
-    return f"M {p0[0]:.2f} {p0[1]:.2f} A {r} {r} 0 {large} 1 {p1[0]:.2f} {p1[1]:.2f}"
-
-
-def ring(cx, cy, r, width, gap_deg=7, opacity=1.0):
-    """Sju bågar, en per fas, medurs från Utforska högst upp."""
-    parts = []
-    step = 2 * math.pi / 7
-    gap = math.radians(gap_deg)
-    for i, color in enumerate(FASFÄRGER):
-        a0 = -math.pi / 2 + i * step + gap / 2
-        a1 = a0 + step - gap
-        parts.append(f'<path d="{arc(cx, cy, r, a0, a1)}" fill="none" stroke="{color}" '
-                     f'stroke-width="{width}" stroke-linecap="round" opacity="{opacity}"><title>{FASER[i]}</title></path>')
-    return "\n  ".join(parts)
+# Logotypen: symbolen och ordmärket ur katalog/logotyp.svg.
+KÄLLA = (ROOT / LOGO["källa"]).read_text(encoding="utf-8")
+SYMBOL_TRANSFORM = re.search(r'<g id="symbol"[^>]*transform="([^"]+)"', KÄLLA).group(1)
+SYMBOL = re.findall(r'<path d="([^"]+)"', KÄLLA.split('<g id="symbol"', 1)[1].split("</g>", 1)[0])
+ORDMÄRKE = re.findall(r'<path id="[^"]*" d="([^"]+)"', KÄLLA.split('<g id="wordmark"', 1)[1].split("</g>", 1)[0])
+LOGO_W, LOGO_H = 1280, 320
 
 
-def logo():
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+def symbol_paths():
+    return "\n    ".join(f'<path d="{d}"/>' for d in SYMBOL)
+
+
+def logo_group(mode):
+    """Hela logotypen i sina egna koordinater (1280 × 320)."""
+    words = "\n    ".join(f'<path d="{d}"/>' for d in ORDMÄRKE)
+    return (f'<g fill="{LOGO["symbol"]}" transform="{SYMBOL_TRANSFORM}">\n    {symbol_paths()}\n  </g>\n'
+            f'  <g fill="{LOGO["ordmärke"][mode]}">\n    {words}\n  </g>')
+
+
+def logo(mode):
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {LOGO_W} {LOGO_H}" width="{LOGO_W}" height="{LOGO_H}" role="img">
   <title>DegsellOS</title>
-  {ring(128, 128, 92, 22)}
-  <circle cx="128" cy="128" r="19.8" fill="{YTOR['skrivbord']['ljus']}" stroke="{YTOR['text']['ljus']}" stroke-width="4.8"/>
+  {logo_group(mode)}
+</svg>
+"""
+
+
+def symbol():
+    """Symbolen ensam, kvadratisk: programikon och menyknappen uppe till vänster."""
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -32 496 496" width="256" height="256" role="img">
+  <title>DegsellOS</title>
+  <g fill="{LOGO["symbol"]}">
+    {symbol_paths()}
+  </g>
 </svg>
 """
 
 
 def wallpaper(mode):
-    """Lugn yta i papperston. Cykeln stor och lätt, förskjuten från mitten så att fönster och docka får plats."""
+    """Papperston med logotypen i mitten, något över mittlinjen så att dockan inte skymmer den."""
     w, h = 3840, 2160
-    cx, cy, r = w * 0.64, h * 0.56, h * 0.36
-    opacity = 0.62 if mode == "mörk" else 0.55
+    scale = 1.05
+    x = (w - LOGO_W * scale) / 2
+    y = h * 0.46 - LOGO_H * scale / 2
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
   <title>DegsellOS</title>
   <rect width="{w}" height="{h}" fill="{YTOR['skrivbord'][mode]}"/>
-  {ring(cx, cy, round(r), 30, gap_deg=6, opacity=opacity)}
-  <circle cx="{cx:.0f}" cy="{cy:.0f}" r="24" fill="{YTOR['text'][mode]}" opacity="0.6"/>
+  <g transform="translate({x:.1f} {y:.1f}) scale({scale})">
+  {logo_group(mode)}
+  </g>
 </svg>
 """
 
@@ -112,6 +121,11 @@ picture-uri='file://{INSTALLERAD}/degsellos-bakgrund-ljus.svg'
 picture-uri-dark='file://{INSTALLERAD}/degsellos-bakgrund-mork.svg'
 picture-options='zoom'
 primary-color='{YTOR['skrivbord']['ljus']}'
+
+[org/gnome/shell/extensions/Logo-menu]
+use-custom-icon=true
+custom-icon-path='{INSTALLERAD}/degsellos-symbol.svg'
+symbolic-icon=false
 
 [org/gnome/desktop/screensaver]
 picture-uri='file://{INSTALLERAD}/degsellos-bakgrund-mork.svg'
@@ -173,7 +187,9 @@ def with_report_tokens(css):
 
 def outputs():
     files = {
-        f"{IDENTITET}/degsellos-logotyp.svg": logo(),
+        f"{IDENTITET}/degsellos-logotyp.svg": logo("ljus"),
+        f"{IDENTITET}/degsellos-logotyp-mork.svg": logo("mörk"),
+        f"{IDENTITET}/degsellos-symbol.svg": symbol(),
         f"{IDENTITET}/degsellos-bakgrund-ljus.svg": wallpaper("ljus"),
         f"{IDENTITET}/degsellos-bakgrund-mork.svg": wallpaper("mörk"),
         f"{IDENTITET}/{TYPSNITTSFIL}": fontconfig(),

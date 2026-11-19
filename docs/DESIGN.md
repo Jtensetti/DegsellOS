@@ -2,7 +2,7 @@
 
 Skrivbordsappen använder GTK 4 och libadwaita och följer GNOME:s inställningar för textstorlek, accentfärg och mörkt läge. DegsellOS färger och typsnitt definieras i [design.json](../katalog/design.json).
 
-![Typsnitt, färger för granskningsstatus och forskningscykelns sju fasfärger.](bilder/designsystem.png)
+![Typsnitt, färger för granskningsstatus och logotypens färger.](bilder/designsystem.png)
 
 ## Projektvyn
 
@@ -18,12 +18,14 @@ Använd verb på knappar, som **Bygg rapport** och **Upprepa**. När ett underla
 | Dokument och rapporttext | Noto Serif |
 | Terminal, analyskod och data | JetBrains Mono |
 
-Appen använder Adwaitas textstilar och GNOME:s symboliska ikoner. HTML-rapportens brödtext har en maximal radlängd på 68 tecken och radavståndet 1,55. Rapportens stilmall stöder ljust och mörkt läge. Forskningscykelns sju färger används i logotypen och skrivbordsbakgrunden.
+Appen använder Adwaitas textstilar och GNOME:s symboliska ikoner. HTML-rapportens brödtext har en maximal radlängd på 68 tecken och radavståndet 1,55. Rapportens stilmall stöder ljust och mörkt läge. Logotypen, en terrakottafärgad symbol och ett mörkt plommonfärgat ordmärke i Open Sans ExtraBold, står på skrivbordsbakgrunden. Symbolen ensam är programikon och menyknapp uppe till vänster. På mörk bakgrund är ordmärket ljust.
 
 ## Ändra utseendet
 
 1. Ändra typsnitt eller färger i `katalog/design.json`.
-2. Kör `python3 scripts/identitet.py` för att uppdatera logotyp, bakgrunder, GNOME-inställningar, Obsidian och rapportens stilmall.
+2. Kör `python3 scripts/identitet.py` för att uppdatera logotypens varianter, symbolen, bakgrunder, GNOME-inställningar, Obsidian och rapportens stilmall.
 3. Kör `bash tests/identitet.test.sh` för att kontrollera de genererade filerna och rapporttextens kontrast. Lägg till nya typsnittspaket i `build_files/build.sh`.
 
 GNOME-inställningarna är standardvärden som användaren kan ändra. Obsidian får sina utseendeinställningar när en forskningsmapp skapas.
+
+Bilden `docs/bilder/delningsbild.png` (1280 × 640) visas när en länk till repot delas.

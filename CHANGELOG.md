@@ -4,6 +4,7 @@
 
 ## Under utveckling
 
+- Ny logotyp. Skrivbordsbakgrunden visar logotypen på papperston, i ljust och mörkt läge. Symbolen är menyknapp uppe till vänster och programikon.
 - **Nytt namn: DegsellOS.** Systemet, appen, kommandona (`degsellos`, `degsellos-projekt`, `degsellos-setup` …), forskningsmappen (`~/DegsellOS`), Core-tillägget och avbildningen (`ghcr.io/jtensetti/degsellos`) heter nu DegsellOS. Datorer som installerades som ForskarOS fortsätter få uppdateringar under det gamla avbildningsnamnet. Vid första inloggningen flyttas forskningsmappen, appens inställningar och tillägget till de nya namnen, och äldre `forskaros://`-länkar öppnar fortfarande appen.
 - AI-stödet är frivilligt och avstängt från början. Välj nivå i inställningarna för Core: av, handledning (bara frågor och felsökning i det du själv skrivit) eller fullt. När det är av nämns AI inte i panelen, granskningen eller måtten. Det rekommenderade urvalet av program innehåller inte längre någon AI.
 - Skrivs hypotesen om efter att resultat finns föreslår appen en ny körning, och rapporten säger öppet att hypotesen ändrats och var den ursprungliga formuleringen finns.

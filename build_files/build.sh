@@ -63,7 +63,7 @@ bwrap --version
 systemctl enable degsellos-grund.service degsellos-forskare.service degsellos-delad-mapp.service
 
 # Identitet: logotypen som programikon.
-install -Dm644 /usr/share/degsellos/identitet/degsellos-logotyp.svg /usr/share/icons/hicolor/scalable/apps/degsellos.svg
+install -Dm644 /usr/share/degsellos/identitet/degsellos-symbol.svg /usr/share/icons/hicolor/scalable/apps/degsellos.svg
 
 # Typsnitt för gränssnitt, läsning och kod (katalog/design.json, docs/DESIGN.md).
 # Bluefin har dem oftast redan; installera bara det som saknas.

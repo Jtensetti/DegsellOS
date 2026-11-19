@@ -13,6 +13,11 @@ picture-uri-dark='file:///usr/share/degsellos/identitet/degsellos-bakgrund-mork.
 picture-options='zoom'
 primary-color='#f4f1ea'
 
+[org/gnome/shell/extensions/Logo-menu]
+use-custom-icon=true
+custom-icon-path='/usr/share/degsellos/identitet/degsellos-symbol.svg'
+symbolic-icon=false
+
 [org/gnome/desktop/screensaver]
 picture-uri='file:///usr/share/degsellos/identitet/degsellos-bakgrund-mork.svg'
 primary-color='#1c1b19'
