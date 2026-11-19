@@ -22,6 +22,9 @@ cp "${efi}_VARS${suffix}.fd" "$work/vars.fd"
 accel=tcg
 cpu=max
 if [[ -r /dev/kvm && -w /dev/kvm ]]; then accel=kvm; cpu=host; fi
+# Emulerad arm64 med -cpu max har MOPS-instruktioner som QEMU 8.2 utför fel,
+# så gästens kärna kan krascha i memset. Neoverse N1 saknar dem.
+if [[ "$accel" == tcg && "$arch" == arm64 ]]; then cpu=neoverse-n1; fi
 qemu-img create -q -f qcow2 -F qcow2 -b "$disk" "$work/guest.qcow2"
 "$binary" -machine "$machine" -accel "$accel" -cpu "$cpu" -m 3072 -smp 2 \
   -drive "if=pflash,format=raw,readonly=on,file=${efi}_CODE${suffix}.fd" \
