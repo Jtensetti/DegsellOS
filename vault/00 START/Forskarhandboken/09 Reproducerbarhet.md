@@ -11,8 +11,8 @@ För en egen analys utanför projektappen kan du använda labbet direkt:
 
 ```bash
 cd /sökväg/till/min-studie
-forskaros-labb Rscript analys.R
-forskaros-labb version
+degsellos-labb Rscript analys.R
+degsellos-labb version
 ```
 
 Spara miljöns digest tillsammans med kod, data och körinstruktioner. En annan dator behöver Podman eller Docker och kompatibel processorarkitektur. En låst miljö minskar skillnader i programversioner; slump, externa data och hårdvaruberoende beräkningar kan ändå påverka resultatet.

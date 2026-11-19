@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=ForskarOS – förbered forskningsmiljön
-Exec=/usr/bin/forskaros-init
-OnlyShowIn=GNOME;
-NoDisplay=true
-X-GNOME-Autostart-enabled=true

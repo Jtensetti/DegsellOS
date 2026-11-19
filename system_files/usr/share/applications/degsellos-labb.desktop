@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=DegsellOS-labbet (RStudio)
+Comment=Reproducerbar analysmiljö med R, Python och RStudio i webbläsaren
+Exec=/usr/bin/degsellos-labb rstudio
+Terminal=true
+Icon=degsellos
+Categories=Education;Science;

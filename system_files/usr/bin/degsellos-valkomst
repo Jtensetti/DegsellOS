@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Välkomstmenyn i terminalen. I en grafisk session öppnas appen DegsellOS i stället.
+#   degsellos-valkomst              appen, eller terminalmenyn utan grafisk session
+#   degsellos-valkomst --terminal   terminalmenyn
+#   degsellos-valkomst --status     grundverktygens installation
+set -eu
+vault="${DEGSELLOS_VAULT:-$HOME/DegsellOS}"
+service=degsellos-grund.service
+
+status() {
+  if [[ -e /var/lib/degsellos/grund.klar ]]; then
+    echo 'Grundverktygen är installerade.'
+    return
+  fi
+  local state
+  state=$(systemctl show "$service" -p SubState --value 2>/dev/null) || state=okänt
+  case "$state" in
+    auto-restart|failed) echo 'Installationen av grundverktygen har misslyckats. Kontrollera nätet. Tjänsten försöker igen efter två minuter.' ;;
+    start|running) echo 'Grundverktygen installeras i bakgrunden. Du kan börja skriva under tiden.' ;;
+    *) echo 'Grundverktygen är ännu inte färdiginstallerade.' ;;
+  esac
+  echo "Senaste installationsmeddelanden visas med journalctl -u $service -n 10."
+}
+
+if [[ ${1:-} == --status ]]; then status; exit 0; fi
+if [[ ${1:-} != --terminal && -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then exec degsellos; fi
+[[ -f "$vault/00 START/Hem.md" ]] || DEGSELLOS_INGEN_VALKOMST=1 degsellos-init
+while :; do
+  echo
+  echo 'Välkommen till DegsellOS'
+  echo "Din forskningsmapp finns här: $vault"
+  status
+  echo
+  echo 'P. Starta ett forskningsprojekt med data, analys och rapport'
+  echo '1. Öppna forskningsmappen i Obsidian'
+  echo '2. Läs startsidan som text (fungerar utan nät)'
+  echo '3. Välj fler verktyg'
+  echo '4. Visa installationsloggen'
+  echo 'Enter stänger verktygslådan.'
+  read -r -p 'Ditt val: ' choice || exit 0
+  case "$choice" in
+    p|P)
+      echo 'I en grafisk session: öppna appen DegsellOS. I terminalen:'
+      echo '  degsellos-projekt skapa kvantitativ ~/Forskningsprojekt/Studie'
+      echo '  degsellos-projekt belägg ~/Forskningsprojekt/Studie'
+      echo '  degsellos-projekt kör ~/Forskningsprojekt/Studie'
+      echo 'Alla kommandon: degsellos-projekt --help' ;;
+    1)
+      if ! flatpak info md.obsidian.Obsidian >/dev/null 2>&1; then
+        if ! degsellos-setup --profil obsidian; then
+          echo 'Obsidian kunde inte installeras. Kontrollera nätet och välj 1 för att försöka igen.'
+          continue
+        fi
+        flatpak info md.obsidian.Obsidian >/dev/null 2>&1 || continue
+      fi
+      echo "Första gången: välj Open folder as vault och mappen $vault."
+      echo 'Godkänn DegsellOS Core om du vill använda tillägget. Öppna 00 START/Hem och välj din första fråga i hjärnpanelen.'
+      flatpak run md.obsidian.Obsidian || echo 'Obsidian kunde inte öppnas.'
+      ;;
+    2) cat -- "$vault/00 START/Hem.md" ;;
+    3) degsellos-setup || echo 'Installationen avbröts. Du kan välja profilen igen.' ;;
+    4) journalctl --no-pager -u "$service" -n 10 || true ;;
+    '') exit 0 ;;
+    *) echo 'Välj P, 1, 2, 3 eller 4.' ;;
+  esac
+done

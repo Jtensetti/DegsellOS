@@ -1,10 +1,10 @@
-# ForskarOS Core
+# DegsellOS Core
 
-ForskarOS Core är ett Obsidian-tillägg för att formulera forskningsfrågor, pröva hypoteser och dokumentera beslut. Anteckningarna är vanliga Markdown-filer. Core kan användas på en befintlig dator utan att installera operativsystemet ForskarOS.
+DegsellOS Core är ett Obsidian-tillägg för att formulera forskningsfrågor, pröva hypoteser och dokumentera beslut. Anteckningarna är vanliga Markdown-filer. Core kan användas på en befintlig dator utan att installera operativsystemet DegsellOS.
 
-## I ForskarOS
+## I DegsellOS
 
-Välj Obsidian under **Välj forskningsverktyg**. Öppna mappen `~/ForskarOS` som en vault i Obsidian och aktivera **ForskarOS Core** under **Settings → Community plugins**. Mappen skapas vid första inloggningen.
+Välj Obsidian under **Välj forskningsverktyg**. Öppna mappen `~/DegsellOS` som en vault i Obsidian och aktivera **DegsellOS Core** under **Settings → Community plugins**. Mappen skapas vid första inloggningen.
 
 ## På en annan dator
 
@@ -14,7 +14,7 @@ Installera Obsidian och klona repot. Kör följande från repots rot i ett Bash-
 bash scripts/install-vault.sh
 ```
 
-Skriptet skapar `~/ForskarOS`. För en annan plats anger du sökvägen som argument:
+Skriptet skapar `~/DegsellOS`. För en annan plats anger du sökvägen som argument:
 
 ```bash
 bash scripts/install-vault.sh /sökväg/till/forskningsmapp
@@ -22,7 +22,7 @@ bash scripts/install-vault.sh /sökväg/till/forskningsmapp
 
 En befintlig mapp skrivs inte över. På en dator utan Bash kan du kopiera hela `vault/`, inklusive den dolda mappen `.obsidian`, till en ny mapp.
 
-Öppna mappen som en vault i Obsidian. Aktivera **ForskarOS Core** under **Settings → Community plugins** och öppna panelen med hjärnikonen.
+Öppna mappen som en vault i Obsidian. Aktivera **DegsellOS Core** under **Settings → Community plugins** och öppna panelen med hjärnikonen.
 
 ## Arbetsgång
 
@@ -33,14 +33,14 @@ En befintlig mapp skrivs inte över. På en dator utan Bash kan du kopiera hela 
 
 Core förbereder AI-konsultationer som text att kopiera. Tillägget gör inga nätverksanrop. Du väljer själv vilken tjänst som får texten.
 
-Core-anteckningarna ligger normalt i `~/ForskarOS` och appens forskningsprojekt i `~/Forskningsprojekt`. Ett projekt som är kopplat till en fråga skriver sitt läge till `04 EXPERIMENT`, och panelen visar det under frågan. *Nytt projekt i appen* startar ett projekt för frågan.
+Core-anteckningarna ligger normalt i `~/DegsellOS` och appens forskningsprojekt i `~/Forskningsprojekt`. Ett projekt som är kopplat till en fråga skriver sitt läge till `04 EXPERIMENT`, och panelen visar det under frågan. *Nytt projekt i appen* startar ett projekt för frågan.
 
-I ForskarOS öppnar Obsidian forskningsmappen direkt vid första start. I en egen installation väljer du *Open folder as vault* och mappen. [Koppla projektet till en forskningsfråga](PROJEKT.md#koppla-projektet-till-en-forskningsfråga) · [Begreppen](../vault/00%20START/Begreppen.md)
+I DegsellOS öppnar Obsidian forskningsmappen direkt vid första start. I en egen installation väljer du *Open folder as vault* och mappen. [Koppla projektet till en forskningsfråga](PROJEKT.md#koppla-projektet-till-en-forskningsfråga) · [Begreppen](../vault/00%20START/Begreppen.md)
 
 ## Uppdatering och säkerhetskopiering
 
-I ForskarOS uppdateras tilläggets filer, verktygskorten och Forskarhandboken vid inloggning. Lägg egna anteckningar utanför `00 START/Verktyg` och `00 START/Forskarhandboken`. Ett borttaget Core-tillägg återinstalleras inte automatiskt.
+I DegsellOS uppdateras tilläggets filer, verktygskorten och Forskarhandboken vid inloggning. Lägg egna anteckningar utanför `00 START/Verktyg` och `00 START/Forskarhandboken`. Ett borttaget Core-tillägg återinstalleras inte automatiskt.
 
-I en fristående installation uppdaterar du tillägget genom att kopiera `main.js`, `manifest.json` och `styles.css` från `vault/.obsidian/plugins/forskaros-core/` till motsvarande mapp i din vault. Säkerhetskopiera hela vaulten, inklusive `.obsidian`, före uppdateringen.
+I en fristående installation uppdaterar du tillägget genom att kopiera `main.js`, `manifest.json` och `styles.css` från `vault/.obsidian/plugins/degsellos-core/` till motsvarande mapp i din vault. Säkerhetskopiera hela vaulten, inklusive `.obsidian`, före uppdateringen.
 
 [Arbetsmetoden](../vault/00%20START/Arbetsmetod.md) · [Forskarhandboken](../vault/00%20START/Forskarhandboken/00%20Innehåll.md)

@@ -1,5 +1,5 @@
-# Python-paket i ForskarOS-labbet. Exakta versioner sparas i
-# /opt/forskaros/python-las.txt i varje avbildning.
+# Python-paket i DegsellOS-labbet. Exakta versioner sparas i
+# /opt/degsellos/python-las.txt i varje avbildning.
 numpy
 pandas
 scipy

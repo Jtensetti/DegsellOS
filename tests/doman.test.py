@@ -6,9 +6,9 @@
 4. Forskningspaket    – varje körning är ett giltigt RO-Crate 1.1 / Process Run Crate 0.5
 
 Miljövariabler:
-  FORSKAROS_KRAV_SANDLADA=1     fel i stället för överhoppning om bubblewrap inte fungerar
-  FORSKAROS_KRAV_ROCRATE=1      fel i stället för överhoppning om valideraren saknas
-  FORSKAROS_ROCRATE_VALIDATOR   sökväg till rocrate-validator
+  DEGSELLOS_KRAV_SANDLADA=1     fel i stället för överhoppning om bubblewrap inte fungerar
+  DEGSELLOS_KRAV_ROCRATE=1      fel i stället för överhoppning om valideraren saknas
+  DEGSELLOS_ROCRATE_VALIDATOR   sökväg till rocrate-validator
 """
 import json
 import os
@@ -19,9 +19,9 @@ import sys
 import tempfile
 
 root = Path(__file__).resolve().parents[1]
-cmd = root / "system_files/usr/bin/forskaros-projekt"
+cmd = root / "system_files/usr/bin/degsellos-projekt"
 sys.dont_write_bytecode = True
-sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
+sys.path.insert(0, str(root / "system_files/usr/share/degsellos/projekt"))
 from upprepa import sandbox_probe  # noqa: E402
 
 skipped = []
@@ -71,14 +71,14 @@ with tempfile.TemporaryDirectory() as tmp:
     protected = tmp / "Skyddad studie"
     call("skapa", "kvalitativ", protected, "--skydd", "skyddad")
     assert json.loads((protected / "projekt.json").read_text())["skydd"] == "skyddad"
-    refused = call("kör", protected, fail=True, env={"FORSKAROS_BWRAP": "/bin/false"})
+    refused = call("kör", protected, fail=True, env={"DEGSELLOS_BWRAP": "/bin/false"})
     assert "kör inte analysen utan skydd" in refused and runs(protected) == [], refused
     print("  ✓ vägrar köra när sandlådan inte kan startas, och lämnar ingen körning")
     if not sandbox:
-        skip("En fungerande bubblewrap", "FORSKAROS_KRAV_SANDLADA")
+        skip("En fungerande bubblewrap", "DEGSELLOS_KRAV_SANDLADA")
         protected_run = None
     else:
-        protected_run = Path(call("kör", protected, env={"FORSKAROS_TEST_HEMLIGHET": "läckt"}))
+        protected_run = Path(call("kör", protected, env={"DEGSELLOS_TEST_HEMLIGHET": "läckt"}))
         shield = json.loads((protected_run / "korning.json").read_text())["skydd"]
         assert shield["nivå"] == "skyddad" and shield["nätverk"] == "avstängt" and shield["hemkatalog"] == "dold"
         assert shield["mekanism"].startswith("bubblewrap"), shield
@@ -89,14 +89,14 @@ with tempfile.TemporaryDirectory() as tmp:
         attempts = {
             "nätverk": ("import socket\nsocket.create_connection(('1.1.1.1', 443), timeout=3)\n", "unreachable"),
             "fil utanför körningen": (f"open({str(secret)!r}).read()\n", "No such file"),
-            "miljövariabel": ("import os\nassert os.environ.get('FORSKAROS_TEST_HEMLIGHET') is None, 'läckt'\n", None),
+            "miljövariabel": ("import os\nassert os.environ.get('DEGSELLOS_TEST_HEMLIGHET') is None, 'läckt'\n", None),
             "hemkatalog": ("import os\nassert not any(os.scandir('/home')) if os.path.isdir('/home') else True\n"
                            "assert not os.path.isdir('/root') or not any(os.scandir('/root'))\n", None),
         }
         for name, (code, expected) in attempts.items():
             analysis.write_text(original + code)
             out = call("kör", protected, fail=name != "miljövariabel" and name != "hemkatalog",
-                       env={"FORSKAROS_TEST_HEMLIGHET": "läckt"})
+                       env={"DEGSELLOS_TEST_HEMLIGHET": "läckt"})
             if expected:
                 assert expected in out, (name, out)
             print(f"  ✓ {name}: {'stoppad' if expected else 'inte åtkomlig'} i sandlådan")
@@ -135,7 +135,7 @@ with tempfile.TemporaryDirectory() as tmp:
         bin_dir.mkdir()
         for tool in ("python3", "pandoc"):
             (bin_dir / tool).symlink_to(shutil.which(tool))
-        bare = {"PATH": str(bin_dir), "FORSKAROS_BWRAP": ""}
+        bare = {"PATH": str(bin_dir), "DEGSELLOS_BWRAP": ""}
         result = subprocess.run([sys.executable, "-I", str(colleague / "upprepa.py")], capture_output=True,
                                 text=True, cwd=tmp, env={**os.environ, **bare})
         assert result.returncode and "--utan-skydd" in result.stderr, result
@@ -197,7 +197,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
     # ---- 4. Forskningspaket i öppet format ------------------------------------
     print("4. Forskningspaket (RO-Crate)")
-    validator = os.environ.get("FORSKAROS_ROCRATE_VALIDATOR") or shutil.which("rocrate-validator")
+    validator = os.environ.get("DEGSELLOS_ROCRATE_VALIDATOR") or shutil.which("rocrate-validator")
     crates = [r for r in runs(open_project)] + ([protected_run] if protected_run else [])
     for crate in crates:
         data = json.loads((crate / "ro-crate-metadata.json").read_text())
@@ -220,7 +220,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert "forskningshuvudmannens tillstånd" in license["description"]
         print("  ✓ skyddat projekt: paketet säger att materialet inte får spridas")
     if not validator:
-        skip("rocrate-validator", "FORSKAROS_KRAV_ROCRATE")
+        skip("rocrate-validator", "DEGSELLOS_KRAV_ROCRATE")
     else:
         for crate in (open_run, protected_run):
             if crate is None:

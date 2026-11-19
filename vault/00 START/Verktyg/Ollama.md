@@ -16,10 +16,10 @@ Kör språkmodeller lokalt.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Lokal AI**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Lokal AI**, eller kör:
 
 ```bash
-forskaros-setup --profil lokal-ai
+degsellos-setup --profil lokal-ai
 ```
 
 ## Läs mer

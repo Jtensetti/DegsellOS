@@ -1,6 +1,6 @@
 # Verktygslåda och forskningsportal
 
-> Installera program i appen **ForskarOS** under **Välj forskningsverktyg**.
+> Installera program i appen **DegsellOS** under **Välj forskningsverktyg**.
 > Programmenyn har en mapp per fas. Alla verktyg med beskrivning: [[00 START/Verktyg/Översikt|Verktygen per fas]].
 > = öppen källkod eller öppen tjänst · = molntjänst, din fråga lämnar datorn
 
@@ -30,7 +30,7 @@
 ## 2. Kombinera – se ovanliga samband
 
 **Program:** draw.io (modeller), Freeplane (tankekartor), Rnote (skisser)
-- Perspektivkarta i ForskarOS, och AI-konsultation med uppgiften *Alternativa perspektiv*.
+- Perspektivkarta i DegsellOS, och AI-konsultation med uppgiften *Alternativa perspektiv*.
 
 ## 3. Välj – avgränsa och förregistrera
 

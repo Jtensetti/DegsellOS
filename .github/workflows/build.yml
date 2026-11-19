@@ -1,4 +1,4 @@
-name: Bygg ForskarOS-avbildning
+name: Bygg DegsellOS-avbildning
 
 on:
   push:
@@ -14,10 +14,10 @@ permissions:
 
 env:
   BASE_IMAGE: ghcr.io/ublue-os/bluefin:lts
-  # Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
-  # datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
-  # Byt bara namn tillsammans med en flyttväg för installerade datorer.
-  IMAGE_NAME: ghcr.io/jtensetti/researchos
+  # Avbildningens namn i registret. Datorer som installerades medan systemet hette ForskarOS
+  # följer LEGACY_IMAGE_NAME, som får samma avbildning vid varje publicering.
+  IMAGE_NAME: ghcr.io/jtensetti/degsellos
+  LEGACY_IMAGE_NAME: ghcr.io/jtensetti/researchos
 
 jobs:
   test:
@@ -31,18 +31,18 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y pandoc bubblewrap
           # Ubuntu 24.04 begränsar användarnamnrymder för oprivilegierade program med AppArmor.
-          # ForskarOS-avbildningen (CentOS Stream 10) har ingen sådan begränsning.
+          # DegsellOS-avbildningen (CentOS Stream 10) har ingen sådan begränsning.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           python3 -m venv "$RUNNER_TEMP/rocrate" && "$RUNNER_TEMP/rocrate/bin/pip" install -q roc-validator==0.14.0
-          echo "FORSKAROS_ROCRATE_VALIDATOR=$RUNNER_TEMP/rocrate/bin/rocrate-validator" >> "$GITHUB_ENV"
+          echo "DEGSELLOS_ROCRATE_VALIDATOR=$RUNNER_TEMP/rocrate/bin/rocrate-validator" >> "$GITHUB_ENV"
       - name: Installera GTK 4, libadwaita och Xvfb för appens självtest
         run: sudo apt-get install -y python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 xvfb
       - name: Kontroller och acceptanstest (sandlåda, RO-Crate och appen krävs)
         env:
-          FORSKAROS_KRAV_SANDLADA: "1"
-          FORSKAROS_KRAV_ROCRATE: "1"
-          FORSKAROS_KRAV_APP: "1"
-          FORSKAROS_SKARMDUMPAR: ${{ runner.temp }}/skarmdumpar
+          DEGSELLOS_KRAV_SANDLADA: "1"
+          DEGSELLOS_KRAV_ROCRATE: "1"
+          DEGSELLOS_KRAV_APP: "1"
+          DEGSELLOS_SKARMDUMPAR: ${{ runner.temp }}/skarmdumpar
         run: bash scripts/check.sh
       - name: Spara appens skärmdumpar
         if: always()
@@ -84,7 +84,7 @@ jobs:
         run: |
           sudo podman build --pull=newer \
             --build-arg BASE_IMAGE="$BASE_IMAGE" \
-            -t localhost/forskaros:${{ matrix.arch }} .
+            -t localhost/degsellos:${{ matrix.arch }} .
 
       - name: Publicera arkitekturspecifik tagg
         if: github.ref_name == 'main' && github.event_name != 'pull_request'
@@ -93,8 +93,8 @@ jobs:
         run: |
           IMAGE="$IMAGE_NAME"
           echo "$TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
-          sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
-          sudo podman push localhost/forskaros:${{ matrix.arch }} "docker://$IMAGE:build-$GITHUB_RUN_ID-${{ matrix.arch }}"
+          sudo podman push localhost/degsellos:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
+          sudo podman push localhost/degsellos:${{ matrix.arch }} "docker://$IMAGE:build-$GITHUB_RUN_ID-${{ matrix.arch }}"
 
   publish:
     if: github.ref_name == 'main' && github.event_name != 'pull_request'
@@ -119,17 +119,20 @@ jobs:
         run: |
           IMAGE="$IMAGE_NAME"
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
-          podman manifest create forskaros-manifest \
+          podman manifest create degsellos-manifest \
             "docker://$IMAGE:build-$GITHUB_RUN_ID-amd64" "docker://$IMAGE:build-$GITHUB_RUN_ID-arm64"
           podman manifest push --all --digestfile /tmp/digest \
-            forskaros-manifest "docker://$IMAGE:latest"
+            degsellos-manifest "docker://$IMAGE:latest"
           podman manifest push --all \
-            forskaros-manifest "docker://$IMAGE:$(date -u +%Y%m%d)"
+            degsellos-manifest "docker://$IMAGE:$(date -u +%Y%m%d)"
+          # Datorer som installerades medan systemet hette ForskarOS följer det gamla namnet.
+          podman manifest push --all degsellos-manifest "docker://$LEGACY_IMAGE_NAME:latest"
+          podman manifest push --all degsellos-manifest "docker://$LEGACY_IMAGE_NAME:$(date -u +%Y%m%d)"
           # En vanlig push eller schemalagd ombyggnad får inte flytta en släppt version.
           VERSION=$(cat VERSION)
           if [[ "$RELEASE_MEDIA" == true ]]; then
             [[ "$VERSION" =~ ^[0-9]{4}\.[1-4](-[a-z0-9]+)?$ && "$VERSION" != *-dev ]]
-            podman manifest push --all forskaros-manifest "docker://$IMAGE:$VERSION"
+            podman manifest push --all degsellos-manifest "docker://$IMAGE:$VERSION"
           fi
           echo "digest=$(cat /tmp/digest)" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -141,6 +144,7 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u "${{ github.actor }}" --password-stdin
           cosign sign "$IMAGE_REF"
+          cosign sign "$LEGACY_IMAGE_NAME@${IMAGE_REF#*@}"
 
   release-media:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, '[release-media] ')

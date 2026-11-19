@@ -7,12 +7,12 @@ import tempfile
 
 root = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
-sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
+sys.path.insert(0, str(root / "system_files/usr/share/degsellos/projekt"))
 from projekt import domain  # noqa: E402
 from oversikt import (next_step, overview, pending_claims, progress, recent_projects, remember_project, run_label,
                       suggest_key)  # noqa: E402
 
-cmd = root / "system_files/usr/bin/forskaros-projekt"
+cmd = root / "system_files/usr/bin/degsellos-projekt"
 
 
 def call(*args):

@@ -1,0 +1,7 @@
+# Genererad från katalog/verktyg.json. Ändra inte för hand.
+# namn: Möten och samarbete
+# beskrivning: Videomöten, chatt, e-post och delade projektmappar med medarbetare. Inget går via DegsellOS.
+flatpak org.jitsi.jitsi-meet                    Jitsi Meet – Videomöten med öppen källkod
+flatpak im.riot.Riot                            Element – Chatt för forskargrupper (Matrix)
+brew    syncthing                               Syncthing – Dela projektmappar direkt mellan datorer
+flatpak org.gnome.Evolution                     Evolution – E-post, kalender och kontakter

@@ -1,12 +1,12 @@
 # Färdplan
 
-ForskarOS utvecklas mot den första stabila kvartalsutgåvan, 2027.1. Publicerad förhandsversion och nedladdningar finns i [README](../README.md#ladda-ner). Levererade funktioner beskrivs i [ändringsloggen](../CHANGELOG.md).
+DegsellOS utvecklas mot den första stabila kvartalsutgåvan, 2027.1. Publicerad förhandsversion och nedladdningar finns i [README](../README.md#ladda-ner). Levererade funktioner beskrivs i [ändringsloggen](../CHANGELOG.md).
 
 ## Inför stabil utgåva
 
 | Område | Krav |
 |---|---|
-| Användbarhet | Forskare från tre forskningsprofiler genomför samma uppgift i ForskarOS och sin ordinarie miljö. Jämför tid, handgrepp, hjälpbehov och fel. |
+| Användbarhet | Forskare från tre forskningsprofiler genomför samma uppgift i DegsellOS och sin ordinarie miljö. Jämför tid, handgrepp, hjälpbehov och fel. |
 | Arbetsmetod | Följ användningen under fyra veckor. Bedöm hur frågor, motprov, belägg, osäkerhet och slutsatser dokumenteras. Självskattningsmåtten behöver prövas mot arbetsproven. |
 | Hårdvara | Genomför hela flödet med inloggning, delad mapp och labb i UTM på fysisk Apple Silicon-Mac samt installation på fysisk PC. |
 | Utgivning | Publicera versionsbundna, signerade avbildningar och installationsmedier enligt [släpprocessen](RELEASE.md). |

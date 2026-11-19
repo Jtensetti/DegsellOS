@@ -2,7 +2,7 @@
 # t.ex. UTM på en Mac.
 #
 # Kontot forskare / forskare.
-# Lösenordet MÅSTE bytas vid första inloggningen (forskaros-forskare.service
+# Lösenordet MÅSTE bytas vid första inloggningen (degsellos-forskare.service
 # markerar det som utgånget vid första start). ISO-installationer har inget
 # förinställt konto.
 [[customizations.user]]

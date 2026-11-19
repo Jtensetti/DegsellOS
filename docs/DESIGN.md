@@ -1,6 +1,6 @@
 # Gränssnitt och typografi
 
-Skrivbordsappen använder GTK 4 och libadwaita och följer GNOME:s inställningar för textstorlek, accentfärg och mörkt läge. ForskarOS färger och typsnitt definieras i [design.json](../katalog/design.json).
+Skrivbordsappen använder GTK 4 och libadwaita och följer GNOME:s inställningar för textstorlek, accentfärg och mörkt läge. DegsellOS färger och typsnitt definieras i [design.json](../katalog/design.json).
 
 ![Typsnitt, färger för granskningsstatus och forskningscykelns sju fasfärger.](bilder/designsystem.png)
 

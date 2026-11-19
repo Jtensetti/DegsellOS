@@ -3,9 +3,9 @@ typ: handbok
 ---
 # Forskarhandboken
 
-Handbok för ForskarOS: arbetsmetoden och verktygen. Varje kapitel slutar med en övning som görs utan AI.
+Handbok för DegsellOS: arbetsmetoden och verktygen. Varje kapitel slutar med en övning som görs utan AI.
 
-1. [[00 START/Forskarhandboken/01 Vad ForskarOS är|Vad ForskarOS är]]
+1. [[00 START/Forskarhandboken/01 Vad DegsellOS är|Vad DegsellOS är]]
 2. [[00 START/Forskarhandboken/02 Faserna|Faserna]]
 3. [[00 START/Forskarhandboken/03 AI-konsultationer|AI-konsultationer]]
 4. [[00 START/Forskarhandboken/04 Från ämne till forskningsfråga|Från ämne till forskningsfråga]]

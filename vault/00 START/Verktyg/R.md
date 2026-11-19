@@ -12,14 +12,14 @@ profil: statistik
 
 ## Vad det används till
 
-R installerat lokalt. För en låst version, använd forskaros-labb.
+R installerat lokalt. För en låst version, använd degsellos-labb.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Statistik och data**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Statistik och data**, eller kör:
 
 ```bash
-forskaros-setup --profil statistik
+degsellos-setup --profil statistik
 ```
 
 ## Läs mer

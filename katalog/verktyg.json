@@ -37,7 +37,7 @@
     },
     {
       "id": "obsidian",
-      "namn": "Obsidian (krävs för ForskarOS Core)",
+      "namn": "Obsidian (krävs för DegsellOS Core)",
       "beskrivning": "Gränssnittet för vaulten och panelen. Gratis men inte öppen källkod.",
       "aktivt_val": "licens"
     },
@@ -69,7 +69,7 @@
     {
       "id": "samarbete",
       "namn": "Möten och samarbete",
-      "beskrivning": "Videomöten, chatt, e-post och delade projektmappar med medarbetare. Inget går via ForskarOS."
+      "beskrivning": "Videomöten, chatt, e-post och delade projektmappar med medarbetare. Inget går via DegsellOS."
     },
     {
       "id": "ideer",
@@ -238,7 +238,7 @@
       "profil": "statistik",
       "fas": "utveckla",
       "kort": "Statistikspråket",
-      "metod": "R installerat lokalt. För en låst version, använd forskaros-labb.",
+      "metod": "R installerat lokalt. För en låst version, använd degsellos-labb.",
       "läs_mer": "https://www.r-project.org"
     },
     {
@@ -391,8 +391,8 @@
       "namn": "Obsidian",
       "profil": "obsidian",
       "fas": "utforska",
-      "kort": "Gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)",
-      "metod": "Gränssnittet för vaulten och ForskarOS Core. Gratis men inte öppen källkod.",
+      "kort": "Gränssnittet för DegsellOS-vaulten i dag (gratis, proprietärt)",
+      "metod": "Gränssnittet för vaulten och DegsellOS Core. Gratis men inte öppen källkod.",
       "läs_mer": "https://help.obsidian.md"
     },
     {

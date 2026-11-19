@@ -6,10 +6,10 @@ ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.13.8
 FROM ${UV_IMAGE} AS uv
 
 FROM ${R_IMAGE}
-LABEL org.opencontainers.image.title="ForskarOS-labbet" \
+LABEL org.opencontainers.image.title="DegsellOS-labbet" \
       org.opencontainers.image.description="Reproducerbar analysmiljö: R, tidyverse, RStudio Server, Python, JupyterLab" \
       org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.source="https://github.com/Jtensetti/researchOS"
+      org.opencontainers.image.source="https://github.com/Jtensetti/DegsellOS"
 
 # R-paket som ofta behövs i beteende- och samhällsvetenskap.
 RUN install2.r --error --skipinstalled renv psych lme4 effectsize janitor here \
@@ -17,13 +17,13 @@ RUN install2.r --error --skipinstalled renv psych lme4 effectsize janitor here \
 
 # Python i en egen miljö, med låsta versioner sparade i avbildningen.
 COPY --from=uv /uv /usr/local/bin/uv
-COPY labb/requirements.txt /opt/forskaros/requirements.txt
+COPY labb/requirements.txt /opt/degsellos/requirements.txt
 ENV UV_PYTHON_INSTALL_DIR=/opt/python
-RUN uv venv /opt/forskaros-python --python 3.13 \
- && uv pip install --python /opt/forskaros-python/bin/python -r /opt/forskaros/requirements.txt \
- && uv pip freeze --python /opt/forskaros-python/bin/python > /opt/forskaros/python-las.txt \
- && R -q -e 'writeLines(capture.output(sessionInfo()), "/opt/forskaros/r-session.txt")'
-ENV PATH=/opt/forskaros-python/bin:$PATH
+RUN uv venv /opt/degsellos-python --python 3.13 \
+ && uv pip install --python /opt/degsellos-python/bin/python -r /opt/degsellos/requirements.txt \
+ && uv pip freeze --python /opt/degsellos-python/bin/python > /opt/degsellos/python-las.txt \
+ && R -q -e 'writeLines(capture.output(sessionInfo()), "/opt/degsellos/r-session.txt")'
+ENV PATH=/opt/degsellos-python/bin:$PATH
 
 WORKDIR /arbete
 CMD ["bash"]

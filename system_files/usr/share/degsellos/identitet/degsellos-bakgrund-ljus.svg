@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="3840" height="2160">
+  <title>DegsellOS</title>
+  <rect width="3840" height="2160" fill="#f4f1ea"/>
+  <path d="M 2498.32 432.67 A 778 778 0 0 1 3039.64 693.36" fill="none" stroke="#2E86AB" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Utforska</title></path>
+  <path d="M 3090.42 757.02 A 778 778 0 0 1 3224.11 1342.79" fill="none" stroke="#3FA7A0" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Kombinera</title></path>
+  <path d="M 3205.99 1422.18 A 778 778 0 0 1 2831.38 1891.93" fill="none" stroke="#7BB662" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Välj</title></path>
+  <path d="M 2758.01 1927.26 A 778 778 0 0 1 2157.19 1927.26" fill="none" stroke="#E0A458" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Pröva</title></path>
+  <path d="M 2083.82 1891.93 A 778 778 0 0 1 1709.21 1422.18" fill="none" stroke="#D9724A" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Utveckla</title></path>
+  <path d="M 1691.09 1342.79 A 778 778 0 0 1 1824.78 757.02" fill="none" stroke="#A45DA8" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Ompröva</title></path>
+  <path d="M 1875.56 693.36 A 778 778 0 0 1 2416.88 432.67" fill="none" stroke="#5B6CC4" stroke-width="30" stroke-linecap="round" opacity="0.55"><title>Dela</title></path>
+  <circle cx="2458" cy="1210" r="24" fill="#1f1d1a" opacity="0.6"/>
+</svg>

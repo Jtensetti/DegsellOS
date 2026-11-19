@@ -9,7 +9,7 @@ Module._load = function (request, ...rest) {
   if (request === 'obsidian') return { Plugin: class {}, ItemView: class {}, Notice: class {}, Modal: class {} };
   return orig.call(this, request, ...rest);
 };
-const { engine: e } = require('../vault/.obsidian/plugins/forskaros-core/main.js');
+const { engine: e } = require('../vault/.obsidian/plugins/degsellos-core/main.js');
 Module._load = orig;
 
 const DAY = '2026-11-17';
@@ -117,7 +117,7 @@ test('faskrav: Dela kräver en sammanfattning på 50–200 ord och nästa fråga
   assert.deepEqual(e.phaseRequirements(q(400), []).map(r => r.ok), [false, true, true]);
 });
 
-test('faskrav: Utveckla och Dela läser projekt från appen ForskarOS', () => {
+test('faskrav: Utveckla och Dela läser projekt från appen DegsellOS', () => {
   const projekt = (nivå, extra = '') => note('04 EXPERIMENT/Projekt.md',
     { typ: 'experiment', fråga: link, projekt: '/home/forskare/Forskningsprojekt/Studie', nivå }, `## Resultat\nRapporten är byggd.\n${extra}`);
   const utv = note(Q, { typ: 'forskningsfråga', fas: 'utveckla' }, '## Medarbetare\nAnna kodar intervjuerna.\n');
@@ -146,7 +146,7 @@ test('AI-stödet är frivilligt: av från början, handledning utan färdiga sva
 
 test('appen och panelen pekar på varandra', () => {
   assert.equal(e.appUri('nytt-projekt', { fråga: '01 RIKTNING/Min fråga', hypotes: null }),
-    'forskaros://nytt-projekt?fr%C3%A5ga=01+RIKTNING%2FMin+fr%C3%A5ga');
+    'degsellos://nytt-projekt?fr%C3%A5ga=01+RIKTNING%2FMin+fr%C3%A5ga');
   const q = note(Q, { typ: 'forskningsfråga' });
   const egen = note('04 EXPERIMENT/Projekt A.md', { typ: 'experiment', fråga: link, projekt: '/p/A' });
   const annan = note('04 EXPERIMENT/Projekt B.md', { typ: 'experiment', fråga: '[[Annan]]', projekt: '/p/B' });

@@ -1,6 +1,6 @@
 # Arkitektur
 
-ForskarOS är en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. Skrivbordsappen hanterar forskningsprojekt med underlag och sparade körningar. Det valfria Obsidian-tillägget ForskarOS Core hanterar forskningsfrågor och arbetsmetod i en Markdown-vault. Ett projekt kan kopplas till en fråga; appen skriver då projektets läge som en anteckning i vaulten, och Core läser den.
+DegsellOS är en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. Skrivbordsappen hanterar forskningsprojekt med underlag och sparade körningar. Det valfria Obsidian-tillägget DegsellOS Core hanterar forskningsfrågor och arbetsmetod i en Markdown-vault. Ett projekt kan kopplas till en fråga; appen skriver då projektets läge som en anteckning i vaulten, och Core läser den.
 
 ## Projektets krav
 
@@ -18,19 +18,19 @@ Användbarhetskravet behöver prövas med forskare enligt [färdplanen](ROADMAP.
 
 | Del | Ansvar | Källkod |
 |---|---|---|
-| Skrivbordsapp | Projektvyer, granskning och verktygsval med GTK 4 och libadwaita | [app.py](../system_files/usr/share/forskaros/projekt/app.py), [oversikt.py](../system_files/usr/share/forskaros/projekt/oversikt.py) |
-| Projektmotor | Skapa projekt, köra analyser och upprepa sparade körningar | [projekt.py](../system_files/usr/share/forskaros/projekt/projekt.py), [upprepa.py](../system_files/usr/share/forskaros/projekt/upprepa.py) |
-| Belägg och källor | Kopplingar, granskningsbeslut, omprövning och Zotero-import | [belagg.py](../system_files/usr/share/forskaros/projekt/belagg.py), [zotero.py](../system_files/usr/share/forskaros/projekt/zotero.py) |
-| Forskningspaket | RO-Crate-metadata för en körning | [paket.py](../system_files/usr/share/forskaros/projekt/paket.py) |
-| Rapportläsare | Lokal visning av HTML-rapporter med WebKitGTK | [rapportvy.py](../system_files/usr/share/forskaros/projekt/rapportvy.py) |
-| Core | Frågor, faser och beslutslogg i Obsidian | [Tillägg](../vault/.obsidian/plugins/forskaros-core), [forskningsmapp](../vault) |
+| Skrivbordsapp | Projektvyer, granskning och verktygsval med GTK 4 och libadwaita | [app.py](../system_files/usr/share/degsellos/projekt/app.py), [oversikt.py](../system_files/usr/share/degsellos/projekt/oversikt.py) |
+| Projektmotor | Skapa projekt, köra analyser och upprepa sparade körningar | [projekt.py](../system_files/usr/share/degsellos/projekt/projekt.py), [upprepa.py](../system_files/usr/share/degsellos/projekt/upprepa.py) |
+| Belägg och källor | Kopplingar, granskningsbeslut, omprövning och Zotero-import | [belagg.py](../system_files/usr/share/degsellos/projekt/belagg.py), [zotero.py](../system_files/usr/share/degsellos/projekt/zotero.py) |
+| Forskningspaket | RO-Crate-metadata för en körning | [paket.py](../system_files/usr/share/degsellos/projekt/paket.py) |
+| Rapportläsare | Lokal visning av HTML-rapporter med WebKitGTK | [rapportvy.py](../system_files/usr/share/degsellos/projekt/rapportvy.py) |
+| Core | Frågor, faser och beslutslogg i Obsidian | [Tillägg](../vault/.obsidian/plugins/degsellos-core), [forskningsmapp](../vault) |
 | Labb | Containerbaserad analysmiljö med R och Python | [labb](../labb) |
 | Verktyg och utseende | Kataloger och generatorer för profiler, programmenyer och design | [katalog](../katalog), [scripts](../scripts) |
 | System och installation | Systemkommandon, tjänster, GNOME-inställningar och installationsmedier | [Containerfile](../Containerfile), [byggskript](../build_files/build.sh), [systemfiler](../system_files), [diskinställningar](../disk_config) |
 
 ## Projektformat
 
-Appen och `forskaros-projekt` använder samma projektlogik och filer. Projekten kräver ingen bakgrundstjänst eller central databas.
+Appen och `degsellos-projekt` använder samma projektlogik och filer. Projekten kräver ingen bakgrundstjänst eller central databas.
 
 | Fil eller mapp | Innehåll |
 |---|---|
@@ -55,9 +55,9 @@ Vid upprepning kontrolleras filerna mot de sparade kontrollsummorna. Analysen k�
 
 ## Verktyg och första inloggning
 
-`forskaros-grund.service` hämtar grundprofilens program från Flathub när nätåtkomst finns. Fler profiler installeras från appen eller med `forskaros-setup`. Obsidian installeras separat. Skrivbordsappen, Python och Pandoc ingår i systemavbildningen.
+`degsellos-grund.service` hämtar grundprofilens program från Flathub när nätåtkomst finns. Fler profiler installeras från appen eller med `degsellos-setup`. Obsidian installeras separat. Skrivbordsappen, Python och Pandoc ingår i systemavbildningen.
 
-`forskaros-init` skapar `~/ForskarOS` från vaultens mall vid första inloggningen. Vid senare inloggningar uppdateras medföljande verktygskort, handbokssidor och ett befintligt Core-tillägg. Användarens övriga anteckningar och inställningar bevaras.
+`degsellos-init` skapar `~/DegsellOS` från vaultens mall vid första inloggningen. Vid senare inloggningar uppdateras medföljande verktygskort, handbokssidor och ett befintligt Core-tillägg. Användarens övriga anteckningar och inställningar bevaras.
 
 ## Bygga och ändra
 

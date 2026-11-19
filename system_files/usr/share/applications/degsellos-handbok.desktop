@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Forskarhandboken
+Comment=Den öppna handboken om att forska med DegsellOS
+Exec=/usr/bin/degsellos-handbok
+Icon=degsellos
+Categories=Education;Science;

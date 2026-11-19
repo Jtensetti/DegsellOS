@@ -16,10 +16,10 @@ Spara de personer du möter, med kompetens och fält. Forskningsmötena i forskn
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Grund**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Grund**, eller kör:
 
 ```bash
-forskaros-setup --profil grund
+degsellos-setup --profil grund
 ```
 
 ## Läs mer

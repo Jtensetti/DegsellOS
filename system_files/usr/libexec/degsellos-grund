@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Installerar grundprofilen som systemprogram en gång, vid första start med nätverk.
+set -euo pipefail
+STAMP=/var/lib/degsellos/grund.klar
+PROFIL=/usr/share/degsellos/profiler/01-grund.profil
+WANT=$(sha256sum "$PROFIL" | cut -d' ' -f1)
+# Klar när just den här grundprofilen är installerad. Nya program i profilen
+# installeras vid nästa start; en installation från ForskarOS räknas som påbörjad.
+[[ -e "$STAMP" && "$(cat "$STAMP")" == "$WANT" ]] && exit 0
+flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+ids=$(grep -E '^\s*flatpak\s' "$PROFIL" | awk '{print $2}')
+# shellcheck disable=SC2086
+flatpak install --system -y --noninteractive flathub $ids
+mkdir -p "$(dirname "$STAMP")"
+echo "$WANT" > "$STAMP"

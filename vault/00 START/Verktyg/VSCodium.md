@@ -16,10 +16,10 @@ Kodredigerare (VS Code utan Microsofts telemetri).
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Programmering och reproducerbarhet**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Programmering och reproducerbarhet**, eller kör:
 
 ```bash
-forskaros-setup --profil programmering
+degsellos-setup --profil programmering
 ```
 
 ## Läs mer

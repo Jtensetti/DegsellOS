@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Paketerar en ForskarOS-disk som en färdig UTM-maskin (.utm.zip).
+"""Paketerar en DegsellOS-disk som en färdig UTM-maskin (.utm.zip).
 
 En .utm är en mapp med config.plist och disken i Data/. Paketeringen
 utgår från en befintlig ARM64-mall för UTM:s QEMU-backend och anpassar:
@@ -36,9 +36,9 @@ def adapt(config: dict, disk_name: str, memory: int, cpus: int) -> dict:
     if config.get("Information", {}).get("IconCustom") or config.get("QEMU", {}).get("TPMDevice"):
         raise SystemExit("Välj en mall med inbyggd ikon och utan TPM. Båda kan kräva extra filer.")
     info = config.setdefault("Information", {})
-    info["Name"] = "ForskarOS"
+    info["Name"] = "DegsellOS"
     info["UUID"] = str(uuid.uuid4()).upper()
-    info["Notes"] = ("ForskarOS – ett forskningsorienterat operativsystem. "
+    info["Notes"] = ("DegsellOS – ett forskningsorienterat operativsystem. "
                      "Inloggning: forskare / forskare (lösenordet måste bytas vid första inloggningen).")
 
     drives = config.get("Drive", [])
@@ -88,10 +88,10 @@ def main():
         pending = Path(tmp.name)
     try:
         with zipfile.ZipFile(pending, "w", allowZip64=True) as z:
-            z.writestr("ForskarOS.utm/config.plist", plistlib.dumps(config))
+            z.writestr("DegsellOS.utm/config.plist", plistlib.dumps(config))
             if license_file.is_file():
-                z.write(license_file, arcname="ForskarOS.utm/LICENSE-mall")
-            z.write(disk, arcname=f"ForskarOS.utm/Data/{disk.name}")
+                z.write(license_file, arcname="DegsellOS.utm/LICENSE-mall")
+            z.write(disk, arcname=f"DegsellOS.utm/Data/{disk.name}")
         os.replace(pending, out)
     finally:
         pending.unlink(missing_ok=True)

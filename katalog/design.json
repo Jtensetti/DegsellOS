@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "beskrivning": "ForskarOS designvärden. scripts/identitet.py skapar bakgrunder, logotyp, typsnittsinställningar, GNOME-inställningar, Obsidians utseende och rapportens färger ur den här filen. Se docs/DESIGN.md.",
+  "beskrivning": "DegsellOS designvärden. scripts/identitet.py skapar bakgrunder, logotyp, typsnittsinställningar, GNOME-inställningar, Obsidians utseende och rapportens färger ur den här filen. Se docs/DESIGN.md.",
   "accent": {
     "gnome": "teal",
     "gnome_hex": "#2190a4",

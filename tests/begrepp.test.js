@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 const Module = require('node:module');
 const orig = Module._load;
 Module._load = function (r, ...a) { return r === 'obsidian' ? { Plugin: class {}, ItemView: class {}, Notice: class {}, Modal: class {} } : orig.call(this, r, ...a); };
-const { engine: e } = require('../vault/.obsidian/plugins/forskaros-core/main.js');
+const { engine: e } = require('../vault/.obsidian/plugins/degsellos-core/main.js');
 Module._load = orig;
 
 const D = '2026-11-17';

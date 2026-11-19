@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=DegsellOS
+GenericName=Forskningsmiljö
+Comment=Forskningsprojekt, forskningsmappen och verktyg
+Keywords=forskning;projekt;rapport;granskning;verktyg;verktygslåda;
+Exec=/usr/bin/degsellos %u
+MimeType=x-scheme-handler/degsellos;x-scheme-handler/forskaros;
+Icon=degsellos
+Categories=Education;Science;
+Terminal=false
+StartupNotify=true

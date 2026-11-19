@@ -17,10 +17,10 @@ Markdown-redigerare för längre texter, med citat från Zotero.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Skriva och publicera**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Skriva och publicera**, eller kör:
 
 ```bash
-forskaros-setup --profil skriva
+degsellos-setup --profil skriva
 ```
 
 ## Läs mer

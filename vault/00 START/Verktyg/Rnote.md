@@ -16,10 +16,10 @@ Handskrivna anteckningar och skisser.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Idéer och modeller**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Idéer och modeller**, eller kör:
 
 ```bash
-forskaros-setup --profil ideer
+degsellos-setup --profil ideer
 ```
 
 ## Läs mer

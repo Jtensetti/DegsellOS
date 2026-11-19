@@ -16,10 +16,10 @@ Kvalitativ kodning av intervjuer och dokument.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Kvalitativ forskning**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Kvalitativ forskning**, eller kör:
 
 ```bash
-forskaros-setup --profil kvalitativ
+degsellos-setup --profil kvalitativ
 ```
 
 ## Läs mer

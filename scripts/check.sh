@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-node --check vault/.obsidian/plugins/forskaros-core/main.js
+node --check vault/.obsidian/plugins/degsellos-core/main.js
 node tests/engine.test.js
 node tests/plugin.test.js
 node tests/begrepp.test.js
@@ -31,18 +31,20 @@ python3 - <<'PY'
 import json
 from pathlib import Path
 root = Path('vault')
-manifest = json.loads((root / '.obsidian/plugins/forskaros-core/manifest.json').read_text())
-assert manifest['id'] == 'forskaros-core'
+manifest = json.loads((root / '.obsidian/plugins/degsellos-core/manifest.json').read_text())
+assert manifest['id'] == 'degsellos-core'
 assert len(list(root.rglob('*.md'))) >= 4
 assert Path('Containerfile').is_file()
-assert any(Path('system_files/usr/share/forskaros/profiler').glob('*.profil'))
+assert any(Path('system_files/usr/share/degsellos/profiler').glob('*.profil'))
 import re
 workflows = ''.join(f.read_text() for f in Path('.github/workflows').glob('*.yml'))
 assert 'GITHUB_REPOSITORY,,' not in workflows, 'avbildningens namn får inte bero på repots namn'
-names = set(re.findall(r'IMAGE_NAME: (ghcr\.io/\S+)', workflows))
-assert names == {'ghcr.io/jtensetti/researchos', 'ghcr.io/jtensetti/researchos-labb'}, names
-assert 'ghcr.io/jtensetti/researchos-labb:latest' in Path('system_files/usr/share/forskaros/projekt/projekt.py').read_text()
-assert 'ghcr.io/jtensetti/researchos-labb:latest' in Path('system_files/usr/bin/forskaros-labb').read_text()
-assert 'bootc switch ghcr.io/jtensetti/researchos:' in Path('docs/INSTALLATION.md').read_text()
+names = set(re.findall(r'(?<!LEGACY_)IMAGE_NAME: (ghcr\.io/\S+)', workflows))
+assert names == {'ghcr.io/jtensetti/degsellos', 'ghcr.io/jtensetti/degsellos-labb'}, names
+legacy = set(re.findall(r'LEGACY_IMAGE_NAME: (ghcr\.io/\S+)', workflows))
+assert legacy == {'ghcr.io/jtensetti/researchos', 'ghcr.io/jtensetti/researchos-labb'}, 'installerade datorer måste få uppdateringar'
+assert 'ghcr.io/jtensetti/degsellos-labb:latest' in Path('system_files/usr/share/degsellos/projekt/projekt.py').read_text()
+assert 'ghcr.io/jtensetti/degsellos-labb:latest' in Path('system_files/usr/bin/degsellos-labb').read_text()
+assert 'bootc switch ghcr.io/jtensetti/degsellos:' in Path('docs/INSTALLATION.md').read_text()
 print('OK: manifest, vault, Containerfile, verktygsprofiler, avbildningarnas namn')
 PY

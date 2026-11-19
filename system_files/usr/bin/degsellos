@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# DegsellOS: forskningsprojekt, forskningsmappen och verktyg i ett fönster.
+#   degsellos                    startvyn
+#   degsellos --projekt MAPP     öppna ett projekt
+#   degsellos --verktyg          välj forskningsverktyg
+# Utan grafisk session (till exempel över SSH) visas välkomstmenyn i terminalen.
+set -eu
+if [[ -z "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+  exec degsellos-valkomst --terminal
+fi
+exec /usr/bin/python3 -I "$(dirname "$0")/../share/degsellos/projekt/app.py" "$@"

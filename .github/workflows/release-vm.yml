@@ -41,11 +41,9 @@ permissions:
   contents: read
   packages: read
 
-# Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
-# datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
-# Byt bara namn tillsammans med en flyttväg för installerade datorer.
+# Avbildningens namn i registret.
 env:
-  IMAGE_NAME: ghcr.io/jtensetti/researchos
+  IMAGE_NAME: ghcr.io/jtensetti/degsellos
 
 jobs:
   plan:
@@ -69,7 +67,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       VERSION: ${{ inputs.version }}
-      ITEM: forskaros-${{ inputs.version }}-${{ matrix.arch }}-${{ matrix.kind }}
+      ITEM: degsellos-${{ inputs.version }}-${{ matrix.arch }}-${{ matrix.kind }}
     steps:
       - uses: actions/checkout@v4
 
@@ -85,7 +83,7 @@ jobs:
         run: |
           endpoint="https://archive.org/metadata/$ITEM"
           current=$(curl -fsS "$endpoint" | jq -er '.metadata.description | strings')
-          notice="OBS: ForskarOS-2027.1-beta4-amd64.iso installerar automatiskt och kan radera inkopplade diskar. Använd bara den äldre filen i en tom virtuell maskin. Välj ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso för installation med diskval och svenskt språk. Den första interaktiva revisionen kan stanna vid språkvalet."
+          notice="OBS: DegsellOS-2027.1-beta4-amd64.iso installerar automatiskt och kan radera inkopplade diskar. Använd bara den äldre filen i en tom virtuell maskin. Välj DegsellOS-2027.1-beta4-amd64-interaktiv-r2.iso för installation med diskval och svenskt språk. Den första interaktiva revisionen kan stanna vid språkvalet."
           if [[ "$current" != *"$notice"* ]]; then
             base=${current#*"med uttryckligt diskval. "}
             patch=$(jq -nc --arg old "$current" --arg new "$notice $base" '[{op:"test",path:"/description",value:$old},{op:"replace",path:"/description",value:$new}]')
@@ -117,7 +115,7 @@ jobs:
           fi
           echo "$TOKEN" | sudo podman login ghcr.io -u "${{ github.actor }}" --password-stdin
           sudo podman pull --arch ${{ matrix.arch }} "$IMAGE"
-          [[ "$(sudo podman run --rm --entrypoint cat "$IMAGE" /usr/share/forskaros/RELEASE)" == "$VERSION" ]]
+          [[ "$(sudo podman run --rm --entrypoint cat "$IMAGE" /usr/share/degsellos/RELEASE)" == "$VERSION" ]]
           if [[ -n "$DIGEST" ]]; then
             # Bygg med det hämtade innehållet. Installerade system följer latest.
             sudo podman tag "$IMAGE" "$IMAGE_NAME:latest"
@@ -160,7 +158,7 @@ jobs:
       - name: Förbered filer
         run: |
           mkdir -p dist
-          BASE="ForskarOS-$VERSION-${{ matrix.arch }}"
+          BASE="DegsellOS-$VERSION-${{ matrix.arch }}"
           if [[ "${{ matrix.type }}" == qcow2 ]]; then
             # Komprimerad qcow2: mindre nedladdning, kan importeras direkt i UTM.
             qemu-img convert -p -c -O qcow2 output/qcow2/disk.qcow2 "dist/$BASE.qcow2"
@@ -195,7 +193,7 @@ jobs:
           WHAT: ${{ matrix.what }}
         run: |
           [[ -n "$IA_ACCESS_KEY" && -n "$IA_SECRET_KEY" ]] || { echo "IA-hemligheterna saknas"; exit 1; }
-          DESC="ForskarOS $VERSION för forskningsarbete, byggt på Bluefin LTS. Källkod: https://github.com/Jtensetti/researchOS/tree/$GITHUB_SHA"
+          DESC="DegsellOS $VERSION för forskningsarbete, byggt på Bluefin LTS. Källkod: https://github.com/Jtensetti/DegsellOS/tree/$GITHUB_SHA"
           if [[ "${{ matrix.kind }}" == vm ]]; then DESC="$DESC Logga in med forskare / forskare och byt lösenord vid första inloggningen."; fi
           if [[ "$VERSION" == *-* ]]; then DESC="Förhandsversion, inte testad på hårdvara. $DESC"; fi
           uri() { printf 'uri(%s)' "$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$1")"; }
@@ -211,12 +209,12 @@ jobs:
           # Kontrollsumman först: den skapar objektet med metadata.
           put "dist/$FILE.sha256" \
             -H "x-archive-meta-mediatype:software" \
-            -H "x-archive-meta-title:$(uri "ForskarOS $VERSION – $WHAT")" \
+            -H "x-archive-meta-title:$(uri "DegsellOS $VERSION – $WHAT")" \
             -H "x-archive-meta-description:$(uri "$DESC")" \
-            -H "x-archive-meta-creator:ForskarOS" \
+            -H "x-archive-meta-creator:DegsellOS" \
             -H "x-archive-meta01-subject:linux" -H "x-archive-meta02-subject:research" -H "x-archive-meta03-subject:bootc" \
             -H "x-archive-meta-licenseurl:https://opensource.org/licenses/MIT" \
-            -H "x-archive-meta-source:https://github.com/Jtensetti/researchOS"
+            -H "x-archive-meta-source:https://github.com/Jtensetti/DegsellOS"
           put "dist/$FILE"
           if [[ -n "${UTM_FILE:-}" ]]; then
             put "dist/$UTM_FILE.sha256"

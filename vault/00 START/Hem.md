@@ -1,11 +1,11 @@
 ---
 typ: hem
 ---
-# ForskarOS
+# DegsellOS
 
-I sidopanelen för ForskarOS Core (hjärnikonen) hittar du dina forskningsfrågor, vilken fas varje fråga befinner sig i och vad som behöver följas upp.
+I sidopanelen för DegsellOS Core (hjärnikonen) hittar du dina forskningsfrågor, vilken fas varje fråga befinner sig i och vad som behöver följas upp.
 
-Skrivbordsappens projekt med data, analys och manus ligger normalt i `~/Forskningsprojekt`. Den här forskningsmappen, `~/ForskarOS`, innehåller Core-anteckningarna. Ett projekt som är kopplat till en forskningsfråga skriver sitt läge till `04 EXPERIMENT`.
+Skrivbordsappens projekt med data, analys och manus ligger normalt i `~/Forskningsprojekt`. Den här forskningsmappen, `~/DegsellOS`, innehåller Core-anteckningarna. Ett projekt som är kopplat till en forskningsfråga skriver sitt läge till `04 EXPERIMENT`.
 
 ## Kom igång
 
@@ -30,6 +30,6 @@ Skrivbordsappens projekt med data, analys och manus ligger normalt i `~/Forsknin
 
 ## Säkerhetskopior
 
-Säkerhetskopiera både `~/ForskarOS` och `~/Forskningsprojekt`, exempelvis med Déjà Dup. Git kan användas för versionshantering av anteckningar och kod.
+Säkerhetskopiera både `~/DegsellOS` och `~/Forskningsprojekt`, exempelvis med Déjà Dup. Git kan användas för versionshantering av anteckningar och kod.
 
 Lägg inte personuppgifter eller sekretessbelagt material i molntjänster.

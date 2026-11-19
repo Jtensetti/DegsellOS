@@ -5,7 +5,7 @@ typ: handbok
 
 **Kvalitativ forskning** undersöker hur människor förstår och erfar något: intervjuer, observationer, dokument.
 
-**Verktyg i ForskarOS:**
+**Verktyg i DegsellOS:**
 - **Speech Note**: transkriberar intervjuer *på din dator*. Ljudet lämnar aldrig maskinen, vilket ofta är ett krav när forskningen etikprövas.
 - **Taguette**: koda intervjuer och dokument, och se mönster över materialet.
 

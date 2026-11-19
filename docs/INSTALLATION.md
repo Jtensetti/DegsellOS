@@ -1,6 +1,6 @@
-# Installera ForskarOS
+# Installera DegsellOS
 
-ForskarOS finns som installations-ISO för amd64 och färdiga VM-diskar för amd64 och arm64. [Hämta senaste förhandsversionen](../README.md#ladda-ner). På Apple Silicon används [UTM-guiden](MAC.md).
+DegsellOS finns som installations-ISO för amd64 och färdiga VM-diskar för amd64 och arm64. [Hämta senaste förhandsversionen](../README.md#ladda-ner). På Apple Silicon används [UTM-guiden](MAC.md).
 
 ## Kontrollera nedladdningen
 
@@ -9,13 +9,13 @@ Hämta avbildningen och dess `.sha256`-fil till samma mapp. De publicerade summo
 På Linux, för installations-ISO:n:
 
 ```bash
-sha256sum -c ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256
+sha256sum -c DegsellOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256
 ```
 
 På macOS, för arm64-disken:
 
 ```bash
-shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.qcow2.sha256
+shasum -a 256 -c DegsellOS-2027.1-beta4-arm64.qcow2.sha256
 ```
 
 För amd64-disken används motsvarande `.qcow2.sha256`-fil. Resultatet ska vara `OK`. En avvikelse innebär att nedladdningen inte matchar den publicerade kontrollsumman.
@@ -38,10 +38,10 @@ Installationen ändrar partitionerna på den valda disken. Säkerhetskopiera des
 
 1. Skriv ISO-filen som en diskavbildning till ett USB-minne med ett program för startbara medier. I en virtuell maskin ansluter du filen som en virtuell CD/DVD.
 2. Starta datorn från mediet i UEFI-läge. Beta4:s startmeny och installerare använder basdistributionens namn **Bluefin LTS 10**.
-3. Välj **Svenska (Sverige)**. Öppna **Installationsmål** och välj endast den disk som ForskarOS ska installeras på. Flera diskar kan vara förvalda; kontrollera namn, storlek och antalet valda diskar innan du väljer **Klar**.
+3. Välj **Svenska (Sverige)**. Öppna **Installationsmål** och välj endast den disk som DegsellOS ska installeras på. Flera diskar kan vara förvalda; kontrollera namn, storlek och antalet valda diskar innan du väljer **Klar**.
 4. Kontrollera tangentbord och tidszon. Aktivera nätverket under **Nätverk & värdnamn** om grundverktygen ska hämtas vid första inloggningen. Ett lokalt konto kan skapas i installeraren eller i skrivbordets välkomstguide.
 5. Välj **Börja Installation**. När installationen är färdig tar du bort USB-minnet eller kopplar från ISO-filen och startar från systemdisken.
-6. Slutför GNOME:s välkomstguide. Öppna **ForskarOS** för att skapa ditt första projekt.
+6. Slutför GNOME:s välkomstguide. Öppna **DegsellOS** för att skapa ditt första projekt.
 
 ![Installationsmål med endast systemdisken vald och en separat datadisk avmarkerad.](bilder/installation-diskval.png)
 
@@ -57,21 +57,23 @@ Skrivbordsappen, Python och Pandoc ingår i systemet. Exempelprojekten kan grans
 
 Grundverktygen hämtas automatiskt från Flathub när nätåtkomst finns. Startsidan visar installationens läge. Välj **Välj forskningsverktyg** för ytterligare profiler. Obsidian är ett separat tillval.
 
-[Skapa ett forskningsprojekt](PROJEKT.md) · [ForskarOS Core](CORE.md)
+[Skapa ett forskningsprojekt](PROJEKT.md) · [DegsellOS Core](CORE.md)
 
 ## Uppdatera en befintlig installation
 
-Byt till den publicerade beta4-utgåvan:
+Följ utvecklingsavbildningen under namnet DegsellOS:
 
 ```bash
-sudo bootc switch ghcr.io/jtensetti/researchos:2027.1-beta4
+sudo bootc switch ghcr.io/jtensetti/degsellos:latest
 sudo systemctl reboot
 ```
+
+DegsellOS hette tidigare ForskarOS. Datorer som installerades under det namnet följer `ghcr.io/jtensetti/researchos`, som får samma avbildning, så de uppdateras utan att du behöver göra något. Vid första inloggningen efter uppdateringen flyttas forskningsmappen från `~/ForskarOS` till `~/DegsellOS`, tillsammans med appens inställningar och Core-tillägget. Den släppta beta4-utgåvan finns kvar som `ghcr.io/jtensetti/researchos:2027.1-beta4`.
 
 Visa installerad version och aktuell systemavbildning:
 
 ```bash
-cat /usr/share/forskaros/RELEASE
+cat /usr/share/degsellos/RELEASE
 bootc status
 ```
 

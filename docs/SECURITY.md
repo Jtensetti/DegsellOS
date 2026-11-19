@@ -2,7 +2,7 @@
 
 ## Skyddat forskningsprojekt
 
-Skyddsnivån i `projekt.json` styr de processer som ForskarOS startar för analys och rapportbygge. Ett skyddat projekt körs i bubblewrap, eller i det versionsbundna labbet med Podman och avstängt nätverk. Om den begärda isoleringen inte kan upprättas avbryts körningen.
+Skyddsnivån i `projekt.json` styr de processer som DegsellOS startar för analys och rapportbygge. Ett skyddat projekt körs i bubblewrap, eller i det versionsbundna labbet med Podman och avstängt nätverk. Om den begärda isoleringen inte kan upprättas avbryts körningen.
 
 I bubblewrap-sandlådan gäller följande:
 
@@ -27,7 +27,7 @@ En körning innehåller en kopia av underlaget, även ursprungliga data och cita
 
 Grundprofilen hämtas från Flathub och innehåller bland annat Zotero och LibreOffice. Obsidian och genvägar till molntjänster kräver ett separat val. Andra program och tillägg har egna villkor och behörigheter.
 
-ForskarOS Core gör inga nätverksanrop. Vid en AI-konsultation väljer forskaren vilken text som kopieras till en annan tjänst. Zotero-importen i skrivbordsappen kontaktar Zoteros lokala API på samma dator.
+DegsellOS Core gör inga nätverksanrop. Vid en AI-konsultation väljer forskaren vilken text som kopieras till en annan tjänst. Zotero-importen i skrivbordsappen kontaktar Zoteros lokala API på samma dator.
 
 ## Systemavbildningar
 

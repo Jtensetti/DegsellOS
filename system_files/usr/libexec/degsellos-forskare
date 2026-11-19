@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Vid första start: kräv att det förinställda kontot "forskare" byter lösenord
+# vid första inloggningen. Körs en gång. Finns inget sådant konto händer inget.
+set -euo pipefail
+STAMP=/var/lib/degsellos/forskare-losenord.klar
+mkdir -p "$(dirname "$STAMP")"
+if id forskare >/dev/null 2>&1; then
+  chage -d 0 forskare
+  echo "degsellos: kontot forskare måste byta lösenord vid första inloggningen"
+fi
+date -Iseconds > "$STAMP"

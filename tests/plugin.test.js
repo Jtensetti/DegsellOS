@@ -83,19 +83,19 @@ Module._load = function (request, ...rest) {
   if (request === 'obsidian') return { Plugin, ItemView, Notice, Modal };
   return origLoad.call(this, request, ...rest);
 };
-const ForskarOSPlugin = require('../vault/.obsidian/plugins/forskaros-core/main.js');
+const DegsellOSPlugin = require('../vault/.obsidian/plugins/degsellos-core/main.js');
 Module._load = origLoad;
-const { engine } = ForskarOSPlugin;
+const { engine } = DegsellOSPlugin;
 
 (async () => {
-  const p = new ForskarOSPlugin();
+  const p = new DegsellOSPlugin();
   await p.onload();
   const ids = commands.map(c => c.id);
   for (const id of ['open-dashboard', 'close-question', 'new-question', 'park-idea', 'consult-ai', 'advance-phase', 'mark-belagt', 'mark-tolkning', 'mark-spekulation']) {
     assert(ids.includes(id), `kommandot ${id} saknas`);
   }
   assert.equal(new Set(ids).size, ids.length, 'kommando-id ska vara unika');
-  assert.equal(p.registeredView.type, 'forskaros-dashboard');
+  assert.equal(p.registeredView.type, 'degsellos-dashboard');
 
   // En forskningsfråga skapas, nya anteckningar kopplas till den.
   const qFile = await app.vault.create('01 RIKTNING/När stärker AI tänkandet.md',
@@ -178,7 +178,7 @@ const { engine } = ForskarOSPlugin;
   // Från hypotesen till ett nytt projekt i appen.
   activeFile = hyp;
   const url = await p.projectFromActive();
-  assert(url.startsWith('forskaros://nytt-projekt?') && url.includes('hypotes=02+HYPOTESER'), url);
+  assert(url.startsWith('degsellos://nytt-projekt?') && url.includes('hypotes=02+HYPOTESER'), url);
   assert(url.includes(encodeURIComponent('01 RIKTNING/När stärker AI tänkandet').replace(/%20/g, '+')), url);
   // AI-stödet är avstängt tills forskaren väljer en nivå.
   assert.equal(p.settings.ai, 'av');
@@ -200,7 +200,7 @@ const { engine } = ForskarOSPlugin;
   assert(Array.isArray(findings));
 
   // Tillägget ska vara fristående: inga nätverksanrop.
-  const source = fs.readFileSync(require.resolve('../vault/.obsidian/plugins/forskaros-core/main.js'), 'utf8');
+  const source = fs.readFileSync(require.resolve('../vault/.obsidian/plugins/degsellos-core/main.js'), 'utf8');
   assert(!/\bfetch\s*\(/.test(source));
   assert(!/XMLHttpRequest|requestUrl|https?:\/\//.test(source));
   process.stdout.write('OK: tillägget: kommandon, koppling till fråga, fasbyten, vila, idéer, AI-logg, inget nätverk\n');

@@ -25,7 +25,7 @@ while read -r kind id _; do
       echo "ok pypi $id" ;;
     webb) echo "ok webb ${id%%|*}" ;;
   esac
-done < <(cat system_files/usr/share/forskaros/profiler/*.profil | grep -vE '^\s*(#|$)')
+done < <(cat system_files/usr/share/degsellos/profiler/*.profil | grep -vE '^\s*(#|$)')
 
 [[ $errors -eq 0 ]] || { echo "$errors fel" >&2; exit 1; }
 echo "OK: alla verktyg finns för amd64 och arm64"

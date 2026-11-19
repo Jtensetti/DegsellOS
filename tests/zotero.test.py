@@ -5,7 +5,7 @@ import tempfile
 
 sys.dont_write_bytecode = True
 root = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
+sys.path.insert(0, str(root / "system_files/usr/share/degsellos/projekt"))
 from belagg import add_source, bib_entries, inspect
 from projekt import create, run
 from zotero import annotation_link, import_reference, read_annotation

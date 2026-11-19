@@ -1,0 +1,43 @@
+# Genererad från katalog/verktyg.json.
+[org/gnome/desktop/app-folders]
+folder-children=['degsellos-0', 'degsellos-1', 'degsellos-2', 'degsellos-3', 'degsellos-4', 'degsellos-5', 'degsellos-6', 'degsellos-7']
+
+[org/gnome/desktop/app-folders/folders/degsellos-0]
+name='DegsellOS'
+translate=false
+apps=['io.github.jtensetti.DegsellOS.desktop', 'degsellos-handbok.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-1]
+name='1 · Utforska'
+translate=false
+apps=['org.mozilla.firefox.desktop', 'org.zotero.Zotero.desktop', 'com.github.xournalpp.xournalpp.desktop', 'md.obsidian.Obsidian.desktop', 'degsellos-webb-perplexity.desktop', 'degsellos-webb-elicit.desktop', 'degsellos-webb-consensus.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-2]
+name='2 · Kombinera'
+translate=false
+apps=['com.jgraph.drawio.desktop.desktop', 'org.freeplane.App.desktop', 'com.github.flxzt.rnote.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-3]
+name='3 · Välj'
+translate=false
+apps=['degsellos-fokus.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-4]
+name='4 · Pröva'
+translate=false
+apps=['com.jeffser.Alpaca.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calendar.desktop', 'org.jitsi.jitsi-meet.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-5]
+name='5 · Utveckla'
+translate=false
+apps=['degsellos-labb.desktop', 'org.jaspstats.JASP.desktop', 'org.jamovi.jamovi.desktop', 'org.kde.labplot.desktop', 'degsellos-jupyterlab.desktop', 'com.vscodium.codium.desktop', 'net.mkiol.SpeechNote.desktop', 'degsellos-taguette.desktop', 'im.riot.Riot.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-6]
+name='6 · Ompröva'
+translate=false
+apps=['org.gnome.DejaDup.desktop']
+
+[org/gnome/desktop/app-folders/folders/degsellos-7]
+name='7 · Dela'
+translate=false
+apps=['org.libreoffice.LibreOffice.writer.desktop', 'org.libreoffice.LibreOffice.calc.desktop', 'org.libreoffice.LibreOffice.impress.desktop', 'com.zettlr.Zettlr.desktop', 'org.onlyoffice.desktopeditors.desktop', 'org.texstudio.TeXstudio.desktop', 'org.gnome.Evolution.desktop']

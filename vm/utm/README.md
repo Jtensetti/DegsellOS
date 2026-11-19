@@ -4,11 +4,11 @@
 
 Mallen är anpassad från [Homebridges UTM-maskin](https://github.com/homebridge/homebridge-vm-image/blob/49aed1492c2929326ce54e3a980c3ca26dedfca4/assets/template-utm-config.plist). Tredjepartslicensen i `config.LICENSE` följer med i paketet.
 
-Kör från repots rot med ForskarOS-disken för den utgåva du vill paketera.
+Kör från repots rot med DegsellOS-disken för den utgåva du vill paketera.
 
 ```bash
 python3 scripts/paketera_utm.py vm/utm/config.plist \
-  ForskarOS-2027.1-beta4-arm64.qcow2 ForskarOS-2027.1-beta4-arm64.utm.zip --minne 4096
+  DegsellOS-2027.1-beta4-arm64.qcow2 DegsellOS-2027.1-beta4-arm64.utm.zip --minne 4096
 ```
 
-Packa upp arkivet på Macen och dubbelklicka på `ForskarOS.utm`. Välj eventuell delad mapp i maskinens inställningar. [Mac-guide](../../docs/MAC.md)
+Packa upp arkivet på Macen och dubbelklicka på `DegsellOS.utm`. Välj eventuell delad mapp i maskinens inställningar. [Mac-guide](../../docs/MAC.md)

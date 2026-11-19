@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ritar ForskarOS identitet och utseende ur katalog/design.json.
+"""Ritar DegsellOS identitet och utseende ur katalog/design.json.
 
   python3 scripts/identitet.py              skriv om filerna
   python3 scripts/identitet.py --kontroll   kontrollera att filerna är i synk
@@ -19,10 +19,10 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 DESIGN = json.loads((ROOT / "katalog/design.json").read_text(encoding="utf-8"))
-IDENTITET = "system_files/usr/share/forskaros/identitet"
-INSTALLERAD = "/usr/share/forskaros/identitet"
-TYPSNITTSFIL = "52-forskaros-typsnitt.conf"
-RAPPORT = "system_files/usr/share/forskaros/projekt/mallar/gemensamt/rapport.css"
+IDENTITET = "system_files/usr/share/degsellos/identitet"
+INSTALLERAD = "/usr/share/degsellos/identitet"
+TYPSNITTSFIL = "52-degsellos-typsnitt.conf"
+RAPPORT = "system_files/usr/share/degsellos/projekt/mallar/gemensamt/rapport.css"
 START, SLUT = "/* designvärden: början */", "/* designvärden: slut */"
 GENERERAD = "Genererad av scripts/identitet.py från katalog/design.json. Ändra inte för hand."
 
@@ -55,7 +55,7 @@ def ring(cx, cy, r, width, gap_deg=7, opacity=1.0):
 
 def logo():
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <title>ForskarOS</title>
+  <title>DegsellOS</title>
   {ring(128, 128, 92, 22)}
   <circle cx="128" cy="128" r="19.8" fill="{YTOR['skrivbord']['ljus']}" stroke="{YTOR['text']['ljus']}" stroke-width="4.8"/>
 </svg>
@@ -68,7 +68,7 @@ def wallpaper(mode):
     cx, cy, r = w * 0.64, h * 0.56, h * 0.36
     opacity = 0.62 if mode == "mörk" else 0.55
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
-  <title>ForskarOS</title>
+  <title>DegsellOS</title>
   <rect width="{w}" height="{h}" fill="{YTOR['skrivbord'][mode]}"/>
   {ring(cx, cy, round(r), 30, gap_deg=6, opacity=opacity)}
   <circle cx="{cx:.0f}" cy="{cy:.0f}" r="24" fill="{YTOR['text'][mode]}" opacity="0.6"/>
@@ -86,7 +86,7 @@ def fontconfig():
         f"<!-- {GENERERAD}",
         "     Nummer 52: efter användarens egna inställningar (50), före systemets standardval (56 och uppåt). -->",
         "<fontconfig>",
-        "  <description>ForskarOS: typsnitt för gränssnitt, läsning och kod</description>",
+        "  <description>DegsellOS: typsnitt för gränssnitt, läsning och kod</description>",
         alias("sans-serif", "gränssnitt"),
         alias("system-ui", "gränssnitt"),
         alias("serif", "läsning"),
@@ -108,13 +108,13 @@ document-font-name='{font('läsning')}'
 monospace-font-name='{font('kod')}'
 
 [org/gnome/desktop/background]
-picture-uri='file://{INSTALLERAD}/forskaros-bakgrund-ljus.svg'
-picture-uri-dark='file://{INSTALLERAD}/forskaros-bakgrund-mork.svg'
+picture-uri='file://{INSTALLERAD}/degsellos-bakgrund-ljus.svg'
+picture-uri-dark='file://{INSTALLERAD}/degsellos-bakgrund-mork.svg'
 picture-options='zoom'
 primary-color='{YTOR['skrivbord']['ljus']}'
 
 [org/gnome/desktop/screensaver]
-picture-uri='file://{INSTALLERAD}/forskaros-bakgrund-mork.svg'
+picture-uri='file://{INSTALLERAD}/degsellos-bakgrund-mork.svg'
 primary-color='{YTOR['skrivbord']['mörk']}'
 """
 
@@ -173,11 +173,11 @@ def with_report_tokens(css):
 
 def outputs():
     files = {
-        f"{IDENTITET}/forskaros-logotyp.svg": logo(),
-        f"{IDENTITET}/forskaros-bakgrund-ljus.svg": wallpaper("ljus"),
-        f"{IDENTITET}/forskaros-bakgrund-mork.svg": wallpaper("mörk"),
+        f"{IDENTITET}/degsellos-logotyp.svg": logo(),
+        f"{IDENTITET}/degsellos-bakgrund-ljus.svg": wallpaper("ljus"),
+        f"{IDENTITET}/degsellos-bakgrund-mork.svg": wallpaper("mörk"),
         f"{IDENTITET}/{TYPSNITTSFIL}": fontconfig(),
-        "system_files/etc/dconf/db/local.d/03-forskaros-utseende": dconf(),
+        "system_files/etc/dconf/db/local.d/03-degsellos-utseende": dconf(),
         "vault/.obsidian/appearance.json": obsidian(),
     }
     files[RAPPORT] = with_report_tokens((ROOT / RAPPORT).read_text(encoding="utf-8"))

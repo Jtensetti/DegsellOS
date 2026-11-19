@@ -1,6 +1,6 @@
 # Arbeta i ett forskningsprojekt
 
-Öppna **ForskarOS → Nytt forskningsprojekt**. Appen skapar en mapp i `~/Forskningsprojekt` med exempeldata, ett manus och en analys. Välj exempel efter materialet du vill arbeta med.
+Öppna **DegsellOS → Nytt forskningsprojekt**. Appen skapar en mapp i `~/Forskningsprojekt` med exempeldata, ett manus och en analys. Välj exempel efter materialet du vill arbeta med.
 
 | Projektmall | Underlag |
 |---|---|
@@ -23,7 +23,7 @@ Urval och filkopplingar finns i `underlag/belagg.json`. Ett tabellurval omfattar
 
 ## Pröva en rättelse
 
-Granska påståendena i ett kvantitativt exempelprojekt och välj **Bygg rapport**. Öppna därefter CSV-filen i Calc och ändra en etta till en nolla i gruppen *Saklig respons*. När du återgår till ForskarOS får påståendet om den gruppen status **Ompröva**. Påståendet om den neutrala gruppen behåller sin granskning. För intervjumaterial kan du på samma sätt granska både ett citat som stöder tolkningen och ett avvikande utdrag.
+Granska påståendena i ett kvantitativt exempelprojekt och välj **Bygg rapport**. Öppna därefter CSV-filen i Calc och ändra en etta till en nolla i gruppen *Saklig respons*. När du återgår till DegsellOS får påståendet om den gruppen status **Ompröva**. Påståendet om den neutrala gruppen behåller sin granskning. För intervjumaterial kan du på samma sätt granska både ett citat som stöder tolkningen och ett avvikande utdrag.
 
 I utvecklingsversionen visas det tidigare och det aktuella underlaget under rubrikerna **Vid förra granskningen** och **Nu** när jämförelsetext har sparats. Välj **Ändra meningen i manus** eller **Bekräfta granskning**. Vill du läsa den tidigare tolkningen öppnar du **Rapport** på den äldre körningens rad.
 
@@ -33,19 +33,19 @@ Granskningsbeslut sparas i `underlag/granskningar.json`. Den separata filen `gra
 
 ## Koppla ett påstående till en källpassage
 
-I beta4 kan du importera en BibTeX-export från Zotero under **Underlag**. Välj sedan **Koppla underlag → Källpassage** och ange citat och sida. Om du lägger källtexten i `underlag/kallor/` kan ForskarOS även kontrollera att citatet finns i texten.
+I beta4 kan du importera en BibTeX-export från Zotero under **Underlag**. Välj sedan **Koppla underlag → Källpassage** och ange citat och sida. Om du lägger källtexten i `underlag/kallor/` kan DegsellOS även kontrollera att citatet finns i texten.
 
 I utvecklingsversionen går det att hämta en PDF-markering direkt från Zotero på samma dator.
 
 1. Öppna Zotero och tillåt lokala program under **Inställningar → Avancerat**. Kopiera en markering i PDF-läsaren. Aktivera Zotero-länkar för Markdown under **Export** om den kopierade markeringen saknar länk.
-2. Välj **Koppla underlag → Hämta markering från Zotero** i ForskarOS och klistra in markeringen.
+2. Välj **Koppla underlag → Hämta markering från Zotero** i DegsellOS och klistra in markeringen.
 3. Kontrollera titel, citat och sida. Välj **Lägg till källa och använd citat**. Referensen sparas i `kallor.bib`.
 
 En ändrad titel, författare eller DOI kräver en ny granskning av källan. En ny filsökväg från Zotero påverkar inte granskningen. [Zoteros lokala API](https://www.zotero.org/support/dev/web_api/v3/local_api)
 
 ## Bygg och upprepa rapporten
 
-**Bygg rapport** sparar en kopia av arbetsunderlaget i `korningar/` och kör analysen på kopian. Rapport, figur och resultattabell ligger i körningens `resultat/`. Rapporten går att läsa direkt i ForskarOS. Om du delar HTML-filen separat, lägg `resultat.csv` bredvid den så att länken till tabellen fungerar.
+**Bygg rapport** sparar en kopia av arbetsunderlaget i `korningar/` och kör analysen på kopian. Rapport, figur och resultattabell ligger i körningens `resultat/`. Rapporten går att läsa direkt i DegsellOS. Om du delar HTML-filen separat, lägg `resultat.csv` bredvid den så att länken till tabellen fungerar.
 
 **Upprepa** kör analysen på nytt och jämför resultaten med de sparade SHA-256-summorna. På en annan dator kan du öppna hela körningsmappen från projektmenyn eller köra `python3 upprepa.py` i mappen. För lokala körningar behövs Python 3 och Pandoc 3. Versionerna från originalkörningen finns i `korning.json`. Andra programversioner eller okontrollerad slump kan ge andra resultat; kontrollen jämför filerna byte för byte.
 
@@ -60,7 +60,7 @@ För analyser med versionslåsta beroenden, välj **Kör i versionslåst labb** 
 
 ## Skyddat material
 
-Välj **Skyddat material** när du skapar projektet. ForskarOS kör då analysen och rapportbygget med avstängt nätverk och dold hemkatalog. Om sandlådan inte går att starta avbryts körningen. Skyddet för analysen omfattar inte separata skrivbordsprogram eller material som du väljer att dela. [Säkerhet och integritet](SECURITY.md)
+Välj **Skyddat material** när du skapar projektet. DegsellOS kör då analysen och rapportbygget med avstängt nätverk och dold hemkatalog. Om sandlådan inte går att starta avbryts körningen. Skyddet för analysen omfattar inte separata skrivbordsprogram eller material som du väljer att dela. [Säkerhet och integritet](SECURITY.md)
 
 ## Forskningspaketet
 
@@ -72,7 +72,7 @@ Du kan ange materialets licens i `projekt.json` med fältet `licens`. Citat och 
 
 Ett projekt prövar oftast en hypotes i en forskningsfråga i Obsidian. Välj frågan, hypotesen och eventuella medarbetare när projektet skapas, eller under **Forskningsfrågan** i projektet. Kopplingen sparas i `projekt.json`.
 
-Appen skriver då projektets läge till `04 EXPERIMENT/Projekt NAMN.md` i forskningsmappen: senaste körning, täckningsgrad, länk till rapporten och varje påstående med sin status. Dina egna avsnitt i anteckningen, till exempel *Vad betyder resultatet*, skrivs aldrig över. ForskarOS Core läser anteckningen:
+Appen skriver då projektets läge till `04 EXPERIMENT/Projekt NAMN.md` i forskningsmappen: senaste körning, täckningsgrad, länk till rapporten och varje påstående med sin status. Dina egna avsnitt i anteckningen, till exempel *Vad betyder resultatet*, skrivs aldrig över. DegsellOS Core läser anteckningen:
 
 - En körning med resultat uppfyller kravet på ett experiment i fasen Utveckla.
 - Medarbetare i projektet uppfyller kravet på att någon mer arbetar med frågan.
@@ -85,15 +85,15 @@ Skrivs hypotesen om efter en körning föreslår appen att rapporten byggs igen.
 
 När påståendena är granskade och körningen upprepad leder appens sista steg tillbaka till frågan i Obsidian.
 
-Åt andra hållet visar panelen i Obsidian projekten under varje fråga. Ett klick öppnar projektet i appen. *Nytt projekt i appen* på en fråga, eller kommandot *Pröva i ett nytt projekt i appen ForskarOS* på en hypotes, öppnar appen med frågan och hypotesen valda. Länkarna har formen `forskaros://projekt?mapp=…` och `forskaros://nytt-projekt?fråga=…`. Appens startsida visar de aktiva forskningsfrågorna med sina projekt.
+Åt andra hållet visar panelen i Obsidian projekten under varje fråga. Ett klick öppnar projektet i appen. *Nytt projekt i appen* på en fråga, eller kommandot *Pröva i ett nytt projekt i appen DegsellOS* på en hypotes, öppnar appen med frågan och hypotesen valda. Länkarna har formen `degsellos://projekt?mapp=…` och `degsellos://nytt-projekt?fråga=…`. Appens startsida visar de aktiva forskningsfrågorna med sina projekt.
 
 ## Kommandorad
 
 ```bash
-forskaros-projekt skapa kvantitativ "Min studie"
-forskaros-projekt belägg "Min studie"
-forskaros-projekt kör "Min studie"
-forskaros-projekt status "Min studie"
+degsellos-projekt skapa kvantitativ "Min studie"
+degsellos-projekt belägg "Min studie"
+degsellos-projekt kör "Min studie"
+degsellos-projekt status "Min studie"
 ```
 
-Koppla till en forskningsfråga med `forskaros-projekt koppla "Min studie" --fråga "01 RIKTNING/Min fråga" --hypotes "02 HYPOTESER/Min hypotes" --medarbetare "Anna, Björn"`, eller med samma flaggor till `skapa`. Använd `forskaros-projekt upprepa SÖKVÄG` med sökvägen till en sparad körning. För ett skyddat projekt, lägg till `--skydd skyddad` när projektet skapas. För en labbkörning, använd `forskaros-projekt kör --labb "Min studie"`.
+Koppla till en forskningsfråga med `degsellos-projekt koppla "Min studie" --fråga "01 RIKTNING/Min fråga" --hypotes "02 HYPOTESER/Min hypotes" --medarbetare "Anna, Björn"`, eller med samma flaggor till `skapa`. Använd `degsellos-projekt upprepa SÖKVÄG` med sökvägen till en sparad körning. För ett skyddat projekt, lägg till `--skydd skyddad` när projektet skapas. För en labbkörning, använd `degsellos-projekt kör --labb "Min studie"`.

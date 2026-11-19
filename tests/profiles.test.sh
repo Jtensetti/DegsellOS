@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Testar verktygsprofilerna och forskaros-setup utan att installera något.
+# Testar verktygsprofilerna och degsellos-setup utan att installera något.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-DIR=system_files/usr/share/forskaros/profiler
-SETUP=system_files/usr/bin/forskaros-setup
-export FORSKAROS_PROFILDIR="$PWD/$DIR"
-export FORSKAROS_STARTDIR="$PWD/system_files/usr/share/forskaros/startare"
+DIR=system_files/usr/share/degsellos/profiler
+SETUP=system_files/usr/bin/degsellos-setup
+export DEGSELLOS_PROFILDIR="$PWD/$DIR"
+export DEGSELLOS_STARTDIR="$PWD/system_files/usr/share/degsellos/startare"
 fail() { echo "FEL: $*" >&2; exit 1; }
 
 # 1. Varje profil har namn, beskrivning och giltiga rader.
@@ -45,7 +45,7 @@ else
   grep -q '+ brew install pandoc' <<<"$out" || fail "pandoc installeras inte"
 fi
 grep -q '+ uv tool install jupyterlab' <<<"$out" || fail "jupyterlab installeras inte"
-grep -q '+ skapa startare forskaros-jupyterlab.desktop' <<<"$out" || fail "startare för JupyterLab saknas"
+grep -q '+ skapa startare degsellos-jupyterlab.desktop' <<<"$out" || fail "startare för JupyterLab saknas"
 out=$(bash "$SETUP" --profil kvalitativ --ja --torrkörning)
 grep -Fq '+ uv tool install --with setuptools<81 taguette' <<<"$out" || fail "Taguettes körmiljö saknas"
 
@@ -61,15 +61,15 @@ grep -q 'org.libreoffice.LibreOffice' <<<"$out" || fail "'alla' ska ta med grund
 out=$(bash "$SETUP" --profil obsidian --torrkörning)
 grep -q "flathub md.obsidian.Obsidian" <<<"$out" || fail "Obsidian-profilen installerar inte Obsidian"
 out=$(bash "$SETUP" --profil moln --torrkörning)
-grep -q 'skapa genväg .*forskaros-webb-perplexity.desktop → https://www.perplexity.ai' <<<"$out" || fail "Perplexity-genväg saknas"
+grep -q 'skapa genväg .*degsellos-webb-perplexity.desktop → https://www.perplexity.ai' <<<"$out" || fail "Perplexity-genväg saknas"
 
 # 7b. Utan terminal hoppas aktiva val över; med --godkänt (appens dialog) görs de.
 home=$(mktemp -d)
 out=$(HOME="$home" bash "$SETUP" --profil moln --ja </dev/null)
 grep -q 'Hoppar över' <<<"$out" || fail "moln utan bekräftelse ska hoppas över"
-[[ ! -e "$home/.local/share/applications/forskaros-webb-perplexity.desktop" ]] || fail "molngenväg skapades utan val"
+[[ ! -e "$home/.local/share/applications/degsellos-webb-perplexity.desktop" ]] || fail "molngenväg skapades utan val"
 HOME="$home" bash "$SETUP" --profil moln --ja --godkänt </dev/null >/dev/null
-grep -q 'Exec=xdg-open https://www.perplexity.ai' "$home/.local/share/applications/forskaros-webb-perplexity.desktop" \
+grep -q 'Exec=xdg-open https://www.perplexity.ai' "$home/.local/share/applications/degsellos-webb-perplexity.desktop" \
   || fail "--godkänt skapar inte molngenvägen"
 rm -rf "$home"
 
@@ -77,22 +77,22 @@ rm -rf "$home"
 [[ $(grep -cvE '^\s*(#|$)' "$DIR"/*-rekommenderat.profil) -eq 10 ]] || fail "det rekommenderade urvalet ska ha tio verktyg"
 
 # 9. Programmenyn har en mapp per fas och genererade filer är i synk med katalogen.
-grep -q "name='3 · Välj'" system_files/etc/dconf/db/local.d/02-forskaros-meny || fail "mappen Välj saknas"
+grep -q "name='3 · Välj'" system_files/etc/dconf/db/local.d/02-degsellos-meny || fail "mappen Välj saknas"
 python3 -I scripts/generera.py --kontroll >/dev/null || fail "kör python3 scripts/generera.py"
 
-# 10. Grundtjänsten och dockan pekar på program som finns i profilerna eller i ForskarOS.
-grep -q 'ExecStart=/usr/libexec/forskaros-grund' system_files/usr/lib/systemd/system/forskaros-grund.service || fail "tjänsten pekar fel"
-for app in $(grep -o "'[^']*\.desktop'" system_files/etc/dconf/db/local.d/01-forskaros | tr -d "'" | sed 's/\.desktop$//'); do
+# 10. Grundtjänsten och dockan pekar på program som finns i profilerna eller i DegsellOS.
+grep -q 'ExecStart=/usr/libexec/degsellos-grund' system_files/usr/lib/systemd/system/degsellos-grund.service || fail "tjänsten pekar fel"
+for app in $(grep -o "'[^']*\.desktop'" system_files/etc/dconf/db/local.d/01-degsellos | tr -d "'" | sed 's/\.desktop$//'); do
   case "$app" in
-    org.gnome.*|forskaros-*|io.github.jtensetti.Forskaros) continue ;;
+    org.gnome.*|degsellos-*|io.github.jtensetti.DegsellOS) continue ;;
     org.libreoffice.LibreOffice.writer) app=org.libreoffice.LibreOffice ;;
   esac
   grep -q "^flatpak *$app " "$DIR"/*.profil || fail "dockan visar $app som inte finns i någon profil"
 done
 
-for own in $(grep -o "'\(forskaros-[^']*\|io\.github\.jtensetti\.Forskaros\)\.desktop'" system_files/etc/dconf/db/local.d/0*-forskaros* | cut -d: -f2 | tr -d "'" | sort -u); do
-  # Genvägar och startare som forskaros-setup skapar vid installation.
-  case "$own" in forskaros-webb-*|forskaros-jupyterlab*|forskaros-taguette*) continue ;; esac
+for own in $(grep -o "'\(degsellos-[^']*\|io\.github\.jtensetti\.DegsellOS\)\.desktop'" system_files/etc/dconf/db/local.d/0*-degsellos* | cut -d: -f2 | tr -d "'" | sort -u); do
+  # Genvägar och startare som degsellos-setup skapar vid installation.
+  case "$own" in degsellos-webb-*|degsellos-jupyterlab*|degsellos-taguette*) continue ;; esac
   [[ -f "system_files/usr/share/applications/$own" ]] || fail "dockan eller menyn pekar på $own som inte finns"
 done
 

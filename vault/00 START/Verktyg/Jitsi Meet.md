@@ -17,10 +17,10 @@ Möt forskare som inte finns i närheten. Anteckna invändningarna i ett forskni
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Möten och samarbete**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Möten och samarbete**, eller kör:
 
 ```bash
-forskaros-setup --profil samarbete
+degsellos-setup --profil samarbete
 ```
 
 ## Läs mer

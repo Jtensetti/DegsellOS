@@ -3,7 +3,7 @@ typ: hem
 ---
 # Begreppen
 
-ForskarOS bygger på 25 begrepp. Inget av dem är en knapp. De bärs av samspelet mellan faserna, kraven, granskningen, programmen och appen. När ett begrepp brister i ditt arbete säger panelen eller appen till.
+DegsellOS bygger på 25 begrepp. Inget av dem är en knapp. De bärs av samspelet mellan faserna, kraven, granskningen, programmen och appen. När ett begrepp brister i ditt arbete säger panelen eller appen till.
 
 ## Att tänka
 

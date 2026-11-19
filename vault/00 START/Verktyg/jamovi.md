@@ -16,10 +16,10 @@ Statistik med grafiskt gränssnitt, byggt på R. Analyser kan visas som R-kod.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Statistik och data**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Statistik och data**, eller kör:
 
 ```bash
-forskaros-setup --profil statistik
+degsellos-setup --profil statistik
 ```
 
 ## Läs mer

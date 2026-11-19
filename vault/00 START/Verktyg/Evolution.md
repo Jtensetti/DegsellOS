@@ -16,10 +16,10 @@ Skicka resultatet till den som ska granska det och följ upp svaret.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Möten och samarbete**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Möten och samarbete**, eller kör:
 
 ```bash
-forskaros-setup --profil samarbete
+degsellos-setup --profil samarbete
 ```
 
 ## Läs mer

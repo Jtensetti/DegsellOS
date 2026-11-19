@@ -11,7 +11,7 @@ typ: verktygskort
 - [[00 START/Verktyg/Firefox|Firefox]] (rekommenderad): Webbläsare
 - [[00 START/Verktyg/Zotero|Zotero]] (rekommenderad): Källhantering och citat
 - [[00 START/Verktyg/Xournal++|Xournal++]] (rekommenderad): Anteckna direkt i PDF:er
-- [[00 START/Verktyg/Obsidian|Obsidian]]: Gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)
+- [[00 START/Verktyg/Obsidian|Obsidian]]: Gränssnittet för DegsellOS-vaulten i dag (gratis, proprietärt)
 - [[00 START/Verktyg/Perplexity|Perplexity]] (molntjänst): AI-sök i molnet
 - [[00 START/Verktyg/Elicit|Elicit]] (molntjänst): AI-stöd för litteraturöversikter i molnet
 - [[00 START/Verktyg/Consensus|Consensus]] (molntjänst): AI-sök i forskningsartiklar i molnet

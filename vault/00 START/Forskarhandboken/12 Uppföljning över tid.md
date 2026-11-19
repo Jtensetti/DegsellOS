@@ -11,7 +11,7 @@ typ: handbok
 
 **Forskarutbildning** kräver i regel en examen på avancerad nivå och ämnets särskilda förkunskaper. Många lärosäten antar externfinansierade doktorander, där en arbetsgivare finansierar utbildningen.
 
-Måtten i ForskarOS är självskattningar och har inte validerats.
+Måtten i DegsellOS är självskattningar och har inte validerats.
 
 ## Övning utan AI
 Gör en förmågegranskning och planera en övning för den lägsta förmågan.

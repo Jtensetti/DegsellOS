@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# DegsellOS-labbet: kör analyser i en låst, reproducerbar miljö (R, Python, Pandoc).
+#
+#   degsellos-labb                 skal i labbet, i aktuell mapp
+#   degsellos-labb Rscript a.R     kör ett kommando i labbet
+#   degsellos-labb rstudio         RStudio Server på http://localhost:8787
+#   degsellos-labb jupyter         JupyterLab på http://localhost:8888
+#   degsellos-labb version         analysmiljöns exakta version, för experimentet
+#   degsellos-labb uppdatera       hämta senaste labbet
+set -euo pipefail
+IMAGE="${DEGSELLOS_LABB:-ghcr.io/jtensetti/degsellos-labb:latest}"
+PODMAN="${DEGSELLOS_PODMAN:-podman}"
+WORK="$(pwd)"
+# Startat från programmenyn (i hemkatalogen): arbeta i vaulten, inte hela hemmet.
+if [[ "$WORK" == "$HOME" && -d "$HOME/DegsellOS" ]]; then WORK="$HOME/DegsellOS"; fi
+
+ensure() { "$PODMAN" image exists "$IMAGE" || "$PODMAN" pull "$IMAGE"; }
+
+case "${1:-}" in
+  version)
+    ensure
+    digest=$("$PODMAN" image inspect --format '{{.Digest}}' "$IMAGE")
+    echo "Analysmiljö: ${IMAGE%%:*}@${digest}"
+    echo "Kör om:      podman run --rm -it -v \"\$PWD\":/arbete ${IMAGE%%:*}@${digest}"
+    ;;
+  uppdatera)
+    "$PODMAN" pull "$IMAGE"
+    ;;
+  rstudio)
+    ensure
+    echo "RStudio Server: http://localhost:8787 (ingen inloggning, bara lokalt). Ctrl+C avslutar."
+    "$PODMAN" run --rm -it -p 127.0.0.1:8787:8787 -e DISABLE_AUTH=true \
+      -v "$WORK":/home/rstudio/arbete:Z "$IMAGE" /init
+    ;;
+  jupyter)
+    ensure
+    "$PODMAN" run --rm -it -p 127.0.0.1:8888:8888 -v "$WORK":/arbete:Z -w /arbete "$IMAGE" \
+      jupyter lab --ip=0.0.0.0 --no-browser --allow-root
+    ;;
+  -h|--hjälp)
+    sed -n '2,10p' "$0"
+    ;;
+  *)
+    ensure
+    "$PODMAN" run --rm -it --userns=keep-id -v "$WORK":/arbete:Z -w /arbete "$IMAGE" "${@:-bash}"
+    ;;
+esac

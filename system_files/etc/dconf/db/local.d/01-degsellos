@@ -1,0 +1,6 @@
+# DegsellOS: en lugn arbetsyta för forskning.
+[org/gnome/shell]
+favorite-apps=['io.github.jtensetti.DegsellOS.desktop', 'org.mozilla.firefox.desktop', 'md.obsidian.Obsidian.desktop', 'org.zotero.Zotero.desktop', 'org.libreoffice.LibreOffice.writer.desktop', 'org.jaspstats.JASP.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'degsellos-fokus.desktop']
+
+[org/gnome/desktop/interface]
+show-battery-percentage=true

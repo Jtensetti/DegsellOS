@@ -8,7 +8,7 @@ import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 
-command = Path(__file__).resolve().parents[1] / "system_files/usr/bin/forskaros-projekt"
+command = Path(__file__).resolve().parents[1] / "system_files/usr/bin/degsellos-projekt"
 
 
 def call(*args, ok=True):

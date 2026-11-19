@@ -1,18 +1,18 @@
 # Dokumentation
 
-## Använda ForskarOS
+## Använda DegsellOS
 
 | Guide | Innehåll |
 |---|---|
 | [Installation](INSTALLATION.md) | Kontrollera nedladdningen, installera på PC, starta en virtuell maskin och uppdatera systemet |
 | [Mac och UTM](MAC.md) | Importera arm64-disken och dela filer med macOS |
 | [Forskningsprojekt](PROJEKT.md) | Underlag, källor, granskning, rapporter och upprepning |
-| [ForskarOS Core](CORE.md) | Använd arbetsmetoden i Obsidian, med eller utan ForskarOS |
+| [DegsellOS Core](CORE.md) | Använd arbetsmetoden i Obsidian, med eller utan DegsellOS |
 | [Säkerhet och integritet](SECURITY.md) | Projektskydd, lokal lagring och externa tjänster |
 | [Forskarhandboken](../vault/00%20START/Forskarhandboken/00%20Innehåll.md) | Forskningsfrågor, metoder, AI-konsultationer och övningar |
 | [Verktygsöversikt](../vault/00%20START/Verktyg/Översikt.md) | Program och installationsprofiler |
 
-## Utveckla ForskarOS
+## Utveckla DegsellOS
 
 | Referens | Innehåll |
 |---|---|

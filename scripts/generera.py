@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Genererar ForskarOS-filer från verktygskatalogen (katalog/verktyg.json).
+"""Genererar DegsellOS-filer från verktygskatalogen (katalog/verktyg.json).
 
 Katalogen är den enda källan. Härifrån skapas:
-  - verktygsprofiler        system_files/usr/share/forskaros/profiler/*.profil
-  - startare för Python-verktyg  system_files/usr/share/forskaros/startare/*.desktop
-  - programmenyn per fas    system_files/etc/dconf/db/local.d/02-forskaros-meny
+  - verktygsprofiler        system_files/usr/share/degsellos/profiler/*.profil
+  - startare för Python-verktyg  system_files/usr/share/degsellos/startare/*.desktop
+  - programmenyn per fas    system_files/etc/dconf/db/local.d/02-degsellos-meny
   - verktygskort            vault/00 START/Verktyg/*.md
 
   python3 scripts/generera.py             skriv filerna
@@ -20,9 +20,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 KATALOG = ROOT / "katalog" / "verktyg.json"
 
-PROFILDIR = Path("system_files/usr/share/forskaros/profiler")
-STARTDIR = Path("system_files/usr/share/forskaros/startare")
-MENYFIL = Path("system_files/etc/dconf/db/local.d/02-forskaros-meny")
+PROFILDIR = Path("system_files/usr/share/degsellos/profiler")
+STARTDIR = Path("system_files/usr/share/degsellos/startare")
+MENYFIL = Path("system_files/etc/dconf/db/local.d/02-degsellos-meny")
 KORTDIR = Path("vault/00 START/Verktyg")
 
 FASNAMN = {
@@ -30,19 +30,19 @@ FASNAMN = {
     "utveckla": "Utveckla", "ompröva": "Ompröva", "dela": "Dela",
 }
 
-# ForskarOS egna program, i en egen mapp först i menyn.
-EGNA = ["io.github.jtensetti.Forskaros.desktop", "forskaros-handbok.desktop"]
-# ForskarOS egna program som hör till en fas. Fokusläget hör till Välj: koncentration.
-EGNA_PER_FAS = {"välj": ["forskaros-fokus.desktop"], "utveckla": ["forskaros-labb.desktop"]}
+# DegsellOS egna program, i en egen mapp först i menyn.
+EGNA = ["io.github.jtensetti.DegsellOS.desktop", "degsellos-handbok.desktop"]
+# DegsellOS egna program som hör till en fas. Fokusläget hör till Välj: koncentration.
+EGNA_PER_FAS = {"välj": ["degsellos-fokus.desktop"], "utveckla": ["degsellos-labb.desktop"]}
 
 
 def desktop_ids(t):
     if t["typ"] == "flatpak":
         return t.get("desktop", [f'{t["id"]}.desktop'])
     if t["typ"] == "uv" and t.get("starta"):
-        return [f'forskaros-{t["id"]}.desktop']
+        return [f'degsellos-{t["id"]}.desktop']
     if t["typ"] == "webb":
-        return [f'forskaros-webb-{t["id"]}.desktop']
+        return [f'degsellos-webb-{t["id"]}.desktop']
     return []  # kommandoradsverktyg syns inte i menyn
 
 
@@ -100,11 +100,11 @@ def generate(out: Path):
         lines += [profile_line(t) for t in members]
         (out / PROFILDIR / f'{n:02d}-{p["id"]}.profil').write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    # 2. Startare för Python-verktyg (kopieras av forskaros-setup vid installation).
+    # 2. Startare för Python-verktyg (kopieras av degsellos-setup vid installation).
     (out / STARTDIR).mkdir(parents=True)
     for t in verktyg:
         if t["typ"] == "uv" and t.get("starta"):
-            (out / STARTDIR / f'forskaros-{t["id"]}.desktop').write_text(
+            (out / STARTDIR / f'degsellos-{t["id"]}.desktop').write_text(
                 "[Desktop Entry]\nType=Application\n"
                 f'Name={t["namn"]}\nComment={t["kort"]}\n'
                 f'Exec=@HOME@/.local/bin/{t["starta"]}\nTerminal=true\n'
@@ -112,12 +112,12 @@ def generate(out: Path):
                 encoding="utf-8")
 
     # 3. Programmenyn: en mapp per fas i forskningscykeln.
-    folders = [("forskaros-0", "ForskarOS", EGNA)]
+    folders = [("degsellos-0", "DegsellOS", EGNA)]
     for i, f in enumerate(faser, start=1):
         apps = EGNA_PER_FAS.get(f["id"], []) + [d for t in verktyg if t["fas"] == f["id"] for d in desktop_ids(t)]
         assert apps, f'fasen {f["id"]} har inga program i menyn'
 
-        folders.append((f"forskaros-{i}", f["mapp"], apps))
+        folders.append((f"degsellos-{i}", f["mapp"], apps))
     meny = ["# Genererad från katalog/verktyg.json.",
             "[org/gnome/desktop/app-folders]",
             "folder-children=[" + ", ".join(f"'{fid}'" for fid, _, _ in folders) + "]", ""]
@@ -143,8 +143,8 @@ def generate(out: Path):
             f'**Profil:** {p["namn"]}' + ("  \n**Ingår i det rekommenderade urvalet**" if t.get("rekommenderat") else ""), "",
             "## Vad det används till", "", t["metod"] + moln, "",
             "## Installera", "",
-            f'Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **{p["namn"]}**, eller kör:', "",
-            "```bash", f'forskaros-setup --profil {t["profil"]}', "```", "",
+            f'Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **{p["namn"]}**, eller kör:', "",
+            "```bash", f'degsellos-setup --profil {t["profil"]}', "```", "",
             "## Läs mer", "",
             f'- [Dokumentation]({t["läs_mer"]})',
             f'- [Paketet]({install_link(t)})', "",
@@ -167,14 +167,14 @@ def generate(out: Path):
     (out / KORTDIR / "Översikt.md").write_text("\n".join(overview) + "\n", encoding="utf-8")
 
 
-CORE = Path("vault/.obsidian/plugins/forskaros-core/main.js")
+CORE = Path("vault/.obsidian/plugins/degsellos-core/main.js")
 # Arbetssätt som hör till varje fas, före programmen i panelens verktygsrad.
 FASENS_ARBETE = {
     "utforska": ["perspektivkarta"],
     "kombinera": ["hypotes"],
     "välj": ["förregistrering (OSF)", "etikprövning", "fokusläge"],
     "pröva": ["motprov", "forskningsmöte"],
-    "utveckla": ["appen ForskarOS", "labbet (R, Python)"],
+    "utveckla": ["appen DegsellOS", "labbet (R, Python)"],
     "ompröva": ["omprövning", "felrättning", "förmågegranskning"],
     "dela": ["rapporten", "Zenodo"],
 }

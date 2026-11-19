@@ -1,4 +1,4 @@
-name: Bygg ForskarOS-labbet
+name: Bygg DegsellOS-labbet
 
 # Den reproducerbara analysmiljön (R, Python, RStudio, Pandoc).
 on:
@@ -12,11 +12,11 @@ on:
 permissions:
   contents: read
 
-# Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
-# datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
-# Byt bara namn tillsammans med en flyttväg för installerade datorer.
+# Labbets namn i registret. DegsellOS-installationer från tiden som ForskarOS hämtar
+# labbet under LEGACY_IMAGE_NAME, som får samma avbildning vid varje publicering.
 env:
-  IMAGE_NAME: ghcr.io/jtensetti/researchos-labb
+  IMAGE_NAME: ghcr.io/jtensetti/degsellos-labb
+  LEGACY_IMAGE_NAME: ghcr.io/jtensetti/researchos-labb
 
 jobs:
   build:
@@ -35,9 +35,9 @@ jobs:
       - name: Installera podman vid behov
         run: command -v podman || (sudo apt-get update && sudo apt-get install -y podman)
       - name: Bygg
-        run: podman build -f labb/Containerfile -t localhost/forskaros-labb:${{ matrix.arch }} .
+        run: podman build -f labb/Containerfile -t localhost/degsellos-labb:${{ matrix.arch }} .
       - name: Röktest
-        run: podman run --rm -v "$PWD/labb:/test:ro" localhost/forskaros-labb:${{ matrix.arch }} bash /test/rok.sh
+        run: podman run --rm -v "$PWD/labb:/test:ro" localhost/degsellos-labb:${{ matrix.arch }} bash /test/rok.sh
       - name: Publicera arkitekturspecifik tagg
         if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
         env:
@@ -45,7 +45,7 @@ jobs:
         run: |
           IMAGE="$IMAGE_NAME"
           echo "$TOKEN" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
-          podman push localhost/forskaros-labb:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
+          podman push localhost/degsellos-labb:${{ matrix.arch }} "docker://$IMAGE:latest-${{ matrix.arch }}"
 
   publish:
     if: (github.ref_name == 'main' || github.ref_name == github.event.repository.default_branch) && github.event_name != 'pull_request'
@@ -68,6 +68,7 @@ jobs:
           podman manifest create labb "docker://$IMAGE:latest-amd64" "docker://$IMAGE:latest-arm64"
           podman manifest push --all --digestfile /tmp/digest labb "docker://$IMAGE:latest"
           podman manifest push --all labb "docker://$IMAGE:$(date -u +%Y%m%d)"
+          podman manifest push --all labb "docker://$LEGACY_IMAGE_NAME:latest"
           if [[ "$VERSION" != *-dev ]]; then podman manifest push --all labb "docker://$IMAGE:$VERSION"; fi
           echo "IMAGE_REF=$IMAGE@$(cat /tmp/digest)" >> "$GITHUB_ENV"
       - name: Signera
@@ -76,3 +77,4 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u "${{ github.actor }}" --password-stdin
           cosign sign "$IMAGE_REF"
+          cosign sign "$LEGACY_IMAGE_NAME@${IMAGE_REF#*@}"

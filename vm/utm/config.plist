@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Adapted for ForskarOS from Homebridge VM Image 49aed1492c2929326ce54e3a980c3ca26dedfca4, Apache License 2.0. Changed identity, icon, disk, CPU count, network mode and logging. -->
+<!-- Adapted for DegsellOS from Homebridge VM Image 49aed1492c2929326ce54e3a980c3ca26dedfca4, Apache License 2.0. Changed identity, icon, disk, CPU count, network mode and logging. -->
 <plist version="1.0">
 <dict>
 	<key>Backend</key>
@@ -28,7 +28,7 @@
 			<key>Identifier</key>
 			<string>92D81149-5C43-4BC9-9DD9-AF661D0F22B4</string>
 			<key>ImageName</key>
-			<string>ForskarOS.qcow2</string>
+			<string>DegsellOS.qcow2</string>
 			<key>ImageType</key>
 			<string>Disk</string>
 			<key>Interface</key>
@@ -44,7 +44,7 @@
 		<key>IconCustom</key>
 		<false/>
 		<key>Name</key>
-		<string>ForskarOS</string>
+		<string>DegsellOS</string>
 		<key>Notes</key>
 		<string></string>
 		<key>UUID</key>

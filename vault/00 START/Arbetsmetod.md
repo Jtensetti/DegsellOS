@@ -10,7 +10,7 @@ Varje forskningsfråga går igenom sju faser. Panelen visar kraven för att gå 
 | 2. Kombinera | En hypotes som anger etablerad kunskap den bygger på, vad som är nytt, vilket antagande den utmanar och vem som företräder antagandet |
 | 3. Välj | Falsifieringskriterium, prediktioner, angiven konfidens, vad som förändras om frågan besvaras, vad som väljs bort |
 | 4. Pröva | Ett besvarat motprov, ett forskningsmöte där någon utanför projektet framfört en invändning, och ett möte med någon som företräder det antagande hypotesen utmanar |
-| 5. Utveckla | Ett experiment eller arbetsprov med resultat, till exempel en körning i appen ForskarOS; någon mer arbetar med frågan (en medarbetare eller ett möte om samarbete) |
+| 5. Utveckla | Ett experiment eller arbetsprov med resultat, till exempel en körning i appen DegsellOS; någon mer arbetar med frågan (en medarbetare eller ett möte om samarbete) |
 | 6. Ompröva | En omprövning och nedskrivna lärdomar |
 | 7. Dela | En sammanfattning för någon utanför fältet (50–200 ord); resultatet har delats med någon som kan granska det; vilken ny fråga svaret öppnar; analysen i appen är upprepad med samma resultat |
 
@@ -27,7 +27,7 @@ Efter Dela börjar en ny cykel. En fråga avslutas med *Avsluta* och ett utfall:
 
 ## AI-konsultationer
 
-Forskningen görs i första hand av människor. AI-stödet är frivilligt och avstängt från början. Välj nivå under *Inställningar → ForskarOS Core*:
+Forskningen görs i första hand av människor. AI-stödet är frivilligt och avstängt från början. Välj nivå under *Inställningar → DegsellOS Core*:
 
 | Nivå | Vad AI får göra |
 |---|---|
@@ -70,8 +70,8 @@ Panelen visar andelen AI-konsultationer med eget utkast, övningar utan AI, motp
 
 Metoden bärs av flera program som lämnar över till varandra:
 
-- **Obsidian med ForskarOS Core** håller tanken: frågan, hypoteserna, motproven, mötena och omprövningarna.
-- **Appen ForskarOS** håller handlingen: data, analys, manus och rapport. Ett projekt kopplas till en fråga och den hypotes det prövar. Projektets läge skrivs till `04 EXPERIMENT` som ett experiment: senaste körning, hur säker den är och vilka påståenden som behöver omprövas. Panelen läser det och visar projekten under frågan. *Nytt projekt i appen* i panelen, eller kommandot *Pröva i ett nytt projekt* på en hypotes, öppnar appen med frågan vald. Appens startsida visar frågorna med sina projekt.
+- **Obsidian med DegsellOS Core** håller tanken: frågan, hypoteserna, motproven, mötena och omprövningarna.
+- **Appen DegsellOS** håller handlingen: data, analys, manus och rapport. Ett projekt kopplas till en fråga och den hypotes det prövar. Projektets läge skrivs till `04 EXPERIMENT` som ett experiment: senaste körning, hur säker den är och vilka påståenden som behöver omprövas. Panelen läser det och visar projekten under frågan. *Nytt projekt i appen* i panelen, eller kommandot *Pröva i ett nytt projekt* på en hypotes, öppnar appen med frågan vald. Appens startsida visar frågorna med sina projekt.
 - **Kontakter, Kalender och Jitsi Meet** (programmenyn, *4 · Pröva*) är till för mötena som metoden kräver. **Element** och **Syncthing** (*5 · Utveckla*) är till för medarbetare som arbetar med underlaget.
 - **Zotero** lämnar källor till projektets referenser, och appen kontrollerar citaten mot dem.
 

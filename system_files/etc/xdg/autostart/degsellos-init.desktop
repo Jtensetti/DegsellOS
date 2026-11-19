@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=DegsellOS – förbered forskningsmiljön
+Exec=/usr/bin/degsellos-init
+OnlyShowIn=GNOME;
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

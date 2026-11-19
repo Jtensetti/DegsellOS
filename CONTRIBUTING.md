@@ -1,6 +1,6 @@
-# Bidra till ForskarOS
+# Bidra till DegsellOS
 
-ForskarOS består av en GTK-app och projektmotor i Python, ett Obsidian-tillägg i JavaScript och en bootc-systemavbildning. [Arkitekturen](docs/ARCHITECTURE.md) beskriver delarna och deras filformat.
+DegsellOS består av en GTK-app och projektmotor i Python, ett Obsidian-tillägg i JavaScript och en bootc-systemavbildning. [Arkitekturen](docs/ARCHITECTURE.md) beskriver delarna och deras filformat.
 
 ## Köra lokalt
 
@@ -15,20 +15,20 @@ Sviten kontrollerar projektmallar, belägg, omprövning, upprepning, Zotero-impo
 Starta appen på en Linuxdator med GTK 4, libadwaita och PyGObject:
 
 ```bash
-system_files/usr/bin/forskaros
+system_files/usr/bin/degsellos
 ```
 
 Projektkommandot kan användas utan grafisk miljö:
 
 ```bash
-system_files/usr/bin/forskaros-projekt skapa kvantitativ /tmp/min-studie
-system_files/usr/bin/forskaros-projekt kör /tmp/min-studie
+system_files/usr/bin/degsellos-projekt skapa kvantitativ /tmp/min-studie
+system_files/usr/bin/degsellos-projekt kör /tmp/min-studie
 ```
 
-Välj en ny projektmapp; en befintlig mapp skrivs inte över. Installation av verktygsprofiler är avsedd för ForskarOS. Inspektera exempelvis statistikprofilen utan installation med:
+Välj en ny projektmapp; en befintlig mapp skrivs inte över. Installation av verktygsprofiler är avsedd för DegsellOS. Inspektera exempelvis statistikprofilen utan installation med:
 
 ```bash
-FORSKAROS_PROFILDIR="$PWD/system_files/usr/share/forskaros/profiler" system_files/usr/bin/forskaros-setup --profil statistik --torrkörning
+DEGSELLOS_PROFILDIR="$PWD/system_files/usr/share/degsellos/profiler" system_files/usr/bin/degsellos-setup --profil statistik --torrkörning
 ```
 
 ## Fullständig kontrollsvit
@@ -36,7 +36,7 @@ FORSKAROS_PROFILDIR="$PWD/system_files/usr/share/forskaros/profiler" system_file
 Utöver grundverktygen behövs en fungerande bubblewrap, PyGObject med GTK 4 och libadwaita, Xvfb samt `roc-validator==0.14.0` i en Pythonmiljö. Python som används för appen behöver kunna importera `gi`.
 
 ```bash
-FORSKAROS_KRAV_SANDLADA=1 FORSKAROS_KRAV_ROCRATE=1 FORSKAROS_KRAV_APP=1 FORSKAROS_ROCRATE_VALIDATOR=/sökväg/till/venv/bin/rocrate-validator bash scripts/check.sh
+DEGSELLOS_KRAV_SANDLADA=1 DEGSELLOS_KRAV_ROCRATE=1 DEGSELLOS_KRAV_APP=1 DEGSELLOS_ROCRATE_VALIDATOR=/sökväg/till/venv/bin/rocrate-validator bash scripts/check.sh
 ```
 
 Med dessa flaggor är en saknad testförutsättning ett fel. GitHub Actions kör denna variant och kontrollerar även tillgängligheten för verktyg på amd64 och arm64. Paket och miljöinställningar för CI finns i [byggflödet](.github/workflows/build.yml).
@@ -44,7 +44,7 @@ Med dessa flaggor är en saknad testförutsättning ett fel. GitHub Actions kör
 Appens befintliga självtest kan spara skärmdumpar i en valfri mapp:
 
 ```bash
-FORSKAROS_SKARMDUMPAR=/tmp/forskaros-skarmdumpar bash tests/app.test.sh
+DEGSELLOS_SKARMDUMPAR=/tmp/degsellos-skarmdumpar bash tests/app.test.sh
 ```
 
 ## Genererade filer
@@ -61,7 +61,7 @@ FORSKAROS_SKARMDUMPAR=/tmp/forskaros-skarmdumpar bash tests/app.test.sh
 På en Linuxvärd med Podman:
 
 ```bash
-podman build -t localhost/forskaros .
+podman build -t localhost/degsellos .
 ```
 
 CI bygger amd64 och arm64 på separata värdar. ISO, VM-diskar, UTM-paket och signering beskrivs i [släpprocessen](docs/RELEASE.md).

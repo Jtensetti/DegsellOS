@@ -13,11 +13,9 @@ permissions:
   contents: read
   packages: read
 
-# Fasta namn på avbildningarna. Repot heter DegsellOS sedan november 2026, men installerade
-# datorer (bootc följer latest), installationsanvisningarna och labbet i OS:et hämtar härifrån.
-# Byt bara namn tillsammans med en flyttväg för installerade datorer.
+# Avbildningens namn i registret.
 env:
-  IMAGE_NAME: ghcr.io/jtensetti/researchos
+  IMAGE_NAME: ghcr.io/jtensetti/degsellos
 
 jobs:
   disk:
@@ -78,11 +76,11 @@ jobs:
         if: matrix.type == 'qcow2'
         run: |
           sudo apt-get update && sudo apt-get install -y qemu-utils
-          qemu-img convert -p -c -O qcow2 output/qcow2/disk.qcow2 "output/ForskarOS-${{ matrix.arch }}.qcow2"
+          qemu-img convert -p -c -O qcow2 output/qcow2/disk.qcow2 "output/DegsellOS-${{ matrix.arch }}.qcow2"
           rm -rf output/qcow2
           if [[ "${{ matrix.arch }}" == arm64 ]]; then
             python3 scripts/paketera_utm.py vm/utm/config.plist \
-              "output/ForskarOS-${{ matrix.arch }}.qcow2" "output/ForskarOS-${{ matrix.arch }}.utm.zip" --minne 4096
+              "output/DegsellOS-${{ matrix.arch }}.qcow2" "output/DegsellOS-${{ matrix.arch }}.utm.zip" --minne 4096
           fi
           ls -lh output
 
@@ -95,6 +93,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: forskaros-${{ matrix.arch }}-${{ matrix.type }}
+          name: degsellos-${{ matrix.arch }}-${{ matrix.type }}
           path: output/
           retention-days: 14

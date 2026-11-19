@@ -33,7 +33,7 @@ jobs:
           auth="Authorization: LOW $IA_ACCESS_KEY:$IA_SECRET_KEY"
           failed=0
           for platform in amd64-vm arm64-vm amd64-iso; do
-            item=forskaros-$version-$platform
+            item=degsellos-$version-$platform
             meta=$(curl -fsS --retry 2 "https://archive.org/metadata/$item?ts=$(date +%s)")
             task=$(jq -r '[.tasks[]? | select(.cmd == "book_op.php" and .wait_admin == 2)] | first | .task_id // empty' <<<"$meta")
             if [[ -z "$task" ]]; then echo "$item: inget felande katalogjobb."; continue; fi

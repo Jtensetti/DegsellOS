@@ -1,0 +1,13 @@
+[Unit]
+Description=DegsellOS: kräv lösenordsbyte för det förinställda kontot (en gång)
+DefaultDependencies=no
+After=local-fs.target systemd-sysusers.service
+Before=systemd-user-sessions.service display-manager.service
+ConditionPathExists=!/var/lib/degsellos/forskare-losenord.klar
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/degsellos-forskare
+
+[Install]
+WantedBy=multi-user.target

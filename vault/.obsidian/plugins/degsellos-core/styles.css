@@ -1,0 +1,47 @@
+.degsellos-panel { padding: 0.6rem 0.45rem 1.3rem; }
+.degsellos-panel h2 { font-size: 1.4rem; margin: 0.25rem 0 0.45rem; }
+.degsellos-panel p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+.degsellos-actions { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0.55rem; margin: 1rem 0; }
+.degsellos-actions button { padding: 0.75rem 0.5rem; text-align: left; white-space: normal; min-height: 3rem; }
+.degsellos-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.5rem; margin: 1rem 0; }
+.degsellos-metric { padding:0.65rem; border:1px solid var(--background-modifier-border); border-radius:0.6rem; }
+.degsellos-metric strong {display:block; font-size:1.3rem;}
+.degsellos-metric span {font-size:0.73rem;color:var(--text-muted);}
+.degsellos-warning { padding:0.8rem; border-left:3px solid var(--interactive-accent); background:var(--background-secondary); color:var(--text-normal); font-size:0.86rem; }
+
+/* Forskningsfrågor och cykeln */
+.degsellos-question { border:1px solid var(--background-modifier-border); border-radius:0.7rem; padding:0.75rem; margin:0.6rem 0 1rem; }
+.degsellos-question-title { font-weight:600; cursor:pointer; margin-bottom:0.5rem; }
+.degsellos-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,4.8rem),1fr)); gap:3px; margin-bottom:0.5rem; }
+.degsellos-step { font-size:0.75rem; text-align:center; padding:0.25rem 0.1rem; border-radius:0.25rem; background:var(--background-secondary); color:var(--text-muted); overflow-wrap:anywhere; }
+.degsellos-step.is-done { color:var(--text-muted); }
+.degsellos-step.is-current { background:var(--interactive-accent); color:var(--text-on-accent); font-weight:600; }
+.degsellos-phase-question { font-size:0.9rem; margin:0.4rem 0; }
+.degsellos-checklist { list-style:none; padding-left:0; margin:0.4rem 0; font-size:0.82rem; }
+.degsellos-checklist li { padding:0.15rem 0; }
+.degsellos-checklist li.is-ok { color:var(--text-success); }
+.degsellos-checklist li.is-missing { color:var(--text-muted); }
+.degsellos-row { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.5rem; }
+.degsellos-muted { color:var(--text-muted); font-size:0.8rem; }
+
+/* Att åtgärda */
+.degsellos-finding { padding:0.5rem 0.6rem; margin:0.35rem 0; border-radius:0.4rem; background:var(--background-secondary); font-size:0.82rem; cursor:default; }
+.degsellos-finding b { display:block; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); }
+.degsellos-finding.is-varning { border-left:3px solid var(--text-warning); }
+.degsellos-finding.is-påminnelse { border-left:3px solid var(--text-faint); }
+
+/* Dialoger */
+.degsellos-modal .degsellos-label { display:block; font-size:0.8rem; color:var(--text-muted); margin:0.7rem 0 0.25rem; }
+.degsellos-modal .degsellos-input { width:100%; }
+.degsellos-modal textarea.degsellos-input { min-height:5rem; }
+.degsellos-modal .degsellos-preview { min-height:14rem; font-family:var(--font-monospace); font-size:0.75rem; }
+.degsellos-ok { padding:0.6rem; border-left:3px solid var(--text-success); background:var(--background-secondary); font-size:0.86rem; }
+
+/* Epistemisk märkning: vad är belagt, vad är tolkning, vad är spekulation? */
+.callout[data-callout="belagt"] { --callout-color: 46, 160, 67; --callout-icon: lucide-check-circle; }
+.callout[data-callout="tolkning"] { --callout-color: 210, 153, 34; --callout-icon: lucide-lightbulb; }
+.callout[data-callout="spekulation"] { --callout-color: 163, 113, 247; --callout-icon: lucide-cloud; }
+.degsellos-tools { cursor:pointer; margin-bottom:0.3rem; }
+.degsellos-resting { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; margin:0.3rem 0; }
+.degsellos-project { font-size:0.82rem; padding:0.35rem 0.55rem; margin:0.25rem 0; border-radius:0.4rem; background:var(--background-secondary); cursor:pointer; }
+.degsellos-project:hover { color:var(--text-accent); }

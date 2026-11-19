@@ -1,4 +1,4 @@
-UTM configuration adapted for ForskarOS from the Homebridge VM Image project.
+UTM configuration adapted for DegsellOS from the Homebridge VM Image project.
 Source: https://github.com/homebridge/homebridge-vm-image/blob/49aed1492c2929326ce54e3a980c3ca26dedfca4/assets/template-utm-config.plist
 Changes: machine identity, icon, disk, CPU count, network mode and logging.
 

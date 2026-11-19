@@ -8,12 +8,12 @@ import tempfile
 
 root = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
-sys.path.insert(0, str(root / "system_files/usr/share/forskaros/projekt"))
+sys.path.insert(0, str(root / "system_files/usr/share/degsellos/projekt"))
 import forskningsmapp as fm  # noqa: E402
 from oversikt import next_step, overview  # noqa: E402
 from projekt import domain  # noqa: E402
 
-cmd = root / "system_files/usr/bin/forskaros-projekt"
+cmd = root / "system_files/usr/bin/degsellos-projekt"
 
 
 def call(*args, ok=True):
@@ -29,7 +29,7 @@ def accept_all(project):
 
 
 def core(question, notes):
-    """Kör ForskarOS Core:s faskrav på anteckningarna, som panelen i Obsidian gör."""
+    """Kör DegsellOS Core:s faskrav på anteckningarna, som panelen i Obsidian gör."""
     script = """
 const Module = require('node:module'); const orig = Module._load;
 Module._load = function (r, ...a) { return r === 'obsidian' ? { Plugin: class {}, ItemView: class {}, Notice: class {}, Modal: class {} } : orig.call(this, r, ...a); };
@@ -38,7 +38,7 @@ const [q, notes] = JSON.parse(require('fs').readFileSync(0, 'utf8'));
 process.stdout.write(JSON.stringify({ krav: engine.phaseRequirements(q, notes), granskning: engine.audit(notes, q.fm.datum) }));
 """
     data = json.dumps([question, notes])
-    out = subprocess.run(["node", "-e", script, str(root / "vault/.obsidian/plugins/forskaros-core/main.js")],
+    out = subprocess.run(["node", "-e", script, str(root / "vault/.obsidian/plugins/degsellos-core/main.js")],
                          input=data, capture_output=True, text=True, check=True).stdout
     return json.loads(out)
 
@@ -49,7 +49,7 @@ def note(path, vault):
 
 
 with tempfile.TemporaryDirectory() as tmp:
-    vault = Path(tmp) / "ForskarOS"
+    vault = Path(tmp) / "DegsellOS"
     (vault / "01 RIKTNING").mkdir(parents=True)
     (vault / "02 HYPOTESER").mkdir()
     (vault / "01 RIKTNING/Hypotesbyten.md").write_text(
@@ -64,7 +64,7 @@ with tempfile.TemporaryDirectory() as tmp:
         "> Mallens hjälptext.\nLika stor andel byten i båda grupperna, jfr [[03 EVIDENS/Karta|kartan]].\n",
         encoding="utf-8")
     (vault / "01 RIKTNING/Avslutad.md").write_text("---\ntyp: forskningsfråga\nstatus: avslutad\n---\n# Gammal\n")
-    os.environ["FORSKAROS_VAULT"] = str(vault)
+    os.environ["DEGSELLOS_VAULT"] = str(vault)
 
     assert [q["ref"] for q in fm.questions()] == ["01 RIKTNING/Hypotesbyten"], "avslutade frågor visas inte"
     assert fm.questions()[0]["titel"] == "Byter elever hypotes efter saklig respons?"
@@ -147,7 +147,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
     dela = dict(q, fm=dict(q["fm"], fas="dela"))
     krav = {k["text"]: k["ok"] for k in core(dela, [note(experiment, vault)])["krav"]}
-    assert krav["Analysen bakom resultatet är upprepad med samma resultat (appen ForskarOS)"]
+    assert krav["Analysen bakom resultatet är upprepad med samma resultat (appen DegsellOS)"]
     assert next_step(overview(project, domain))[0] == "fråga", "sista steget leder tillbaka till frågan"
 
     # Ändrat underlag syns som påstående att ompröva i Core.
@@ -160,7 +160,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert any(f["princip"] == "Påstående att ompröva" for f in granskning), granskning
 
     # Appen och forskningsmappen pekar på varandra.
-    assert "forskaros://projekt?mapp=" in experiment.read_text()
+    assert "degsellos://projekt?mapp=" in experiment.read_text()
     assert [e["ref"] for e in fm.projects_for("01 RIKTNING/Hypotesbyten")] == ["04 EXPERIMENT/Projekt Studie"]
 
     # Ett projekt med samma namn i en annan mapp får en egen anteckning.
@@ -186,7 +186,7 @@ Module._load = function (r, ...a) { return r === 'obsidian' ? { Plugin: class {}
 const { engine } = require(process.argv[1]);
 console.log(engine.appUri('nytt-projekt', { fråga: '01 RIKTNING/Hypotesbyten', hypotes: '02 HYPOTESER/Saklig respons' }));
 console.log(engine.appUri('projekt', { mapp: process.argv[2] }));
-""", str(root / "vault/.obsidian/plugins/forskaros-core/main.js"), str(project)],
+""", str(root / "vault/.obsidian/plugins/degsellos-core/main.js"), str(project)],
         capture_output=True, text=True, check=True).stdout.split()
     assert fm.parse_app_uri(from_core[0]) == {"nytt": {"fråga": "01 RIKTNING/Hypotesbyten", "hypotes": "02 HYPOTESER/Saklig respons"}}
     assert fm.parse_app_uri(from_core[1]) == {"projekt": str(project)}
@@ -195,7 +195,7 @@ console.log(engine.appUri('projekt', { mapp: process.argv[2] }));
     # Kopplingen kan tas bort.
     assert call("koppla", project, "--fråga", "") == "Projektet är inte kopplat till någon forskningsfråga."
     assert "fråga" not in json.loads((project / "projekt.json").read_text())
-    assert fm.obsidian_uri("01 RIKTNING/Hypotesbyten").startswith("obsidian://open?vault=ForskarOS&file=01%20RIKTNING")
+    assert fm.obsidian_uri("01 RIKTNING/Hypotesbyten").startswith("obsidian://open?vault=DegsellOS&file=01%20RIKTNING")
 
 # En ändring inne i en lista räknas, men inte var eller när texten hämtades.
 text = "::: {.forutsagelse}\n## H\n\nUr forskningsfrågan ”X?” Hämtad.\n\n**Förutsägelsen.**\n\n1. A\n2. B\n:::\n"

@@ -5,21 +5,21 @@ profil: obsidian
 ---
 # Obsidian
 
-> Gränssnittet för ForskarOS-vaulten i dag (gratis, proprietärt)
+> Gränssnittet för DegsellOS-vaulten i dag (gratis, proprietärt)
 
 **Fas:** 1 · Utforska  
-**Profil:** Obsidian (krävs för ForskarOS Core)
+**Profil:** Obsidian (krävs för DegsellOS Core)
 
 ## Vad det används till
 
-Gränssnittet för vaulten och ForskarOS Core. Gratis men inte öppen källkod.
+Gränssnittet för vaulten och DegsellOS Core. Gratis men inte öppen källkod.
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **Obsidian (krävs för ForskarOS Core)**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **Obsidian (krävs för DegsellOS Core)**, eller kör:
 
 ```bash
-forskaros-setup --profil obsidian
+degsellos-setup --profil obsidian
 ```
 
 ## Läs mer

@@ -16,10 +16,10 @@ AI-sök med källhänvisningar. Molntjänst. Det du skriver skickas till tjänst
 
 ## Installera
 
-Öppna appen *ForskarOS*, välj **Välj forskningsverktyg** och installera **AI-tjänster i molnet (tillval)**, eller kör:
+Öppna appen *DegsellOS*, välj **Välj forskningsverktyg** och installera **AI-tjänster i molnet (tillval)**, eller kör:
 
 ```bash
-forskaros-setup --profil moln
+degsellos-setup --profil moln
 ```
 
 ## Läs mer
