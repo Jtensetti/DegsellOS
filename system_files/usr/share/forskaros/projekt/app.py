@@ -12,6 +12,7 @@ kommandoraden forskaros-projekt kan göra finns kvar i rader och i menyn.
 """
 import json
 import os
+from urllib.parse import quote
 from pathlib import Path
 import shutil
 import subprocess
@@ -240,6 +241,8 @@ class Window(Adw.ApplicationWindow):
         GLib.timeout_add_seconds(30, self.poll_base)
         if start.get("projekt"):
             self.open_project(Path(start["projekt"]))
+        elif "nytt" in start:
+            self.nav.push(self.new_project_page(start["nytt"]))
         elif start.get("verktyg"):
             self.nav.push(self.tools_page())
 
@@ -350,11 +353,13 @@ class Window(Adw.ApplicationWindow):
                 level = "Skyddat material" if domain(project)["skydd"] == "skyddad" else "Öppet material"
             except ValueError:
                 level = "projekt.json behöver rättas"
-            recent.add(row(project.name, f"{level} · {project.parent}",
+            recent.add(row(project.name, f"{level} · {home_path(project.parent)}",
                            on_activate=lambda p=project: self.open_project(p), icon="folder-documents-symbolic"))
         recent.add(row("Öppna annat projekt…", "Välj en mapp med underlag och körningar.",
                        on_activate=self.choose_project, icon="document-open-symbolic"))
         body.append(recent)
+
+        body.append(self.questions_group())
 
         vault = Adw.PreferencesGroup(title="Forskningsmappen")
         vault.add(row("Öppna i Obsidian", "Forskningsfrågor, hypoteser, motprov och ForskarOS Core.",
@@ -377,6 +382,30 @@ class Window(Adw.ApplicationWindow):
             self.add_action(action)
         more = Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text="Huvudmeny")
         self.start.set_child(content("ForskarOS", body, end=[more]))
+
+    def questions_group(self):
+        """Forskningsfrågorna i Obsidian, med de projekt som prövar dem."""
+        group = Adw.PreferencesGroup(title="Forskningsfrågor",
+                                     description="Tanken finns i forskningsmappen, handlingen i projekten.")
+        found = [q for q in forskningsmapp.questions() if q["fm"].get("status", "aktiv") == "aktiv"]
+        if not found:
+            group.add(row("Formulera en forskningsfråga", "I Obsidian, med ForskarOS Core. Projekten kan sedan pröva den.",
+                          on_activate=self.open_obsidian, icon="dialog-question-symbolic"))
+            return group
+        for q in found:
+            projects = forskningsmapp.projects_for(q["ref"])
+            phase = (q["fm"].get("fas") or "utforska").capitalize()
+            count = {0: "inget projekt än", 1: "1 projekt"}.get(len(projects), f"{len(projects)} projekt")
+            start = flat_button("Nytt projekt", lambda r=q["ref"]: self.nav.push(self.new_project_page({"fråga": r})))
+            group.add(row(q["titel"], f"Fas: {phase} · {count}", suffixes=[start],
+                          on_activate=lambda r=q["ref"]: self.open_note(r), icon="dialog-question-symbolic"))
+            for e in projects:
+                folder = Path(e["fm"]["projekt"])
+                if folder.is_dir():
+                    level = e["fm"].get("nivå") or "Ingen körning än"
+                    group.add(row(f"↳ {folder.name}", level, on_activate=lambda f=folder: self.open_project(f),
+                                  icon="folder-documents-symbolic"))
+        return group
 
     def spawn(self, argv):
         try:
@@ -453,15 +482,18 @@ class Window(Adw.ApplicationWindow):
 
     def open_obsidian(self):
         if subprocess.run(["flatpak", "info", "md.obsidian.Obsidian"], capture_output=True).returncode == 0:
-            self.spawn(["flatpak", "run", "md.obsidian.Obsidian"])
-            self.toast("Första gången: välj Open folder as vault och mappen ForskarOS i din hemkatalog.")
+            uri = f"obsidian://open?vault={quote(forskningsmapp.vault_root().name)}"
+            try:
+                Gio.AppInfo.launch_default_for_uri(uri, None)
+            except GLib.Error:
+                self.spawn(["flatpak", "run", "md.obsidian.Obsidian"])
             return
         profile = next((p for p in read_profiles() if p["id"] == "obsidian"), None)
         if profile:
             self.install(profile, then=lambda: self.open_obsidian())
 
     # ---- nytt projekt ---------------------------------------------------
-    def new_project_page(self):
+    def new_project_page(self, preset=None):
         body = column()
         intro = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         intro.append(label("Nytt forskningsprojekt", "title-1"))
@@ -500,7 +532,7 @@ class Window(Adw.ApplicationWindow):
         research = Adw.PreferencesGroup(title="Forskningsfråga",
                                         description="Valfritt. Projektet prövar då en hypotes ur forskningsmappen, och resultatet "
                                                     "skrivs tillbaka dit så att frågan kan gå vidare i Obsidian.")
-        chosen, research_widgets = self.question_fields(research)
+        chosen, research_widgets = self.question_fields(research, preset)
         body.append(research)
 
         place = Gtk.Box(spacing=6)
@@ -1211,6 +1243,25 @@ def selftest(window, app):
         window.link_widgets["store"]()
         assert "#belagg-aven-intervjuerna-exemplet" in window.last_link
 
+    def texts(widget):
+        if isinstance(widget, (Gtk.Label, Adw.PreferencesRow)):
+            yield widget.get_title() if isinstance(widget, Adw.PreferencesRow) else widget.get_text()
+        for child in widget:
+            yield from texts(child)
+
+    def hub():
+        window.nav.pop_to_page(window.start)
+        window.render_start()
+        shown = set(texts(window.start))
+        assert "Byter elever hypotes efter saklig respons?" in shown, "frågan syns på startsidan"
+        assert "↳ Hypotesbyten efter återkoppling" in shown, "projektet syns under frågan"
+
+    def from_question():
+        window.nav.push(window.new_project_page({"fråga": "01 RIKTNING/Hypotesbyten"}))
+        assert window.new_project_widgets["question"].get_selected() == 1, "frågan är förvald"
+        window.nav.pop()
+        window.open_project(window.project)
+
     def tools():
         window.nav.push(window.tools_page())
 
@@ -1241,7 +1292,7 @@ def selftest(window, app):
 
     steps = [("1-start", start), (None, fill_new), ("2-nytt-projekt", create_project),
              ("3-projekt", review_first), ("4-pastaende", confirm), (None, review_rest), (None, wait_build),
-             ("5-projekt-efter-korning", open_question), ("10-forskningsfraga", save_question), (None, open_link), (None, fill_link), ("6-koppla-underlag", store_link),
+             ("5-projekt-efter-korning", open_question), ("10-forskningsfraga", save_question), (None, open_link), (None, fill_link), ("6-koppla-underlag", store_link), (None, hub), ("11-startsida-fragor", from_question),
              (None, tools), ("7-verktyg", changed_data), ("8-ompröva", reconsider), ("9-ompröva-påstående", None)]
 
     def tick():
@@ -1282,6 +1333,8 @@ def main(argv):
             start["projekt"] = next(args)
         elif arg == "--verktyg":
             start["verktyg"] = True
+        elif arg.startswith("forskaros://"):
+            start.update(forskningsmapp.parse_app_uri(arg))
         elif arg == "--sjalvtest":
             test_dir = Path(next(args))
             os.environ["FORSKAROS_PROJEKTROT"] = str(test_dir / PROJEKTMAPP)

@@ -42,13 +42,13 @@ const PHASES = [
 
 /** Verktyg per fas (se 00 START/Verktygslåda). */
 const PHASE_TOOLS = {
-  utforska: 'Zotero, OpenAlex, DiVA, perspektivkarta',
-  kombinera: 'draw.io, Freeplane, hypotes',
-  välj: 'OSF-förregistrering, etikprövning, fokusläge',
-  pröva: 'motprov, forskningsmöte, lokal AI',
-  utveckla: 'JASP, jamovi, labbet (R, Python), Speech Note, Taguette',
-  ompröva: 'omprövning, felrättning, förmågegranskning',
-  dela: 'Zettlr, LibreOffice, Pandoc, Zenodo'
+  utforska: 'perspektivkarta, Firefox, Zotero, Xournal++, Obsidian',
+  kombinera: 'hypotes, ripgrep, draw.io, Freeplane, Rnote',
+  välj: 'förregistrering (OSF), etikprövning, fokusläge',
+  pröva: 'motprov, forskningsmöte, Kontakter, Kalender, Jitsi Meet, Ollama, Alpaca',
+  utveckla: 'appen ForskarOS, labbet (R, Python), JASP, Element, Syncthing, jamovi, LabPlot, R, DuckDB, JupyterLab, VSCodium, uv, Speech Note, Taguette',
+  ompröva: 'omprövning, felrättning, förmågegranskning, Déjà Dup, git-annex, DataLad',
+  dela: 'rapporten, Zenodo, LibreOffice, Evolution, Zettlr, ONLYOFFICE, TeXstudio, Pandoc, Typst'
 };
 
 const MAX_AKTIVA_FRÅGOR = 2;
@@ -967,6 +967,17 @@ ${varför || ''}
 `;
 }
 
+/** Länk som öppnar appen ForskarOS (forskaros://projekt eller forskaros://nytt-projekt). */
+function appUri(action, params) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
+  return `forskaros://${action}${query ? `?${query}` : ''}`;
+}
+
+/** Projekt i appen som prövar frågan, från deras anteckningar i 04 EXPERIMENT. */
+function projectsFor(question, notes) {
+  return notes.filter(n => n.fm.typ === 'experiment' && n.fm.projekt && refersTo(n, question));
+}
+
 function ideaNote({ date, idé }) {
   return fm({ typ: 'idé', datum: date, status: 'parkerad' }) + `# Idé
 
@@ -990,7 +1001,7 @@ function appendPhaseLog(body, line) {
 const engine = {
   PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, EPISTEMIC_CONTRACT, UTFALL, MAX_ÖPPNA_FRÅGOR, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
   today, addDays, daysBetween, phaseOf, nextPhase, linkTarget, refersTo, section, ownWords,
-  phaseRequirements, audit, metrics, buildPrompt, appendPhaseLog, questionNote, ideaNote, TYPES
+  phaseRequirements, audit, metrics, buildPrompt, appendPhaseLog, questionNote, ideaNote, TYPES, appUri, projectsFor
 };
 
 /* ======================================================================
@@ -1273,9 +1284,22 @@ class ForskarOSView extends ItemView {
     const reqs = phaseRequirements(q, notes);
     const list = box.createEl('ul', { cls: 'forskaros-checklist' });
     for (const r of reqs) list.createEl('li', { text: `${r.ok ? '✓' : '○'} ${r.text}`, cls: r.ok ? 'is-ok' : 'is-missing' });
+    const projekt = projectsFor(q, notes);
+    if (projekt.length) {
+      box.createEl('div', { cls: 'forskaros-muted', text: 'Projekt i appen ForskarOS' });
+      for (const e of projekt) {
+        const omprövas = Number(e.fm.att_ompröva || 0);
+        const namn = String(e.fm.projekt).split('/').pop();
+        const item = box.createDiv({ cls: 'forskaros-project',
+          text: `${namn} · ${e.fm.nivå || 'ingen körning än'}${omprövas ? ` · ${omprövas} att ompröva` : ''}` });
+        item.addEventListener('click', () => this.plugin.openApp('projekt', { mapp: e.fm.projekt }));
+      }
+    }
     const row = box.createDiv({ cls: 'forskaros-row' });
     row.createEl('button', { text: `Gå vidare till ${nextPhase(fas).namn}` })
       .addEventListener('click', () => new PhaseModal(this.app, this.plugin, q, reqs).open());
+    row.createEl('button', { text: 'Nytt projekt i appen' })
+      .addEventListener('click', () => this.plugin.openApp('nytt-projekt', { fråga: q.path.replace(/\.md$/, '') }));
     row.createEl('button', { text: 'Lägg att vila' })
       .addEventListener('click', () => void this.plugin.restQuestion(q));
     row.createEl('button', { text: 'Avsluta' })
@@ -1297,6 +1321,7 @@ module.exports = class ForskarOSPlugin extends Plugin {
       new CloseModal(this.app, this, q).open();
     })() });
     this.addCommand({ id: 'advance-phase', name: 'Gå vidare till nästa fas', callback: () => void this.advanceFromActive() });
+    this.addCommand({ id: 'new-project', name: 'Pröva i ett nytt projekt i appen ForskarOS', callback: () => void this.projectFromActive() });
     for (const [type, spec] of Object.entries(TYPES)) {
       this.addCommand({ id: `new-${type}`, name: spec.label, callback: () => void this.createNote(type) });
     }
@@ -1502,6 +1527,23 @@ module.exports = class ForskarOSPlugin extends Plugin {
     const aktiva = notes.filter(n => n.fm.typ === 'forskningsfråga' && (n.fm.status || 'aktiv') === 'aktiv').length;
     new Notice(aktiva > MAX_AKTIVA_FRÅGOR ? `${aktiva} aktiva frågor nu.` : `"${basename(q.path)}" är aktiv igen.`);
     this.refreshDashboard();
+  }
+
+  /** Öppna appen ForskarOS. Obsidian lämnar länken till skrivbordet. */
+  openApp(action, params) {
+    const url = appUri(action, params);
+    if (typeof window !== 'undefined' && window.open) window.open(url);
+    return url;
+  }
+
+  /** Nytt projekt för den öppna frågan, eller för frågan som den öppna hypotesen hör till. */
+  async projectFromActive() {
+    const file = this.app.workspace.getActiveFile();
+    const fm = file ? (this.app.metadataCache.getFileCache(file) || {}).frontmatter || {} : {};
+    const hypotes = fm.typ === 'hypotes' ? file.path.replace(/\.md$/, '') : null;
+    const fråga = fm.typ === 'hypotes' ? linkTarget(fm.fråga) : (await this.focusQuestion() || {}).path;
+    if (!fråga) { new Notice('Öppna en forskningsfråga eller hypotes först.'); return null; }
+    return this.openApp('nytt-projekt', { fråga: fråga.replace(/\.md$/, ''), hypotes });
   }
 
   async closeQuestion(q, utfall, motivering) {

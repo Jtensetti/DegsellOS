@@ -167,12 +167,44 @@ def generate(out: Path):
     (out / KORTDIR / "Översikt.md").write_text("\n".join(overview) + "\n", encoding="utf-8")
 
 
+CORE = Path("vault/.obsidian/plugins/forskaros-core/main.js")
+# Arbetssätt som hör till varje fas, före programmen i panelens verktygsrad.
+FASENS_ARBETE = {
+    "utforska": ["perspektivkarta"],
+    "kombinera": ["hypotes"],
+    "välj": ["förregistrering (OSF)", "etikprövning", "fokusläge"],
+    "pröva": ["motprov", "forskningsmöte"],
+    "utveckla": ["appen ForskarOS", "labbet (R, Python)"],
+    "ompröva": ["omprövning", "felrättning", "förmågegranskning"],
+    "dela": ["rapporten", "Zenodo"],
+}
+
+
+def phase_tools(kat):
+    """Panelens verktygsrad per fas: arbetssättet och programmen ur katalogen, utan molntjänster."""
+    lines = ["const PHASE_TOOLS = {"]
+    for i, fas in enumerate(f["id"] for f in kat["faser"]):
+        tools = [t for t in kat["verktyg"] if t["fas"] == fas and t["typ"] != "webb"]
+        tools.sort(key=lambda t: t["profil"] not in ("grund", "samarbete"))  # människor och grund först
+        names = FASENS_ARBETE[fas] + [t["namn"] for t in tools]
+        comma = "," if i < len(kat["faser"]) - 1 else ""
+        lines.append(f"  {fas}: '{', '.join(names)}'{comma}")
+    return "\n".join(lines + ["};"])
+
+
+def with_phase_tools(source, kat):
+    start = source.index("const PHASE_TOOLS = {")
+    end = source.index("};", start) + 2
+    return source[:start] + phase_tools(kat) + source[end:]
+
+
 def tree(base: Path):
     return {p.relative_to(base) for p in base.rglob("*") if p.is_file()}
 
 
 def main():
     check = "--kontroll" in sys.argv
+    kat = json.loads(KATALOG.read_text(encoding="utf-8"))
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp)
         generate(out)
@@ -185,6 +217,9 @@ def main():
                 bad += [f"{d}/{p}" for p in sorted(want & have) if not filecmp.cmp(out / d / p, ROOT / d / p, shallow=False)]
             if not (ROOT / MENYFIL).exists() or not filecmp.cmp(out / MENYFIL, ROOT / MENYFIL, shallow=False):
                 bad.append(str(MENYFIL))
+            core = (ROOT / CORE).read_text(encoding="utf-8")
+            if with_phase_tools(core, kat) != core:
+                bad.append(str(CORE))
             if bad:
                 print("Ej i synk med katalogen (kör python3 scripts/generera.py):\n  " + "\n  ".join(bad))
                 sys.exit(1)
@@ -195,6 +230,8 @@ def main():
             shutil.copytree(out / d, ROOT / d)
         (ROOT / MENYFIL).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(out / MENYFIL, ROOT / MENYFIL)
+        core = (ROOT / CORE).read_text(encoding="utf-8")
+        (ROOT / CORE).write_text(with_phase_tools(core, kat), encoding="utf-8")
         print("Genererat: profiler, startare, programmeny och verktygskort")
 
 

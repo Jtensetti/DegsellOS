@@ -17,7 +17,7 @@ import re
 import tempfile
 
 EXPERIMENTMAPP = "04 EXPERIMENT"
-ÄGDA = ("typ", "fråga", "hypotes", "projekt", "medarbetare", "körning", "nivå", "att_ompröva", "status")
+ÄGDA = ("typ", "fråga", "hypotes", "projekt", "projekt_id", "medarbetare", "körning", "nivå", "att_ompröva", "status")
 
 
 def vault_root():
@@ -105,8 +105,42 @@ def question(ref, root=None):
     return next((q for q in _notes(root or vault_root(), "forskningsfråga") if _same(ref, q["ref"])), None)
 
 
-def note_path(project, root=None):
-    return Path(root or vault_root()) / EXPERIMENTMAPP / f"Projekt {Path(project).name}.md"
+def note_path(project, root=None, project_id=None):
+    """Projektets anteckning. Hittas på projektets ID, så att den följer med när projektet flyttas."""
+    folder = Path(root or vault_root()) / EXPERIMENTMAPP
+    project = Path(project).resolve()
+    if project_id is None:
+        try:
+            project_id = json.loads((project / "projekt.json").read_text(encoding="utf-8")).get("id")
+        except (OSError, ValueError):
+            project_id = None
+    taken = {}
+    for path in sorted(folder.glob("*.md")) if folder.is_dir() else []:
+        try:
+            fields, _ = split_frontmatter(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError):
+            continue
+        if project_id and fields.get("projekt_id") == project_id:
+            return path
+        taken[path.name] = fields.get("projekt")
+    base, n = f"Projekt {project.name}", 1
+    while True:
+        name = f"{base}.md" if n == 1 else f"{base} {n}.md"
+        if name not in taken or taken[name] == str(project):
+            return folder / name
+        n += 1
+
+
+def projects_for(question_ref, root=None):
+    """Projekt i appen som prövar en fråga, från deras anteckningar i forskningsmappen."""
+    return [e for e in _notes(root or vault_root(), "experiment")
+            if e["fm"].get("projekt") and _same(link_target(e["fm"].get("fråga")), question_ref)]
+
+
+def app_uri(action, **params):
+    """Länk som öppnar appen ForskarOS, till exempel från en anteckning i Obsidian."""
+    from urllib.parse import urlencode
+    return f"forskaros://{action}?" + urlencode({k: v for k, v in params.items() if v})
 
 
 def _result_section(state):
@@ -115,7 +149,8 @@ def _result_section(state):
     last = state["körningar"][-1]
     report = Path(last["mapp"]) / "resultat" / "rapport.html"
     lines = [f'Senaste körning {last["namn"]}: {last["nivå"]}. {last["varför"]}',
-             f"[Öppna rapporten]({report.as_uri()})", ""]
+             f"[Öppna rapporten]({report.as_uri()}) · "
+             f'[Öppna projektet i appen ForskarOS]({app_uri("projekt", mapp=str(state["projekt"]))})', ""]
     claims = list(state["påståenden"].values())
     if claims:
         lines.append("Påståendena i manuset:")
@@ -141,7 +176,7 @@ def sync(project, state, manifest, root=None):
     ref = manifest.get("fråga")
     if not ref or not root.is_dir():
         return False
-    path = note_path(project, root)
+    path = note_path(project, root, manifest.get("id"))
     old_text = path.read_text(encoding="utf-8") if path.is_file() else None
     fields, body = split_frontmatter(old_text) if old_text else ({}, None)
     hyp = manifest.get("hypotes")
@@ -158,6 +193,7 @@ def sync(project, state, manifest, root=None):
         "fråga": f"[[{ref}]]",
         "hypotes": f"[[{hyp}]]" if hyp else None,
         "projekt": str(Path(project).resolve()),
+        "projekt_id": manifest.get("id"),
         "medarbetare": ", ".join(manifest.get("medarbetare") or []) or None,
         "körning": Path(last["mapp"]).name if last else None,
         "nivå": last["nivå"] if last else None,
@@ -173,6 +209,20 @@ def sync(project, state, manifest, root=None):
         tmp.write(text)
     os.replace(tmp.name, path)
     return True
+
+
+def parse_app_uri(uri):
+    """forskaros://projekt?mapp=… eller forskaros://nytt-projekt?fråga=…&hypotes=… som startval för appen."""
+    from urllib.parse import parse_qs, urlsplit
+    parts = urlsplit(uri)
+    if parts.scheme != "forskaros":
+        raise ValueError(f"Okänd länk: {uri}")
+    query = {k: v[0] for k, v in parse_qs(parts.query).items()}
+    if parts.netloc == "projekt" and query.get("mapp"):
+        return {"projekt": query["mapp"]}
+    if parts.netloc == "nytt-projekt":
+        return {"nytt": {k: query[k] for k in ("fråga", "hypotes") if query.get(k)}}
+    raise ValueError(f"Okänd länk: {uri}")
 
 
 def obsidian_uri(ref, root=None):

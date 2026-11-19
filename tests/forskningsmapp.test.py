@@ -118,6 +118,39 @@ with tempfile.TemporaryDirectory() as tmp:
     granskning = core(q, [note(experiment, vault)])["granskning"]
     assert any(f["princip"] == "Påstående att ompröva" for f in granskning), granskning
 
+    # Appen och forskningsmappen pekar på varandra.
+    assert "forskaros://projekt?mapp=" in experiment.read_text()
+    assert [e["ref"] for e in fm.projects_for("01 RIKTNING/Hypotesbyten")] == ["04 EXPERIMENT/Projekt Studie"]
+
+    # Ett projekt med samma namn i en annan mapp får en egen anteckning.
+    other = Path(tmp) / "annan" / "Studie"
+    other.parent.mkdir()
+    call("skapa", "kvantitativ", other, "--fråga", "01 RIKTNING/Hypotesbyten")
+    assert (vault / "04 EXPERIMENT/Projekt Studie 2.md").is_file()
+    assert fm.split_frontmatter(experiment.read_text())[0]["projekt"] == str(project.resolve())
+
+    # Ett flyttat projekt behåller sin anteckning.
+    moved = Path(tmp) / "Flyttad studie"
+    project.rename(moved)
+    call("koppla", moved, "--medarbetare", "Anna")
+    fields, body = fm.split_frontmatter(experiment.read_text())
+    assert fields["projekt"] == str(moved.resolve()) and "Bara tre elever per grupp." in body
+    assert not (vault / "04 EXPERIMENT/Projekt Flyttad studie.md").exists()
+    project = moved
+
+    # Länkar från panelen i Obsidian öppnar rätt vy i appen.
+    from_core = subprocess.run(["node", "-e", """
+const Module = require('node:module'); const orig = Module._load;
+Module._load = function (r, ...a) { return r === 'obsidian' ? { Plugin: class {}, ItemView: class {}, Notice: class {}, Modal: class {} } : orig.call(this, r, ...a); };
+const { engine } = require(process.argv[1]);
+console.log(engine.appUri('nytt-projekt', { fråga: '01 RIKTNING/Hypotesbyten', hypotes: '02 HYPOTESER/Saklig respons' }));
+console.log(engine.appUri('projekt', { mapp: process.argv[2] }));
+""", str(root / "vault/.obsidian/plugins/forskaros-core/main.js"), str(project)],
+        capture_output=True, text=True, check=True).stdout.split()
+    assert fm.parse_app_uri(from_core[0]) == {"nytt": {"fråga": "01 RIKTNING/Hypotesbyten", "hypotes": "02 HYPOTESER/Saklig respons"}}
+    assert fm.parse_app_uri(from_core[1]) == {"projekt": str(project)}
+    assert fm.parse_app_uri(fm.app_uri("projekt", mapp=str(project))) == {"projekt": str(project)}
+
     # Kopplingen kan tas bort.
     assert call("koppla", project, "--fråga", "") == "Projektet är inte kopplat till någon forskningsfråga."
     assert "fråga" not in json.loads((project / "projekt.json").read_text())

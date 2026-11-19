@@ -133,6 +133,16 @@ test('faskrav: Utveckla och Dela läser projekt från appen ForskarOS', () => {
   assert.equal(e.phaseRequirements(dela, []).length, 3, 'utan projekt i appen gäller inte kravet');
 });
 
+test('appen och panelen pekar på varandra', () => {
+  assert.equal(e.appUri('nytt-projekt', { fråga: '01 RIKTNING/Min fråga', hypotes: null }),
+    'forskaros://nytt-projekt?fr%C3%A5ga=01+RIKTNING%2FMin+fr%C3%A5ga');
+  const q = note(Q, { typ: 'forskningsfråga' });
+  const egen = note('04 EXPERIMENT/Projekt A.md', { typ: 'experiment', fråga: link, projekt: '/p/A' });
+  const annan = note('04 EXPERIMENT/Projekt B.md', { typ: 'experiment', fråga: '[[Annan]]', projekt: '/p/B' });
+  const handskriven = note('04 EXPERIMENT/Försök.md', { typ: 'experiment', fråga: link });
+  assert.deepEqual(e.projectsFor(q, [egen, annan, handskriven]).map(n => n.path), ['04 EXPERIMENT/Projekt A.md']);
+});
+
 test('granskning: påståenden att ompröva i appens projekt och möten bara med kärnan', () => {
   const projekt = note('04 EXPERIMENT/Projekt Studie.md', { typ: 'experiment', projekt: '/p', att_ompröva: 2 });
   assert(e.audit([projekt], DAY).some(f => f.princip === 'Påstående att ompröva' && f.text.startsWith('2 påståenden')));

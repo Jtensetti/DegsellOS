@@ -175,6 +175,11 @@ const { engine } = ForskarOSPlugin;
 
   // AI-konsultationen loggas med uppgift, läge och den skickade texten.
   const hyp = [...files.values()].find(f => f.path.startsWith('02 HYPOTESER/'));
+  // Från hypotesen till ett nytt projekt i appen.
+  activeFile = hyp;
+  const url = await p.projectFromActive();
+  assert(url.startsWith('forskaros://nytt-projekt?') && url.includes('hypotes=02+HYPOTESER'), url);
+  assert(url.includes(encodeURIComponent('01 RIKTNING/När stärker AI tänkandet').replace(/%20/g, '+')), url);
   await p.logConsultation(hyp, 'kritik', 'prövning', false, 'TEXT SOM SKICKADES');
   const log = [...files.values()].find(f => f.path.startsWith('08 REFLEKTION/AI/'));
   assert(log, 'AI-loggen skapades inte');

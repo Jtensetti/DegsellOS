@@ -79,3 +79,7 @@ done
 
 # Arbetsytans standardinställningar (dockan m.m.).
 if command -v dconf >/dev/null 2>&1; then dconf update; fi
+
+# Länkar forskaros:// från forskningsmappen i Obsidian öppnar appen.
+update-desktop-database /usr/share/applications
+grep -q 'x-scheme-handler/forskaros=io.github.jtensetti.Forskaros.desktop' /usr/share/applications/mimeinfo.cache

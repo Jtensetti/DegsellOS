@@ -63,7 +63,7 @@ Panelen visar andelen AI-konsultationer med eget utkast, övningar utan AI, motp
 Metoden bärs av flera program som lämnar över till varandra:
 
 - **Obsidian med ForskarOS Core** håller tanken: frågan, hypoteserna, motproven, mötena och omprövningarna.
-- **Appen ForskarOS** håller handlingen: data, analys, manus och rapport. Ett projekt kopplas till en fråga och den hypotes det prövar. Projektets läge skrivs till `04 EXPERIMENT` som ett experiment: senaste körning, hur säker den är och vilka påståenden som behöver omprövas. Panelen läser det.
+- **Appen ForskarOS** håller handlingen: data, analys, manus och rapport. Ett projekt kopplas till en fråga och den hypotes det prövar. Projektets läge skrivs till `04 EXPERIMENT` som ett experiment: senaste körning, hur säker den är och vilka påståenden som behöver omprövas. Panelen läser det och visar projekten under frågan. *Nytt projekt i appen* i panelen, eller kommandot *Pröva i ett nytt projekt* på en hypotes, öppnar appen med frågan vald. Appens startsida visar frågorna med sina projekt.
 - **Kontakter, Kalender och Jitsi Meet** (programmenyn, *4 · Pröva*) är till för mötena som metoden kräver. **Element** och **Syncthing** (*5 · Utveckla*) är till för medarbetare som arbetar med underlaget.
 - **Zotero** lämnar källor till projektets referenser, och appen kontrollerar citaten mot dem.
 

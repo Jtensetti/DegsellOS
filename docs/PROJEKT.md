@@ -81,6 +81,8 @@ Appen skriver då projektets läge till `04 EXPERIMENT/Projekt NAMN.md` i forskn
 
 När påståendena är granskade och körningen upprepad leder appens sista steg tillbaka till frågan i Obsidian.
 
+Åt andra hållet visar panelen i Obsidian projekten under varje fråga. Ett klick öppnar projektet i appen. *Nytt projekt i appen* på en fråga, eller kommandot *Pröva i ett nytt projekt i appen ForskarOS* på en hypotes, öppnar appen med frågan och hypotesen valda. Länkarna har formen `forskaros://projekt?mapp=…` och `forskaros://nytt-projekt?fråga=…`. Appens startsida visar de aktiva forskningsfrågorna med sina projekt.
+
 ## Kommandorad
 
 ```bash

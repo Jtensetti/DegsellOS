@@ -4,6 +4,7 @@
 #  2. Uppdaterar ForskarOS Core-tillägget i en befintlig vault när OS:et har
 #     uppdaterats. Forskarens egna anteckningar rörs aldrig.
 #  3. Ger Flatpak-programmen ForskarOS typsnitt, en gång.
+#  4. Låter Obsidian öppna forskningsmappen direkt, om Obsidian inte redan har valv.
 set -euo pipefail
 
 SEED=/usr/share/forskaros/vault
@@ -19,6 +20,16 @@ if [[ -f "$FONTCONF" && ! -e "$CONFIG/forskaros/typsnitt.installerade" ]]; then
   mkdir -p "$CONFIG/fontconfig/conf.d" "$CONFIG/forskaros"
   [[ -e "$CONFIG/fontconfig/conf.d/$(basename "$FONTCONF")" ]] || cp -- "$FONTCONF" "$CONFIG/fontconfig/conf.d/"
   : > "$CONFIG/forskaros/typsnitt.installerade"
+fi
+
+# Obsidian öppnar forskningsmappen vid första start i stället för att be forskaren
+# leta upp den. Görs bara när Obsidian inte har några egna inställningar än.
+OBSIDIAN_CONF="${FORSKAROS_OBSIDIAN_KONFIG:-$HOME/.var/app/md.obsidian.Obsidian/config/obsidian}"
+if [[ ! -e "$OBSIDIAN_CONF/obsidian.json" ]]; then
+  mkdir -p "$OBSIDIAN_CONF"
+  vault_id=$(printf '%s' "$TARGET" | sha256sum | cut -c1-16)
+  printf '{"vaults":{"%s":{"path":"%s","ts":%s,"open":true}}}\n' \
+    "$vault_id" "$TARGET" "$(date +%s)000" > "$OBSIDIAN_CONF/obsidian.json"
 fi
 
 if [[ ! -d "$SEED" ]]; then

@@ -61,4 +61,11 @@ rm "$CONF"
 FORSKAROS_TYPSNITT="$PWD/system_files/usr/share/forskaros/identitet/52-forskaros-typsnitt.conf" "$INIT" >/dev/null
 test ! -e "$CONF"  # borttagen av forskaren: kommer inte tillbaka
 
-echo "OK: forskaros-init skapar, bevarar och uppdaterar korrekt, typsnitt för Flatpak en gång"
+# 6. Obsidian får forskningsmappen som valv, men bara om Obsidian saknar egna inställningar.
+OBS="$HOME/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json"
+python3 -c "import json,sys; v=list(json.load(open(sys.argv[1]))['vaults'].values()); assert v[0]['path']==sys.argv[2] and v[0]['open'], v" "$OBS" "$HOME/ForskarOS"
+echo '{"vaults":{}}' > "$OBS"
+"$INIT" >/dev/null
+grep -qx '{"vaults":{}}' "$OBS"  # forskarens egna Obsidian-inställningar rörs inte
+
+echo "OK: forskaros-init skapar, bevarar och uppdaterar korrekt, typsnitt för Flatpak en gång, valv i Obsidian"

@@ -43,3 +43,5 @@
 .callout[data-callout="spekulation"] { --callout-color: 163, 113, 247; --callout-icon: lucide-cloud; }
 .forskaros-tools { cursor:pointer; margin-bottom:0.3rem; }
 .forskaros-resting { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; margin:0.3rem 0; }
+.forskaros-project { font-size:0.82rem; padding:0.35rem 0.55rem; margin:0.25rem 0; border-radius:0.4rem; background:var(--background-secondary); cursor:pointer; }
+.forskaros-project:hover { color:var(--text-accent); }

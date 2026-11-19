@@ -33,7 +33,9 @@ En befintlig mapp skrivs inte över. På en dator utan Bash kan du kopiera hela 
 
 Core förbereder AI-konsultationer som text att kopiera. Tillägget gör inga nätverksanrop. Du väljer själv vilken tjänst som får texten.
 
-Core-anteckningarna ligger normalt i `~/ForskarOS` och appens forskningsprojekt i `~/Forskningsprojekt`. Ett projekt som är kopplat till en fråga skriver sitt läge till `04 EXPERIMENT`, och panelen läser det. [Koppla projektet till en forskningsfråga](PROJEKT.md#koppla-projektet-till-en-forskningsfråga) · [Begreppen](../vault/00%20START/Begreppen.md)
+Core-anteckningarna ligger normalt i `~/ForskarOS` och appens forskningsprojekt i `~/Forskningsprojekt`. Ett projekt som är kopplat till en fråga skriver sitt läge till `04 EXPERIMENT`, och panelen visar det under frågan. *Nytt projekt i appen* startar ett projekt för frågan.
+
+I ForskarOS öppnar Obsidian forskningsmappen direkt vid första start. I en egen installation väljer du *Open folder as vault* och mappen. [Koppla projektet till en forskningsfråga](PROJEKT.md#koppla-projektet-till-en-forskningsfråga) · [Begreppen](../vault/00%20START/Begreppen.md)
 
 ## Uppdatering och säkerhetskopiering
 
