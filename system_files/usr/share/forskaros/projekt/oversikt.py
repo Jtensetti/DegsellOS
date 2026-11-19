@@ -61,7 +61,7 @@ def overview(project, domain):
              "skydd": manifest["skydd"], "fel": None, "påståenden": {}, "körningar": [],
              "underlag_ändrat": False,
              "fråga": manifest.get("fråga"), "hypotes": manifest.get("hypotes"),
-             "medarbetare": manifest.get("medarbetare") or []}
+             "medarbetare": manifest.get("medarbetare") or [], "hypotes_ändrad": False}
     try:
         state["påståenden"] = inspect(project / "underlag", cached=True)
     except (ValueError, OSError, KeyError) as error:
@@ -71,6 +71,8 @@ def overview(project, domain):
         level, why = coverage(run)
         state["körningar"].append({"mapp": run, "namn": run_label(run), "nivå": level, "varför": why})
     if runs:
+        from forskningsmapp import hypothesis_changed_since
+        state["hypotes_ändrad"] = hypothesis_changed_since(manifest, runs[-1])
         try:
             saved = json.loads((runs[-1] / "korning.json").read_text(encoding="utf-8"))["underlag"]
             state["underlag_ändrat"] = saved != inventory(project / "underlag")
@@ -113,6 +115,10 @@ def next_step(state):
     if not state["körningar"]:
         return ("bygg", "Bygg den första rapporten",
                 "Analysen körs på en kopia av underlaget. Rapport, figur och tabell sparas i en ny körning.")
+    if state.get("hypotes_ändrad"):
+        return ("bygg", "Hypotesen har ändrats",
+                "Hypotesen i forskningsmappen har skrivits om sedan senaste körningen. Bygg rapporten igen. "
+                "Rapporten visar den nya formuleringen och säger öppet att den ändrats efter tidigare resultat.")
     if state["underlag_ändrat"]:
         return ("bygg", "Bygg rapporten igen",
                 "Underlaget har ändrats sedan senaste körningen. Den gamla körningen finns kvar.")
@@ -145,7 +151,7 @@ def progress(state):
     action = next_step(state)[0]
     action = {"manus": "granska", "fråga": "rapport"}.get(action, action)
     runs = state["körningar"]
-    built = bool(runs) and not state["underlag_ändrat"]
+    built = bool(runs) and not state["underlag_ändrat"] and not state.get("hypotes_ändrad")
     done = {"granska": bool(state["påståenden"]) and not state["fel"] and all(c["status"] == "Granskad" for c in state["påståenden"].values()),
             "bygg": built, "upprepa": built and runs[-1]["nivå"] == "Återkörd", "rapport": False}
     return [(name, "nu" if key == action else "klar" if done[key] else

@@ -4,6 +4,7 @@
 
 ## Under utveckling
 
+- Skrivs hypotesen om efter att resultat finns föreslår appen en ny körning, och rapporten säger öppet att hypotesen ändrats och var den ursprungliga formuleringen finns.
 - Rapporten börjar med hypotesen som prövas: hypotesen, antagandet den utmanar, förutsägelsen och det som skulle tala emot den, med tidpunkt för när hypotesen senast ändrades och när analysen kördes. Texten följer med körningen och forskningspaketet, och en upprepning upptäcker om den har ändrats.
 - Stora underlag fryser inte appen. Projektet läses i bakgrunden med en laddningsvy, och oförändrade filer läses inte om när du kommer tillbaka till fönstret. Med 300 MB underlag och en tabell på två miljoner rader tar det under en sekund att återvända till projektet i stället för omkring 20. Granskningsbeslut och körningar räknar alltid om från filerna.
 - Startsidan läser bara rubrik och egenskaper i forskningsmappens anteckningar, så den förblir snabb även med tusentals anteckningar.

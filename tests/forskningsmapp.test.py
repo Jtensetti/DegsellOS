@@ -133,6 +133,18 @@ with tempfile.TemporaryDirectory() as tmp:
     (run / "forutsagelse.md").write_text(saved)
     call("upprepa", run)
 
+    # Hypotesen skrevs om efter resultatet. Appen föreslår en ny körning, och rapporten säger det öppet.
+    import time
+    time.sleep(1.1)
+    hyp.touch()
+    assert next_step(overview(project, domain))[:2] == ("bygg", "Hypotesen har ändrats")
+    run2 = Path(call("kör", project))
+    second = (run2 / "forutsagelse.md").read_text()
+    assert "många elever" in second and "Ändrad efter tidigare resultat" in second and run.name in second
+    assert "Ändrad" not in saved, "den första körningen har ingen ändring att redovisa"
+    call("upprepa", run2)
+    run = run2
+
     dela = dict(q, fm=dict(q["fm"], fas="dela"))
     krav = {k["text"]: k["ok"] for k in core(dela, [note(experiment, vault)])["krav"]}
     assert krav["Analysen bakom resultatet är upprepad med samma resultat (appen ForskarOS)"]
@@ -184,5 +196,10 @@ console.log(engine.appUri('projekt', { mapp: process.argv[2] }));
     assert call("koppla", project, "--fråga", "") == "Projektet är inte kopplat till någon forskningsfråga."
     assert "fråga" not in json.loads((project / "projekt.json").read_text())
     assert fm.obsidian_uri("01 RIKTNING/Hypotesbyten").startswith("obsidian://open?vault=ForskarOS&file=01%20RIKTNING")
+
+# En ändring inne i en lista räknas, men inte var eller när texten hämtades.
+text = "::: {.forutsagelse}\n## H\n\nUr forskningsfrågan ”X?” Hämtad.\n\n**Förutsägelsen.**\n\n1. A\n2. B\n:::\n"
+assert fm._claims_of(text) != fm._claims_of(text.replace("2. B", "2. C"))
+assert fm._claims_of(text) == fm._claims_of(text.replace("”X?”", "”Y?”"))
 
 print("OK: forskningsfråga, hypotes och medarbetare kopplas till projektet; körning, upprepning och omprövning når Core")

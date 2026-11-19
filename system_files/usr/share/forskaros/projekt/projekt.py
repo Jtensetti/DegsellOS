@@ -164,7 +164,8 @@ def run(project, lab=False):
         for program in ("upprepa.py", "belagg.py"):
             shutil.copyfile(HERE / program, work / program)
         from forskningsmapp import prediction
-        text = prediction(manifest)
+        earlier = [r for r in runs.iterdir() if not r.name.startswith(".") and (r / "korning.json").is_file()]
+        text = prediction(manifest, earlier=earlier)
         if text:
             (work / "forutsagelse.md").write_text(text, encoding="utf-8")
         shield = shield_for(manifest, lab)

@@ -81,6 +81,8 @@ Appen skriver då projektets läge till `04 EXPERIMENT/Projekt NAMN.md` i forskn
 
 Rapporten börjar med **Hypotesen som prövas**: hypotesen, antagandet den utmanar, förutsägelsen och det som skulle tala emot den, hämtade ur hypotesen i forskningsmappen när analysen körs. Rapporten visar när hypotesen senast ändrades och när analysen kördes, så att läsaren ser vad som var bestämt innan resultatet fanns. Texten sparas i körningen som `forutsagelse.md`, med kontrollsumma i `korning.json`. En upprepning använder den sparade texten och säger till om den har ändrats.
 
+Skrivs hypotesen om efter en körning föreslår appen att rapporten byggs igen. Den nya rapporten säger öppet att hypotesen ändrats efter tidigare resultat och pekar på körningen med den ursprungliga formuleringen.
+
 När påståendena är granskade och körningen upprepad leder appens sista steg tillbaka till frågan i Obsidian.
 
 Åt andra hållet visar panelen i Obsidian projekten under varje fråga. Ett klick öppnar projektet i appen. *Nytt projekt i appen* på en fråga, eller kommandot *Pröva i ett nytt projekt i appen ForskarOS* på en hypotes, öppnar appen med frågan och hypotesen valda. Länkarna har formen `forskaros://projekt?mapp=…` och `forskaros://nytt-projekt?fråga=…`. Appens startsida visar de aktiva forskningsfrågorna med sina projekt.

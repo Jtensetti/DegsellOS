@@ -262,8 +262,22 @@ def _clean(lines):
     return "\n".join(kept).strip()
 
 
-def prediction(manifest, root=None, when=None):
-    """Hypotesen och förutsägelsen som de står i forskningsmappen nu, som Markdown för rapporten."""
+def _claims_of(text):
+    """Det forskaren förutsade, utan rader om var och när texten hämtades."""
+    kept = []
+    for part in text.replace("\n:::", "\n\n:::").split("\n\n"):
+        part = part.strip()
+        if part and not part.startswith(("::: ", ":::", "## ", "Ur forskningsfrågan", "Hämtad ur", "**Ändrad")):
+            kept.append(part)
+    return "\n\n".join(kept)
+
+
+def prediction(manifest, root=None, when=None, earlier=()):
+    """Hypotesen och förutsägelsen som de står i forskningsmappen nu, som Markdown för rapporten.
+
+    earlier är projektets tidigare körningar. Har hypotesen formulerats om sedan
+    den första körningen säger rapporten det, och var den ursprungliga finns.
+    """
     root = Path(root or vault_root())
     ref = manifest.get("hypotes")
     if not ref:
@@ -292,8 +306,26 @@ def prediction(manifest, root=None, when=None):
     origin = (f"Ur forskningsfrågan ”{title}”{stop} " if q else "") + (
         f"Hämtad ur forskningsmappen när analysen kördes {when:%Y-%m-%d %H:%M} UTC. "
         f"Hypotesen ändrades senast {changed:%Y-%m-%d %H:%M} UTC.")
+    first = next((Path(r) for r in sorted(earlier) if (Path(r) / "forutsagelse.md").is_file()), None)
+    if first and _claims_of((first / "forutsagelse.md").read_text(encoding="utf-8")) != _claims_of("\n\n".join(parts)):
+        parts.append(f"**Ändrad efter tidigare resultat.** Hypotesen formulerades annorlunda vid den första "
+                     f"körningen, {first.name[:10]}. Den formuleringen finns i körningen `{first.name}`.")
     return ("::: {.forutsagelse}\n## Hypotesen som prövas {#forutsagelse}\n\n" + f"{origin}\n\n"
             + "\n\n".join(parts) + "\n:::\n")
+
+
+def hypothesis_changed_since(manifest, run, root=None):
+    """Har hypotesen ändrats i forskningsmappen sedan körningen gjordes?"""
+    ref = manifest.get("hypotes")
+    if not ref:
+        return False
+    try:
+        changed = (Path(root or vault_root()) / f"{ref}.md").stat().st_mtime
+        started = json.loads((Path(run) / "korning.json").read_text(encoding="utf-8")).get("start")
+    except (OSError, ValueError):
+        return False
+    # Körningens starttid har hela sekunder. En ändring räknas när den kom tydligt efter.
+    return bool(started) and changed > datetime.fromisoformat(started).timestamp() + 1
 
 
 def parse_app_uri(uri):
