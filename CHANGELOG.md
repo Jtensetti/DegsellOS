@@ -2,7 +2,7 @@
 
 [Utgåvor och kontrollsummor](docs/VERSIONS.md) · [Släpprocess](docs/RELEASE.md)
 
-## Under utveckling
+## 2027.1-beta5
 
 - Ny logotyp. Skrivbordsbakgrunden visar logotypen på papperston, i ljust och mörkt läge. Symbolen är menyknapp uppe till vänster och programikon.
 - **Nytt namn: DegsellOS.** Systemet, appen, kommandona (`degsellos`, `degsellos-projekt`, `degsellos-setup` …), forskningsmappen (`~/DegsellOS`), Core-tillägget och avbildningen (`ghcr.io/jtensetti/degsellos`) heter nu DegsellOS. Datorer som installerades som ForskarOS fortsätter få uppdateringar under det gamla avbildningsnamnet. Vid första inloggningen flyttas forskningsmappen, appens inställningar och tillägget till de nya namnen, och äldre `forskaros://`-länkar öppnar fortfarande appen.

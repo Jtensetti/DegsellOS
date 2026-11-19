@@ -12,9 +12,9 @@ Varje analys sparas tillsammans med data, kod och rapport. En kollega kan öppna
 
 | Dator | Nedladdning | Installation |
 |---|---|---|
-| PC, virtuell maskin | [VM-disk för amd64](https://archive.org/download/degsellos-2027.1-beta4-amd64-vm/DegsellOS-2027.1-beta4-amd64.qcow2) | Importera disken i QEMU eller virt-manager och välj UEFI. |
-| Mac med Apple Silicon | [VM-disk för arm64](https://archive.org/download/degsellos-2027.1-beta4-arm64-vm/DegsellOS-2027.1-beta4-arm64.qcow2) | [Öppna disken i UTM](docs/MAC.md) |
-| PC eller Intel-Mac, installation på disk | [Installations-ISO för amd64, revision r2](https://archive.org/download/degsellos-2027.1-beta4-amd64-iso/DegsellOS-2027.1-beta4-amd64-interaktiv-r2.iso) | [Installera på PC](docs/INSTALLATION.md#installera-på-pc) · [Intel-Mac](docs/MAC.md#intel-mac) |
+| PC, virtuell maskin | [VM-disk för amd64](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2) | Importera disken i QEMU eller virt-manager och välj UEFI. |
+| Mac med Apple Silicon | [VM-disk för arm64](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) | [Öppna disken i UTM](docs/MAC.md) |
+| PC eller Intel-Mac, installation på disk | [Installations-ISO för amd64, revision r2](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso) | [Installera på PC](docs/INSTALLATION.md#installera-på-pc) · [Intel-Mac](docs/MAC.md#intel-mac) |
 
 I en färdig VM är både användarnamn och lösenord `forskare`. Du väljer ett eget lösenord vid första inloggningen. På fysisk disk, använd ISO-filen som slutar på `-interaktiv-r2.iso` och kontrollera vilka diskar som är markerade. Den ursprungliga beta4-ISO:n kan radera anslutna diskar automatiskt. [Kontrollsummor för nedladdningarna](docs/VERSIONS.md#20271-beta4)
 

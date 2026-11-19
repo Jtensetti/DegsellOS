@@ -6,9 +6,9 @@ Använd den senaste förhandsversionen för en ny installation. Äldre utgåvor 
 
 | Plattform | Originalfil | SHA-256 |
 |---|---|---|
-| PC och Intel-Mac | [Interaktiv ISO, revision r2](https://archive.org/download/degsellos-2027.1-beta4-amd64-iso/DegsellOS-2027.1-beta4-amd64-interaktiv-r2.iso) | `289914752f514402f77b21f7b584c9ed6c0b1fadbe214a01bf254ac813e82099` |
-| Virtuell PC | [VM-disk för amd64](https://archive.org/download/degsellos-2027.1-beta4-amd64-vm/DegsellOS-2027.1-beta4-amd64.qcow2) | `e07bd61f2fca2b6e40830b9122171c184dc2bf14a674124835550e3110f84105` |
-| Apple Silicon | [VM-disk för arm64](https://archive.org/download/degsellos-2027.1-beta4-arm64-vm/DegsellOS-2027.1-beta4-arm64.qcow2) | `4a56bfd88ae2ca2a978dccf2b50018d7478a701fd60053f5d4f302e0b5074c60` |
+| PC och Intel-Mac | [Interaktiv ISO, revision r2](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso) | `289914752f514402f77b21f7b584c9ed6c0b1fadbe214a01bf254ac813e82099` |
+| Virtuell PC | [VM-disk för amd64](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2) | `e07bd61f2fca2b6e40830b9122171c184dc2bf14a674124835550e3110f84105` |
+| Apple Silicon | [VM-disk för arm64](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) | `4a56bfd88ae2ca2a978dccf2b50018d7478a701fd60053f5d4f302e0b5074c60` |
 
 Jämför den hämtade filens SHA-256 med värdet i tabellen. På Linux kan du använda `sha256sum FILNAMN`, på macOS `shasum -a 256 FILNAMN` och i PowerShell `Get-FileHash FILNAMN -Algorithm SHA256`.
 

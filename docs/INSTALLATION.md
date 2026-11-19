@@ -9,13 +9,13 @@ Hämta avbildningen och dess `.sha256`-fil till samma mapp. De publicerade summo
 På Linux, för installations-ISO:n:
 
 ```bash
-sha256sum -c DegsellOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256
+sha256sum -c ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256
 ```
 
 På macOS, för arm64-disken:
 
 ```bash
-shasum -a 256 -c DegsellOS-2027.1-beta4-arm64.qcow2.sha256
+shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.qcow2.sha256
 ```
 
 För amd64-disken används motsvarande `.qcow2.sha256`-fil. Resultatet ska vara `OK`. En avvikelse innebär att nedladdningen inte matchar den publicerade kontrollsumman.

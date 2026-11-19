@@ -13,7 +13,7 @@ Utvecklingsbyggen för amd64 och arm64 publiceras på GHCR som `latest` och med 
 
 ## Enbart installeraren
 
-Om samma systemavbildning ska paketeras i en rättad ISO, använd en commit med prefixet `[release-iso] ` på `main`. `VERSION` ska då identifiera den tidigare publicerade utgåvan. Ge en ersättande revision ett eget filnamn så att den kan skiljas från äldre nedladdningar. För beta4 heter den aktuella ISO:n `DegsellOS-2027.1-beta4-amd64-interaktiv-r2.iso`.
+Om samma systemavbildning ska paketeras i en rättad ISO, använd en commit med prefixet `[release-iso] ` på `main`. `VERSION` ska då identifiera den tidigare publicerade utgåvan. Ge en ersättande revision ett eget filnamn så att den kan skiljas från äldre nedladdningar. För beta4 heter den aktuella ISO:n `ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso`.
 
 ## Övriga byggen
 
