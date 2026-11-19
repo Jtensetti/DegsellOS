@@ -9,28 +9,30 @@ Hämta avbildningen och dess `.sha256`-fil till samma mapp. De publicerade summo
 På Linux, för installations-ISO:n:
 
 ```bash
-sha256sum -c ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso.sha256
+sha256sum -c DegsellOS-2027.1-beta5-amd64-interaktiv.iso.sha256
 ```
 
-På macOS, för arm64-disken:
+På macOS, för UTM-maskinen:
 
 ```bash
-shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.qcow2.sha256
+shasum -a 256 -c DegsellOS-2027.1-beta5-arm64.utm.zip.sha256
 ```
 
-För amd64-disken används motsvarande `.qcow2.sha256`-fil. Resultatet ska vara `OK`. En avvikelse innebär att nedladdningen inte matchar den publicerade kontrollsumman.
+För VM-diskarna används motsvarande `.qcow2.sha256`-fil. Resultatet ska vara `OK`. En avvikelse innebär att nedladdningen inte matchar den publicerade kontrollsumman.
 
 I PowerShell kan du använda `Get-FileHash FILNAMN -Algorithm SHA256` och jämföra med värdet i versionsreferensen.
 
-### Äldre beta4-medier
+### Beta4-medier
+
+Beta4 släpptes som ForskarOS, och filerna heter `ForskarOS-2027.1-beta4-…`.
 
 | Filnamnets slut | Användning |
 |---|---|
-| `-amd64-interaktiv-r2.iso` | Aktuell installerare med diskval och stöd för svenskt språkval |
+| `-amd64-interaktiv-r2.iso` | Installerare med diskval och stöd för svenskt språkval |
 | `-amd64-interaktiv.iso` | Ersatt; kan stanna vid svenskt språkval |
 | `-amd64.iso` | Ersatt; kan partitionera anslutna diskar automatiskt |
 
-**Använd endast `-interaktiv-r2.iso` för installation.** Hämta den aktuella filen om du har någon av de äldre varianterna.
+**Installera beta4 endast med `-interaktiv-r2.iso`.** Har du någon av de äldre varianterna, hämta den senaste utgåvan i stället.
 
 ## Installera på PC
 

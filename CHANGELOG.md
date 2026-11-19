@@ -2,6 +2,10 @@
 
 [Utgåvor och kontrollsummor](docs/VERSIONS.md) · [Släpprocess](docs/RELEASE.md)
 
+## Under utveckling
+
+- Startprovet av arm64-disken i CI fungerar utan KVM.
+
 ## 2027.1-beta5
 
 - Ny logotyp. Skrivbordsbakgrunden visar logotypen på papperston, i ljust och mörkt läge. Symbolen är menyknapp uppe till vänster och programikon.

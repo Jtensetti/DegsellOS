@@ -2,15 +2,34 @@
 
 Använd den senaste förhandsversionen för en ny installation. Äldre utgåvor finns kvar för att kunna återskapa tidigare miljöer. [Installationsguide](INSTALLATION.md) · [Ändringslogg](../CHANGELOG.md)
 
+## 2027.1-beta5
+
+Första utgåvan under namnet DegsellOS, med den nya logotypen. [Ändringar](../CHANGELOG.md#20271-beta5)
+
+| Plattform | Originalfil | SHA-256 |
+|---|---|---|
+| PC och Intel-Mac | [Installations-ISO](https://archive.org/download/degsellos-2027.1-beta5-amd64-iso/DegsellOS-2027.1-beta5-amd64-interaktiv.iso) | `7925fb4b58c3e832dfa78e779563b3f9d029378b8be4a5a29bb22e79b509d7af` |
+| Virtuell PC | [VM-disk för amd64](https://archive.org/download/degsellos-2027.1-beta5-amd64-vm/DegsellOS-2027.1-beta5-amd64.qcow2) | `ee1aefdc9399f47780830b2cc23bda4c099814f4db20f6dfd19803dea7b201e5` |
+| Apple Silicon | [UTM-maskin för arm64](https://archive.org/download/degsellos-2027.1-beta5-arm64-vm/DegsellOS-2027.1-beta5-arm64.utm.zip) | `bc87c7ade950038e45e33887b9f89a9a3eb23fc36ccda7ff212ab792b6dcb461` |
+| Apple Silicon | [VM-disk för arm64](https://archive.org/download/degsellos-2027.1-beta5-arm64-vm/DegsellOS-2027.1-beta5-arm64.qcow2) | `bef7525e9074a93a5c711a77d05d52f65f80a405adbd94d091d8223681762f84` |
+
+Jämför den hämtade filens SHA-256 med värdet i tabellen. På Linux kan du använda `sha256sum FILNAMN`, på macOS `shasum -a 256 FILNAMN` och i PowerShell `Get-FileHash FILNAMN -Algorithm SHA256`.
+
+Det signerade flerarkitektursmanifestet för 2027.1-beta5 har digest `sha256:67804832510832bad63b093e677a9fb83f3b7c9ec96d27e2d38d6fb846ff4aec`.
+
+```bash
+sudo bootc switch ghcr.io/jtensetti/degsellos:2027.1-beta5
+```
+
 ## 2027.1-beta4
+
+Beta4 släpptes under namnet ForskarOS. Arkivposterna och filnamnen har kvar det namnet.
 
 | Plattform | Originalfil | SHA-256 |
 |---|---|---|
 | PC och Intel-Mac | [Interaktiv ISO, revision r2](https://archive.org/download/forskaros-2027.1-beta4-amd64-iso/ForskarOS-2027.1-beta4-amd64-interaktiv-r2.iso) | `289914752f514402f77b21f7b584c9ed6c0b1fadbe214a01bf254ac813e82099` |
 | Virtuell PC | [VM-disk för amd64](https://archive.org/download/forskaros-2027.1-beta4-amd64-vm/ForskarOS-2027.1-beta4-amd64.qcow2) | `e07bd61f2fca2b6e40830b9122171c184dc2bf14a674124835550e3110f84105` |
 | Apple Silicon | [VM-disk för arm64](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) | `4a56bfd88ae2ca2a978dccf2b50018d7478a701fd60053f5d4f302e0b5074c60` |
-
-Jämför den hämtade filens SHA-256 med värdet i tabellen. På Linux kan du använda `sha256sum FILNAMN`, på macOS `shasum -a 256 FILNAMN` och i PowerShell `Get-FileHash FILNAMN -Algorithm SHA256`.
 
 **Använd ISO-revisionen `-interaktiv-r2.iso`.** Den ursprungliga beta4-ISO:n kan partitionera anslutna diskar automatiskt. Revisionen `-interaktiv.iso` kan stanna vid svenskt språkval. [Diskval och installation](INSTALLATION.md#installera-på-pc)
 

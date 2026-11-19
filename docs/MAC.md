@@ -2,15 +2,14 @@
 
 ## Apple Silicon
 
-Installera [UTM](https://mac.getutm.app/). En färdig virtuell maskin kan öppnas med ett dubbelklick. Hämta beta4-paketet medan det finns på GitHub eller importera VM-disken från Internet Archive enligt anvisningarna nedan. [UTM-paket för beta4, tidsbegränsad GitHub-artifakt som kräver inloggning](https://github.com/Jtensetti/DegsellOS/actions/runs/44338731185/artifacts/14442862777)
+Installera [UTM](https://mac.getutm.app/). En färdig virtuell maskin kan öppnas med ett dubbelklick. Hämta [UTM-maskinen](https://archive.org/download/degsellos-2027.1-beta5-arm64-vm/DegsellOS-2027.1-beta5-arm64.utm.zip) och dess [kontrollsumma](https://archive.org/download/degsellos-2027.1-beta5-arm64-vm/DegsellOS-2027.1-beta5-arm64.utm.zip.sha256) till samma mapp.
 
-1. Packa upp nedladdningen från GitHub. Där ligger `.utm.zip` och dess `.sha256` tillsammans.
-2. Kör `shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.utm.zip.sha256` i den uppackade mappen.
-3. Packa upp `.utm.zip` och dubbelklicka på `DegsellOS.utm`. Starta maskinen i UTM.
+1. Kör `shasum -a 256 -c DegsellOS-2027.1-beta5-arm64.utm.zip.sha256` i mappen.
+2. Packa upp `.utm.zip` och dubbelklicka på `DegsellOS.utm`. Starta maskinen i UTM.
 
 ### Importera VM-disken från Internet Archive
 
-1. Hämta [arm64-disken](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2) och dess [kontrollsumma](https://archive.org/download/forskaros-2027.1-beta4-arm64-vm/ForskarOS-2027.1-beta4-arm64.qcow2.sha256). Kör `shasum -a 256 -c ForskarOS-2027.1-beta4-arm64.qcow2.sha256` i samma mapp.
+1. Hämta [arm64-disken](https://archive.org/download/degsellos-2027.1-beta5-arm64-vm/DegsellOS-2027.1-beta5-arm64.qcow2) och dess [kontrollsumma](https://archive.org/download/degsellos-2027.1-beta5-arm64-vm/DegsellOS-2027.1-beta5-arm64.qcow2.sha256). Kör `shasum -a 256 -c DegsellOS-2027.1-beta5-arm64.qcow2.sha256` i samma mapp.
 2. Välj **Create a New Virtual Machine → Virtualize → Linux** i UTM. Välj QEMU, ARM64, fyra processorkärnor och minst 4 GB minne. Hoppa över ISO-steget.
 3. Öppna maskinens inställningar. Välj **Drives → New… → Import** och välj qcow2-filen. Ta bort eventuell tom disk som UTM nyss skapat i den nya maskinen. Placera DegsellOS-disken först i startordningen. [UTM:s diskguide](https://docs.getutm.app/settings-qemu/drive/)
 
@@ -22,4 +21,4 @@ För att dela filer väljer du **VirtFS** i maskinens delningsinställningar och
 
 ## Intel-Mac
 
-Använd amd64-ISO:n med ändelsen `-interaktiv-r2.iso`. På modeller med T2-krets kan tangentbord, styrplatta och trådlöst nätverk kräva särskilda drivrutiner. [Installera på PC eller Intel-Mac](INSTALLATION.md#installera-på-pc) · [t2linux](https://t2linux.org/)
+Använd installations-ISO:n för amd64. På modeller med T2-krets kan tangentbord, styrplatta och trådlöst nätverk kräva särskilda drivrutiner. [Installera på PC eller Intel-Mac](INSTALLATION.md#installera-på-pc) · [t2linux](https://t2linux.org/)

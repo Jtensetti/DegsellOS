@@ -8,7 +8,7 @@ Kör från repots rot med DegsellOS-disken för den utgåva du vill paketera.
 
 ```bash
 python3 scripts/paketera_utm.py vm/utm/config.plist \
-  ForskarOS-2027.1-beta4-arm64.qcow2 ForskarOS-2027.1-beta4-arm64.utm.zip --minne 4096
+  DegsellOS-2027.1-beta5-arm64.qcow2 DegsellOS-2027.1-beta5-arm64.utm.zip --minne 4096
 ```
 
 Packa upp arkivet på Macen och dubbelklicka på `DegsellOS.utm`. Välj eventuell delad mapp i maskinens inställningar. [Mac-guide](../../docs/MAC.md)
