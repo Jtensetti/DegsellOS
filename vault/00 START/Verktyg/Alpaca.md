@@ -8,8 +8,7 @@ profil: lokal-ai
 > Chatt med lokala modeller
 
 **Fas:** 4 · Pröva  
-**Profil:** Lokal AI  
-**Ingår i det rekommenderade urvalet**
+**Profil:** Lokal AI
 
 ## Vad det används till
 

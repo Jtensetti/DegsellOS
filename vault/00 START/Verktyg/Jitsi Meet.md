@@ -8,7 +8,8 @@ profil: samarbete
 > Videomöten med öppen källkod
 
 **Fas:** 4 · Pröva  
-**Profil:** Möten och samarbete
+**Profil:** Möten och samarbete  
+**Ingår i det rekommenderade urvalet**
 
 ## Vad det används till
 

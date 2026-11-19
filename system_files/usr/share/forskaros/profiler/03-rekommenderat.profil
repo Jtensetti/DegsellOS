@@ -10,4 +10,4 @@ flatpak com.zettlr.Zettlr                       Zettlr – Akademiskt skrivande 
 brew    pandoc                                  Pandoc – Konvertera mellan Markdown, Word, LaTeX och PDF
 flatpak net.mkiol.SpeechNote                    Speech Note – Transkribering helt på din dator
 flatpak com.jgraph.drawio.desktop               draw.io – Diagram, modeller och flöden
-flatpak com.jeffser.Alpaca                      Alpaca – Chatt med lokala modeller
+flatpak org.jitsi.jitsi-meet                    Jitsi Meet – Videomöten med öppen källkod

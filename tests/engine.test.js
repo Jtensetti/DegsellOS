@@ -133,6 +133,17 @@ test('faskrav: Utveckla och Dela läser projekt från appen ForskarOS', () => {
   assert.equal(e.phaseRequirements(dela, []).length, 3, 'utan projekt i appen gäller inte kravet');
 });
 
+test('AI-stödet är frivilligt: av från början, handledning utan färdiga svar', () => {
+  assert.equal(e.AI_STANDARD, 'av');
+  assert.deepEqual(e.aiModes('av'), []);
+  assert.deepEqual(e.aiModes('handledning'), ['utveckling', 'prövning']);
+  assert.deepEqual(e.aiModes('fullt'), ['utveckling', 'prövning', 'prestation']);
+  assert.deepEqual(e.aiModes('okänd'), [], 'okänd nivå betyder av');
+  const ai = [1, 2, 3].map(i => note(`a${i}.md`, { typ: 'ai-konsultation', datum: DAY, egen_tanke_först: 'nej' }));
+  assert(e.audit(ai, DAY, { ai: 'handledning' }).some(f => f.princip === 'AI-användning'));
+  assert(!e.audit(ai, DAY, { ai: 'av' }).some(f => /AI/.test(f.princip)), 'avstängt AI nämns inte i granskningen');
+});
+
 test('appen och panelen pekar på varandra', () => {
   assert.equal(e.appUri('nytt-projekt', { fråga: '01 RIKTNING/Min fråga', hypotes: null }),
     'forskaros://nytt-projekt?fr%C3%A5ga=01+RIKTNING%2FMin+fr%C3%A5ga');

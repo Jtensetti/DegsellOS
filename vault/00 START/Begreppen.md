@@ -48,4 +48,4 @@ ForskarOS bygger på 25 begrepp. Inget av dem är en knapp. De bärs av samspele
 | Begrepp | Var det finns |
 |---|---|
 | **Vision** | Välj kräver att du skriver vad som förändras om frågan besvaras, och för vem. |
-| **Framtiden är den viktigaste tiden** | Dela kräver att du anger vilken ny fråga svaret öppnar. Den läggs i idébanken när frågan avslutas. Andelen AI-konsultationer där du tänkt själv först ska inte sjunka över tid. |
+| **Framtiden är den viktigaste tiden** | Dela kräver att du anger vilken ny fråga svaret öppnar. Den läggs i idébanken när frågan avslutas. Om du använder AI ska andelen konsultationer där du tänkt själv först inte sjunka över tid. AI-stödet är avstängt tills du själv väljer det. |

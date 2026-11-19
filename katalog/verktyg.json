@@ -383,8 +383,7 @@
       "fas": "pröva",
       "kort": "Chatt med lokala modeller",
       "metod": "Chattgränssnitt för lokala modeller via Ollama.",
-      "läs_mer": "https://flathub.org/apps/com.jeffser.Alpaca",
-      "rekommenderat": true
+      "läs_mer": "https://flathub.org/apps/com.jeffser.Alpaca"
     },
     {
       "id": "md.obsidian.Obsidian",
@@ -457,7 +456,8 @@
       "fas": "pröva",
       "kort": "Videomöten med öppen källkod",
       "metod": "Möt forskare som inte finns i närheten. Anteckna invändningarna i ett forskningsmöte.",
-      "läs_mer": "https://jitsi.org/jitsi-meet/"
+      "läs_mer": "https://jitsi.org/jitsi-meet/",
+      "rekommenderat": true
     },
     {
       "id": "im.riot.Riot",

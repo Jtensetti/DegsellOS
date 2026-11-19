@@ -29,10 +29,10 @@ typ: verktygskort
 ## 4 · Pröva
 
 - [[00 START/Verktyg/Ollama|Ollama]]: Kör språkmodeller lokalt
-- [[00 START/Verktyg/Alpaca|Alpaca]] (rekommenderad): Chatt med lokala modeller
+- [[00 START/Verktyg/Alpaca|Alpaca]]: Chatt med lokala modeller
 - [[00 START/Verktyg/Kontakter|Kontakter]]: Personerna i ditt nätverk
 - [[00 START/Verktyg/Kalender|Kalender]]: Boka forskningsmöten
-- [[00 START/Verktyg/Jitsi Meet|Jitsi Meet]]: Videomöten med öppen källkod
+- [[00 START/Verktyg/Jitsi Meet|Jitsi Meet]] (rekommenderad): Videomöten med öppen källkod
 
 ## 5 · Utveckla
 

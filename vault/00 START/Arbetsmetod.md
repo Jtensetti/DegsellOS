@@ -19,13 +19,21 @@ Efter Dela börjar en ny cykel. En fråga avslutas med *Avsluta* och ett utfall:
 ## Regler
 
 - **Högst två aktiva och fyra öppna frågor.** Vilande frågor räknas som öppna. Nya idéer sparas i idébanken (*Parkera en idé*).
-- **Eget utkast före AI.** *Be AI om hjälp* kräver minst 50 egna ord i anteckningen för utvecklings- och prövningsläget.
+- **Människor först.** AI-stödet är avstängt tills du väljer en nivå. Med AI påslaget kräver utvecklings- och prövningsläget minst 50 egna ord i anteckningen.
 - **Varje hypotes ska ha ett motprov**, och minst en person utanför projektet ska ha sett idén.
 - **Märk påståenden** som belagt (med källa), tolkning eller spekulation.
 - **Rätta fel öppet** med en felrättning.
 - **Vila.** En fråga kan läggas att vila i två veckor. Den återupptas från panelen med en mening om varför den fortfarande är viktig.
 
 ## AI-konsultationer
+
+Forskningen görs i första hand av människor. AI-stödet är frivilligt och avstängt från början. Välj nivå under *Inställningar → ForskarOS Core*:
+
+| Nivå | Vad AI får göra |
+|---|---|
+| **Av** (standard) | Inget. Panelen, granskningen och måtten nämner inte AI. |
+| **Handledning** | Ställa frågor och leta fel i det du redan skrivit, efter minst 50 egna ord. Inga färdiga svar. |
+| **Fullt** | Alla lägen, även hjälp att producera text och kod. |
 
 *Be AI om hjälp* skapar en text som du kopierar till valfri AI. Inget skickas automatiskt. Konsultationen loggas i `08 REFLEKTION/AI`, där du klistrar in svaret och skriver vad du tar med dig.
 

@@ -180,6 +180,14 @@ const { engine } = ForskarOSPlugin;
   const url = await p.projectFromActive();
   assert(url.startsWith('forskaros://nytt-projekt?') && url.includes('hypotes=02+HYPOTESER'), url);
   assert(url.includes(encodeURIComponent('01 RIKTNING/När stärker AI tänkandet').replace(/%20/g, '+')), url);
+  // AI-stödet är avstängt tills forskaren väljer en nivå.
+  assert.equal(p.settings.ai, 'av');
+  activeFile = hyp;
+  assert.equal(await p.consultAI(), null, 'ingen AI-dialog när stödet är avstängt');
+  await p.setAI('handledning');
+  assert.equal(p.settings.ai, 'handledning');
+  await p.setAI('påhittad');
+  assert.equal(p.settings.ai, 'handledning', 'okända nivåer ignoreras');
   await p.logConsultation(hyp, 'kritik', 'prövning', false, 'TEXT SOM SKICKADES');
   const log = [...files.values()].find(f => f.path.startsWith('08 REFLEKTION/AI/'));
   assert(log, 'AI-loggen skapades inte');

@@ -58,6 +58,22 @@ const MAX_ÖPPNA_FRÅGOR = 4;
 const UTFALL = { besvarad: 'Besvarad', förkastad: 'Hypotesen förkastad', övergiven: 'Övergiven' };
 const MIN_EGNA_ORD = 50;
 
+/**
+ * AI-stödet är frivilligt. Forskningen görs i första hand av människor, så
+ * AI är avstängt tills forskaren själv väljer en nivå i inställningarna.
+ */
+const AI_NIVÅER = {
+  av: { namn: 'Av', beskrivning: 'Inget AI-stöd. Panelen, granskningen och måtten nämner inte AI.', lägen: [] },
+  handledning: { namn: 'Handledning', beskrivning: 'AI ställer frågor och letar fel i det du redan skrivit. Inga färdiga svar.', lägen: ['utveckling', 'prövning'] },
+  fullt: { namn: 'Fullt', beskrivning: 'Alla lägen, även hjälp att producera text och kod. Används sparsamt.', lägen: ['utveckling', 'prövning', 'prestation'] }
+};
+const AI_STANDARD = 'av';
+
+/** Vilka AI-lägen som är tillåtna på en nivå. */
+function aiModes(nivå) {
+  return (AI_NIVÅER[nivå] || AI_NIVÅER[AI_STANDARD]).lägen;
+}
+
 /** Uppgifter som en AI-konsultation kan ha. */
 const ROLES = {
   perspektiv: {
@@ -322,7 +338,8 @@ function finding(nivå, princip, text, path) { return { nivå, princip, text, pa
  * Granskar hela vaulten mot arbetsmetoden och listar det som behöver
  * åtgärdas. Regelbaserat, ingen AI.
  */
-function audit(notes, date) {
+function audit(notes, date, opts = {}) {
+  const aiPå = aiModes(opts.ai || 'fullt').length > 0;
   const out = [];
   const of = typ => notes.filter(n => n.fm.typ === typ);
   const questions = of('forskningsfråga');
@@ -509,7 +526,7 @@ function audit(notes, date) {
   }
 
   // AI-konsultationer utan egen sammanfattning efteråt.
-  for (const a of of('ai-konsultation')) {
+  for (const a of aiPå ? of('ai-konsultation') : []) {
     const ålder = daysBetween(noteDate(a) || date, date);
     if (ålder >= 2 && !section(a.body, 'Vad tar jag med mig')) {
       out.push(finding('påminnelse', 'AI-användning',
@@ -519,14 +536,14 @@ function audit(notes, date) {
 
   const ai30 = of('ai-konsultation').filter(a => daysBetween(noteDate(a) || date, date) <= 30);
   const utanTanke = ai30.filter(a => a.fm.egen_tanke_först !== 'ja').length;
-  if (ai30.length >= 3 && utanTanke / ai30.length > 0.5) {
+  if (aiPå && ai30.length >= 3 && utanTanke / ai30.length > 0.5) {
     out.push(finding('varning', 'AI-användning',
       `${utanTanke} av ${ai30.length} AI-konsultationer senaste månaden gjordes innan du skrivit något eget.`));
   }
 
   // Beroende över tid: andelen konsultationer med eget utkast ska inte sjunka.
   const förra30 = of('ai-konsultation').filter(a => { const d = daysBetween(noteDate(a) || date, date); return d > 30 && d <= 60; });
-  if (ai30.length >= 3 && förra30.length >= 3) {
+  if (aiPå && ai30.length >= 3 && förra30.length >= 3) {
     const nu = ai30.filter(a => a.fm.egen_tanke_först === 'ja').length / ai30.length;
     const då = förra30.filter(a => a.fm.egen_tanke_först === 'ja').length / förra30.length;
     if (då - nu >= 0.25) {
@@ -999,7 +1016,7 @@ function appendPhaseLog(body, line) {
 }
 
 const engine = {
-  PHASES, PHASE_TOOLS, ROLES, MODES, CAPABILITIES, EPISTEMIC_CONTRACT, UTFALL, MAX_ÖPPNA_FRÅGOR, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
+  PHASES, PHASE_TOOLS, ROLES, MODES, AI_NIVÅER, AI_STANDARD, aiModes, CAPABILITIES, EPISTEMIC_CONTRACT, UTFALL, MAX_ÖPPNA_FRÅGOR, MAX_AKTIVA_FRÅGOR, MIN_EGNA_ORD,
   today, addDays, daysBetween, phaseOf, nextPhase, linkTarget, refersTo, section, ownWords,
   phaseRequirements, audit, metrics, buildPrompt, appendPhaseLog, questionNote, ideaNote, TYPES, appUri, projectsFor
 };
@@ -1146,12 +1163,16 @@ class AIModal extends Modal {
     el.createEl('label', { text: 'Läge', cls: 'forskaros-label' });
     const läge = el.createEl('select', { cls: 'forskaros-input' });
     if (!tänktFörst) läge.createEl('option', { text: 'Välj läge', value: '' });
+    const tillåtna = aiModes(this.plugin.settings.ai);
     for (const [id, m] of Object.entries(MODES)) {
+      if (!tillåtna.includes(id)) continue;
       const o = läge.createEl('option', { text: `${m.namn} – ${m.beskrivning}`, value: id });
       if (!tänktFörst && id !== 'prestation') o.disabled = true;
     }
     läge.value = tänktFörst ? 'utveckling' : '';
-    if (!tänktFörst) el.createEl('p', { text: 'Skriv ett eget utkast för att få frågor och motargument. Välj prestationsläge om du vill ha hjälp att producera text eller kod redan nu.' });
+    if (!tänktFörst) el.createEl('p', { text: tillåtna.includes('prestation')
+      ? 'Skriv ett eget utkast för att få frågor och motargument. Välj prestationsläge om du vill ha hjälp att producera text eller kod redan nu.'
+      : `Skriv ett eget utkast på minst ${MIN_EGNA_ORD} ord först. På nivån Handledning arbetar AI bara med det du själv har skrivit.` });
 
     el.createEl('label', { text: 'Text att kopiera (skickas inte automatiskt)', cls: 'forskaros-label' });
     const preview = el.createEl('textarea', { cls: 'forskaros-input forskaros-preview' });
@@ -1222,7 +1243,7 @@ class ForskarOSView extends ItemView {
     }
 
     // Granskning.
-    const findings = audit(notes, date);
+    const findings = audit(notes, date, { ai: this.plugin.settings.ai });
     root.createEl('h4', { text: 'Att åtgärda' });
     if (!findings.length) root.createEl('p', { cls: 'forskaros-muted', text: 'Inget just nu.' });
     for (const f of findings.slice(0, 8)) {
@@ -1241,8 +1262,10 @@ class ForskarOSView extends ItemView {
       c.createEl('strong', { text: value });
       c.createEl('span', { text: label });
     };
-    card(m.aiKonsultationer ? `${m.tänktFörst}/${m.aiKonsultationer}` : '–',
-      m.aiFörra ? `AI-frågor efter eget utkast (förra 30 d: ${m.tänktFörstFörra}/${m.aiFörra})` : 'AI-frågor efter eget utkast');
+    if (aiModes(this.plugin.settings.ai).length) {
+      card(m.aiKonsultationer ? `${m.tänktFörst}/${m.aiKonsultationer}` : '–',
+        m.aiFörra ? `AI-frågor efter eget utkast (förra 30 d: ${m.tänktFörstFörra}/${m.aiFörra})` : 'AI-frågor efter eget utkast');
+    }
     card(String(m.övningarUtanAI), 'Övningar utan AI');
     card(m.förmåga ? m.förmåga.toFixed(1) : '–', m.förmågaFörra ? `Förmåga (förra: ${m.förmågaFörra.toFixed(1)})` : 'Förmåga (1–5)');
     card(String(m.motprov), 'Motprov');
@@ -1260,7 +1283,7 @@ class ForskarOSView extends ItemView {
     const actions = root.createDiv({ cls: 'forskaros-actions' });
     const btn = (text, fn) => actions.createEl('button', { text }).addEventListener('click', fn);
     btn('Parkera en idé', () => this.plugin.parkIdea());
-    btn('Be AI om hjälp', () => void this.plugin.consultAI());
+    if (aiModes(this.plugin.settings.ai).length) btn('Be AI om hjälp', () => void this.plugin.consultAI());
     for (const [type, spec] of Object.entries(TYPES)) btn(spec.label, () => void this.plugin.createNote(type));
     root.createEl('button', { text: 'Läs arbetsmetoden' })
       .addEventListener('click', () => void this.plugin.openPath('00 START/Arbetsmetod.md'));
@@ -1309,7 +1332,9 @@ class ForskarOSView extends ItemView {
 
 module.exports = class ForskarOSPlugin extends Plugin {
   async onload() {
+    this.settings = Object.assign({ ai: AI_STANDARD }, (this.loadData && await this.loadData()) || {});
     this.registerView(VIEW_TYPE, leaf => new ForskarOSView(leaf, this));
+    this.addAISettings();
     this.addRibbonIcon('brain', 'Öppna ForskarOS', () => void this.activateDashboard());
     this.addCommand({ id: 'open-dashboard', name: 'Öppna ForskarOS-panelen', callback: () => void this.activateDashboard() });
     this.addCommand({ id: 'new-question', name: 'Ny forskningsfråga', callback: () => this.newQuestion() });
@@ -1564,7 +1589,37 @@ module.exports = class ForskarOSPlugin extends Plugin {
     this.refreshDashboard();
   }
 
+  /** Inställningen för AI-stöd, i Obsidians inställningar under tillägget. */
+  addAISettings() {
+    const { PluginSettingTab, Setting } = obsidian;
+    if (!PluginSettingTab || !Setting || !this.addSettingTab) return;
+    const plugin = this;
+    this.addSettingTab(new (class extends PluginSettingTab {
+      display() {
+        const el = this.containerEl;
+        el.empty();
+        el.createEl('p', { text: 'Forskningen görs i första hand av människor. AI-stöd är frivilligt och avstängt från början.' });
+        new Setting(el).setName('AI-stöd').setDesc(Object.values(AI_NIVÅER).map(n => `${n.namn}: ${n.beskrivning}`).join(' '))
+          .addDropdown(d => {
+            for (const [id, n] of Object.entries(AI_NIVÅER)) d.addOption(id, n.namn);
+            d.setValue(plugin.settings.ai).onChange(v => void plugin.setAI(v));
+          });
+      }
+    })(this.app, this));
+  }
+
+  async setAI(nivå) {
+    if (!AI_NIVÅER[nivå]) return;
+    this.settings.ai = nivå;
+    if (this.saveData) await this.saveData(this.settings);
+    this.refreshDashboard();
+  }
+
   async consultAI() {
+    if (!aiModes(this.settings.ai).length) {
+      new Notice('AI-stödet är avstängt. Välj nivå under Inställningar → ForskarOS Core.');
+      return null;
+    }
     const file = this.app.workspace.getActiveFile();
     if (!file) { new Notice('Öppna anteckningen du vill ha hjälp med.'); return; }
     const text = await this.app.vault.read(file);

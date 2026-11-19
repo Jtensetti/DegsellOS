@@ -5,6 +5,7 @@ typ: handbok
 
 Studier tyder på att AI-stöd kan höja prestationen medan stödet finns men försämra den när det tas bort, och att stöd som ger ledtrådar i stället för svar minskar problemet. ForskarOS är därför byggt så här:
 
+- AI-stödet är frivilligt och avstängt från början. Välj nivå under *Inställningar → ForskarOS Core*: **Av**, **Handledning** (bara frågor och felsökning i det du själv skrivit) eller **Fullt**.
 - *Be AI om hjälp* kräver minst 50 egna ord i anteckningen för utvecklings- och prövningsläget.
 - Du väljer uppgift (alternativa perspektiv, kritisk granskning, handledning, metod och analys, uppföljning) och läge:
   - **utveckling**: frågor och ledtrådar, inte färdiga svar (standard)
