@@ -62,8 +62,25 @@ def link_target(value):
     return (m.group(1) if m else str(value or "")).strip().removesuffix(".md") or None
 
 
-def _notes(root, typ):
-    root = Path(root)
+_HUVUDEN = {}
+
+
+def _head(path):
+    """Frontmatter och rubrik. Läser bara början av filen och återanvänder oförändrade."""
+    st = path.stat()
+    key = (str(path), st.st_size, st.st_mtime_ns)
+    if key not in _HUVUDEN:
+        with path.open("rb") as stream:
+            text = stream.read(16384).decode("utf-8", errors="replace")
+        fields, body = split_frontmatter(text)
+        heading = re.search(r"^# (.+)$", body, re.M)
+        _HUVUDEN[key] = (fields, heading.group(1).strip() if heading else path.stem)
+    return _HUVUDEN[key]
+
+
+def scan(root=None):
+    """Alla anteckningar med typ i forskningsmappen, läst en gång."""
+    root = Path(root or vault_root())
     if not root.is_dir():
         return []
     out = []
@@ -71,30 +88,31 @@ def _notes(root, typ):
         if any(part.startswith(".") for part in path.relative_to(root).parts):
             continue
         try:
-            text = path.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+            fields, title = _head(path)
+        except OSError:
             continue
-        fields, body = split_frontmatter(text)
-        if fields.get("typ") == typ:
-            heading = re.search(r"^# (.+)$", body, re.M)
+        if fields.get("typ"):
             ref = path.relative_to(root).with_suffix("").as_posix()
-            out.append({"ref": ref, "titel": heading.group(1).strip() if heading else path.stem,
-                        "fm": fields, "body": body})
+            out.append({"ref": ref, "titel": title, "fm": fields})
     return out
+
+
+def _notes(root, typ, notes=None):
+    return [n for n in (scan(root) if notes is None else notes) if n["fm"].get("typ") == typ]
 
 
 def _same(target, ref):
     return bool(target) and (target == ref or target == ref.rsplit("/", 1)[-1])
 
 
-def questions(root=None):
+def questions(root=None, notes=None):
     """Forskningsfrågor som går att arbeta med: aktiva, vilande och förslag."""
-    found = _notes(root or vault_root(), "forskningsfråga")
+    found = _notes(root, "forskningsfråga", notes)
     return [q for q in found if q["fm"].get("status", "aktiv") in ("aktiv", "vilar", "förslag")]
 
 
 def hypotheses(question_ref, root=None):
-    return [h for h in _notes(root or vault_root(), "hypotes")
+    return [h for h in _notes(root, "hypotes")
             if _same(link_target(h["fm"].get("fråga")), question_ref)]
 
 
@@ -102,7 +120,7 @@ def question(ref, root=None):
     """Frågan som ett projekt är kopplat till, eller None om den inte finns längre."""
     if not ref:
         return None
-    return next((q for q in _notes(root or vault_root(), "forskningsfråga") if _same(ref, q["ref"])), None)
+    return next((q for q in _notes(root, "forskningsfråga") if _same(ref, q["ref"])), None)
 
 
 def note_path(project, root=None, project_id=None):
@@ -131,9 +149,9 @@ def note_path(project, root=None, project_id=None):
         n += 1
 
 
-def projects_for(question_ref, root=None):
+def projects_for(question_ref, root=None, notes=None):
     """Projekt i appen som prövar en fråga, från deras anteckningar i forskningsmappen."""
-    return [e for e in _notes(root or vault_root(), "experiment")
+    return [e for e in _notes(root, "experiment", notes)
             if e["fm"].get("projekt") and _same(link_target(e["fm"].get("fråga")), question_ref)]
 
 

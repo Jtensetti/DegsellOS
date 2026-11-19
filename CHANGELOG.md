@@ -4,6 +4,9 @@
 
 ## Under utveckling
 
+- Stora underlag fryser inte appen. Projektet läses i bakgrunden med en laddningsvy, och oförändrade filer läses inte om när du kommer tillbaka till fönstret. Med 300 MB underlag och en tabell på två miljoner rader tar det under en sekund att återvända till projektet i stället för omkring 20. Granskningsbeslut och körningar räknar alltid om från filerna.
+- Startsidan läser bara rubrik och egenskaper i forskningsmappens anteckningar, så den förblir snabb även med tusentals anteckningar.
+- Fel som uppstår när en vy byggs om visas för forskaren i stället för att tyst lämna vyn som den var.
 - Appen och Obsidian öppnar varandra. Panelen visar projekten under varje forskningsfråga och kan starta ett nytt projekt med frågan och hypotesen valda. Appens startsida visar frågorna med sina projekt. Projektets anteckning i forskningsmappen följer med när projektet flyttas, och två projekt med samma namn krockar inte.
 - Obsidian öppnar forskningsmappen direkt vid första start.
 - Panelens verktyg per fas kommer från samma katalog som programmenyn, med programmen för möten först i Pröva.

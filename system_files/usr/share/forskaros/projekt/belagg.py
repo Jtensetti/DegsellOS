@@ -145,7 +145,43 @@ def passage(folder, spec, item):
     return item
 
 
-def evidence(folder, spec):
+# Underlag som inte har ändrats sedan det lästes, nycklat på filernas storlek,
+# ändringstid och inod. Gör att appen kan visa ett projekt med stora datafiler
+# utan att läsa om dem varje gång fönstret får fokus. Granskningsbeslut och
+# körningar räknar alltid om från filerna.
+_CACHE = {}
+
+
+def _files(folder, spec):
+    if "källa" in spec:
+        return [folder / "kallor.bib"] + ([source_path(folder, spec["fil"])] if spec.get("fil") else [])
+    return [source_path(folder, spec["fil"])]
+
+
+def _stamp(path):
+    try:
+        st = path.stat()
+        return (str(path), st.st_size, st.st_mtime_ns, st.st_ino)
+    except OSError:
+        return (str(path), None)
+
+
+def evidence(folder, spec, cached=False):
+    if not cached:
+        return _evidence(folder, spec)
+    try:
+        key = (str(folder), json.dumps(spec, sort_keys=True, ensure_ascii=False),
+               tuple(_stamp(p) for p in _files(folder, spec)))
+    except (ValueError, KeyError, TypeError):
+        return _evidence(folder, spec)
+    if key not in _CACHE:
+        if len(_CACHE) > 256:
+            _CACHE.clear()
+        _CACHE[key] = _evidence(folder, spec)
+    return dict(_CACHE[key])  # raderna delas; ingen ändrar dem
+
+
+def _evidence(folder, spec):
     role = spec["roll"]
     if role not in ("stöd", "motbelägg", "metod"):
         raise ValueError(f"Okänd roll för belägg: {role}")
@@ -194,7 +230,7 @@ def source_label(spec):
     return f'{spec["roll"].capitalize()} · {spec["fil"]}' + (f" · {condition}" if condition else "")
 
 
-def inspect(folder):
+def inspect(folder, cached=False):
     config_file = folder / "belagg.json"
     if not config_file.exists():
         manus = folder / "manus.md"
@@ -213,7 +249,7 @@ def inspect(folder):
         definition = config["påståenden"][key]
         if not isinstance(definition.get("underlag"), list) or not definition["underlag"]:
             raise ValueError(f"Ange minst ett underlag för {key}.")
-        sources = [evidence(folder, spec) for spec in definition["underlag"]]
+        sources = [evidence(folder, spec, cached) for spec in definition["underlag"]]
         components = {"Påståendets lydelse": digest(title),
                       "Forskarens kommentar": digest(definition.get("kommentar", ""))}
         # Skilda urval och roller jämförs separat. Behåll även flera poster med samma namn.

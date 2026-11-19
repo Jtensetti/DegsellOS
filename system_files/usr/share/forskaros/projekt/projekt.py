@@ -68,14 +68,14 @@ def link(project, fråga=None, hypotes=None, medarbetare=None):
     return manifest
 
 
-def sync(project):
+def sync(project, state=None):
     """Skriv projektets läge till forskningsmappen om projektet är kopplat till en fråga."""
     from forskningsmapp import sync as write_note
     from oversikt import overview
     try:
         manifest = domain(project)
         if manifest.get("fråga"):
-            return write_note(project, overview(project, domain), manifest)
+            return write_note(project, state or overview(project, domain), manifest)
     except (OSError, ValueError, KeyError):
         pass  # Forskningsmappen är ett tillägg. Projektet fungerar utan den.
     return False

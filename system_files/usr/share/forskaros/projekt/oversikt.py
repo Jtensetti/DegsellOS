@@ -11,9 +11,29 @@ from datetime import datetime
 from pathlib import Path
 
 from belagg import inspect
-from upprepa import coverage, inventory
+from upprepa import checksum, coverage
 
 PROJEKTMAPP = "Forskningsprojekt"
+
+
+_HASHES = {}
+
+
+def inventory(folder):
+    """Som upprepa.inventory, men återanvänder kontrollsummor för filer som inte ändrats."""
+    if folder.is_symlink() or not folder.is_dir():
+        raise ValueError(f"Vanlig mapp saknas: {folder}")
+    hashes = {}
+    for path in sorted(folder.rglob("*")):
+        if path.is_symlink() or not (path.is_file() or path.is_dir()):
+            raise ValueError(f"Endast vanliga filer och mappar kan följa med: {path}")
+        if path.is_file():
+            st = path.stat()
+            key = (str(path), st.st_size, st.st_mtime_ns, st.st_ino)
+            if key not in _HASHES:
+                _HASHES[key] = checksum(path)
+            hashes[path.relative_to(folder).as_posix()] = _HASHES[key]
+    return hashes
 
 
 def runs_of(project):
@@ -43,7 +63,7 @@ def overview(project, domain):
              "fråga": manifest.get("fråga"), "hypotes": manifest.get("hypotes"),
              "medarbetare": manifest.get("medarbetare") or []}
     try:
-        state["påståenden"] = inspect(project / "underlag")
+        state["påståenden"] = inspect(project / "underlag", cached=True)
     except (ValueError, OSError, KeyError) as error:
         state["fel"] = str(error)
     runs = runs_of(project)

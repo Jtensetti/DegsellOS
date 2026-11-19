@@ -52,6 +52,13 @@ with tempfile.TemporaryDirectory() as tmp:
     assert steps(project) == ["klar", "klar", "nu", "senare"]
 
     call("upprepa", run)
+    # Appen läser inte om oförändrat underlag när fönstret får fokus igen.
+    from belagg import inspect
+    first, again = inspect(project / "underlag", cached=True), inspect(project / "underlag", cached=True)
+    key = next(k for k, c in first.items() if c["underlag"][0]["rader"])
+    assert first[key]["underlag"][0]["rader"] is again[key]["underlag"][0]["rader"]
+    assert inspect(project / "underlag")[key]["avtryck"] == first[key]["avtryck"], "samma avtryck utan cache"
+
     assert step(project)[:2] == ("rapport", "Läs och dela rapporten")
     assert steps(project) == ["klar", "klar", "klar", "nu"]
 

@@ -230,6 +230,9 @@ class Window(Adw.ApplicationWindow):
         self.project = None
         self.project_page = None
         self.busy = False
+        self.loading = False
+        self.reload_again = False
+        self.selftest_errors = []
         self.lab = False
         self.banner = None
         self.start = Adw.NavigationPage(title="ForskarOS", tag="start")
@@ -297,7 +300,15 @@ class Window(Adw.ApplicationWindow):
                 result, error = work(), None
             except Exception as exc:  # visas för forskaren, inte som krasch
                 result, error = None, str(exc) or exc.__class__.__name__
-            GLib.idle_add(lambda: (done(result, error), False)[1])
+            GLib.idle_add(lambda: (finish(result, error), False)[1])
+
+        def finish(result, error):
+            try:
+                done(result, error)
+            except Exception:
+                traceback.print_exc()
+                self.selftest_errors.append(traceback.format_exc())
+                self.toast("Något gick fel när vyn skulle visas. Öppna projektet igen.")
         threading.Thread(target=worker, daemon=True).start()
 
     def came_back(self):
@@ -305,7 +316,7 @@ class Window(Adw.ApplicationWindow):
             return
         visible = self.nav.get_visible_page()
         if visible is self.project_page and self.project is not None:
-            self.guarded(self.refresh_project)
+            self.reload_project()
         elif visible is self.start:
             self.render_start()
 
@@ -387,13 +398,14 @@ class Window(Adw.ApplicationWindow):
         """Forskningsfrågorna i Obsidian, med de projekt som prövar dem."""
         group = Adw.PreferencesGroup(title="Forskningsfrågor",
                                      description="Tanken finns i forskningsmappen, handlingen i projekten.")
-        found = [q for q in forskningsmapp.questions() if q["fm"].get("status", "aktiv") == "aktiv"]
+        notes = forskningsmapp.scan()
+        found = [q for q in forskningsmapp.questions(notes=notes) if q["fm"].get("status", "aktiv") == "aktiv"]
         if not found:
             group.add(row("Formulera en forskningsfråga", "I Obsidian, med ForskarOS Core. Projekten kan sedan pröva den.",
                           on_activate=self.open_obsidian, icon="dialog-question-symbolic"))
             return group
         for q in found:
-            projects = forskningsmapp.projects_for(q["ref"])
+            projects = forskningsmapp.projects_for(q["ref"], notes=notes)
             phase = (q["fm"].get("fas") or "utforska").capitalize()
             count = {0: "inget projekt än", 1: "1 projekt"}.get(len(projects), f"{len(projects)} projekt")
             start = flat_button("Nytt projekt", lambda r=q["ref"]: self.nav.push(self.new_project_page({"fråga": r})))
@@ -601,14 +613,47 @@ class Window(Adw.ApplicationWindow):
             self.toast("Välj en projektmapp med underlag och körningar.")
             return
         self.project = folder
+        self.state = None
         remember_project(config_dir(), folder)
         self.project_page = Adw.NavigationPage(title=folder.name, tag="projekt")
-        self.render_project()
+        waiting = Adw.StatusPage(title=folder.name, description="Läser underlag, påståenden och körningar…")
+        spinner = Gtk.Spinner(spinning=True, width_request=32, height_request=32)
+        waiting.set_child(spinner)
+        view = Adw.ToolbarView()
+        view.add_top_bar(Adw.HeaderBar())
+        view.set_content(waiting)
+        self.project_page.set_child(view)
         self.nav.push(self.project_page)
+        self.reload_project()
 
     def refresh_project(self):
         if self.project_page is not None:
             self.render_project()
+
+    def reload_project(self):
+        """Läs projektet i bakgrunden. Stora underlag får inte frysa fönstret."""
+        if self.loading:
+            self.reload_again = True
+            return
+        self.loading, self.reload_again = True, False
+        folder = self.project
+
+        def work():
+            state = overview(folder, domain)
+            sync(folder, state)  # Forskningsmappen visar samma läge som appen.
+            return state
+
+        def done(state, error):
+            self.loading = False
+            if folder != self.project or self.project_page is None:
+                return
+            if error:
+                self.toast(error)
+            else:
+                self.render_project(state)
+            if self.reload_again:
+                self.reload_project()
+        self.in_background(work, done)
 
     def question_group(self, state):
         """Helheten: frågan, hypotesen och medarbetarna som projektet hör till."""
@@ -654,9 +699,10 @@ class Window(Adw.ApplicationWindow):
         self.question_widgets = {**widgets, "save": save}
         return page("Forskningsfråga", body)
 
-    def render_project(self):
-        sync(self.project)  # Forskningsmappen visar samma läge som appen.
-        state = overview(self.project, domain)
+    def render_project(self, state=None):
+        if state is None:
+            state = overview(self.project, domain)
+            sync(self.project, state)  # Forskningsmappen visar samma läge som appen.
         self.state = state
         action, title, why = next_step(state)
         body = column()
@@ -733,7 +779,7 @@ class Window(Adw.ApplicationWindow):
         more = Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text="Mer")
         subtitle = "Skyddat material" if state["skydd"] == "skyddad" else "Öppet material"
         old = self.project_page.get_child()
-        offset = old.scroll.get_vadjustment().get_value() if old else 0
+        offset = old.scroll.get_vadjustment().get_value() if getattr(old, "scroll", None) else 0
         view = content(state["namn"], body, subtitle=subtitle, end=[more])
         self.project_page.set_child(view)
         # Behåll läsplatsen när vyn byggs om efter en granskning eller körning.
@@ -1189,7 +1235,13 @@ def selftest(window, app):
 
     def create_project():
         window.new_project_widgets["create"]()
-        assert window.project is not None and window.state["skydd"] == "skyddad"
+        assert window.project is not None and window.loading, "projektet läses i bakgrunden"
+
+    def loaded():
+        if window.loading or window.state is None:
+            return "vänta"
+        assert getattr(window.project_page.get_child(), "scroll", None), "projektvyn ersatte laddningsvyn"
+        assert window.state["skydd"] == "skyddad"
         assert window.state["fråga"] == "01 RIKTNING/Hypotesbyten" and window.state["medarbetare"] == ["Anna"]
         assert forskningsmapp.note_path(window.project).is_file(), "projektet syns i forskningsmappen"
         assert next_step(window.state)[0] == "granska"
@@ -1290,7 +1342,7 @@ def selftest(window, app):
         shown = set(labels(window.nav.get_visible_page()))
         assert {"Vid förra granskningen", "Nu"} <= shown
 
-    steps = [("1-start", start), (None, fill_new), ("2-nytt-projekt", create_project),
+    steps = [("1-start", start), (None, fill_new), ("2-nytt-projekt", create_project), (None, loaded),
              ("3-projekt", review_first), ("4-pastaende", confirm), (None, review_rest), (None, wait_build),
              ("5-projekt-efter-korning", open_question), ("10-forskningsfraga", save_question), (None, open_link), (None, fill_link), ("6-koppla-underlag", store_link), (None, hub), ("11-startsida-fragor", from_question),
              (None, tools), ("7-verktyg", changed_data), ("8-ompröva", reconsider), ("9-ompröva-påstående", None)]
@@ -1377,6 +1429,7 @@ def main(argv):
     code = app.run([argv[0]])
     window = holder.get("window")
     failures = ([holder["fel"]] if "fel" in holder else []) + getattr(window, "selftest_failures", [])
+    failures += getattr(window, "selftest_errors", [])
     if test_dir and not failures and not getattr(window, "selftest_done", False):
         failures.append("Självtestet avslutades innan alla vyer var genomgångna.")
     if failures:
