@@ -30,6 +30,9 @@ typ: verktygskort
 
 - [[00 START/Verktyg/Ollama|Ollama]]: Kör språkmodeller lokalt
 - [[00 START/Verktyg/Alpaca|Alpaca]] (rekommenderad): Chatt med lokala modeller
+- [[00 START/Verktyg/Kontakter|Kontakter]]: Personerna i ditt nätverk
+- [[00 START/Verktyg/Kalender|Kalender]]: Boka forskningsmöten
+- [[00 START/Verktyg/Jitsi Meet|Jitsi Meet]]: Videomöten med öppen källkod
 
 ## 5 · Utveckla
 
@@ -43,6 +46,8 @@ typ: verktygskort
 - [[00 START/Verktyg/uv|uv]]: Python-miljöer per projekt
 - [[00 START/Verktyg/Speech Note|Speech Note]] (rekommenderad): Transkribering helt på din dator
 - [[00 START/Verktyg/Taguette|Taguette]]: Kodning av intervjuer och dokument
+- [[00 START/Verktyg/Element|Element]]: Chatt för forskargrupper (Matrix)
+- [[00 START/Verktyg/Syncthing|Syncthing]]: Dela projektmappar direkt mellan datorer
 
 ## 6 · Ompröva
 
@@ -58,4 +63,5 @@ typ: verktygskort
 - [[00 START/Verktyg/TeXstudio|TeXstudio]]: LaTeX-redigerare
 - [[00 START/Verktyg/Pandoc|Pandoc]] (rekommenderad): Konvertera mellan Markdown, Word, LaTeX och PDF
 - [[00 START/Verktyg/Typst|Typst]]: Modern sättning, enklare än LaTeX
+- [[00 START/Verktyg/Evolution|Evolution]]: E-post, kalender och kontakter
 

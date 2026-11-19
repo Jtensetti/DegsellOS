@@ -68,6 +68,19 @@ Kopiera hela körningsmappen till den kollega som ska upprepa analysen. Den inne
 
 Du kan ange materialets licens i `projekt.json` med fältet `licens`. Citat och annan källdata följer med i paketet. Kontrollera att mottagaren får ta del av materialet.
 
+## Koppla projektet till en forskningsfråga
+
+Ett projekt prövar oftast en hypotes i en forskningsfråga i Obsidian. Välj frågan, hypotesen och eventuella medarbetare när projektet skapas, eller under **Forskningsfrågan** i projektet. Kopplingen sparas i `projekt.json`.
+
+Appen skriver då projektets läge till `04 EXPERIMENT/Projekt NAMN.md` i forskningsmappen: senaste körning, täckningsgrad, länk till rapporten och varje påstående med sin status. Dina egna avsnitt i anteckningen, till exempel *Vad betyder resultatet*, skrivs aldrig över. ForskarOS Core läser anteckningen:
+
+- En körning med resultat uppfyller kravet på ett experiment i fasen Utveckla.
+- Medarbetare i projektet uppfyller kravet på att någon mer arbetar med frågan.
+- Innan frågan går vidare från Dela ska körningen vara upprepad med samma resultat.
+- Påståenden vars underlag har ändrats visas i panelen under *Att åtgärda*.
+
+När påståendena är granskade och körningen upprepad leder appens sista steg tillbaka till frågan i Obsidian.
+
 ## Kommandorad
 
 ```bash
@@ -77,4 +90,4 @@ forskaros-projekt kör "Min studie"
 forskaros-projekt status "Min studie"
 ```
 
-Använd `forskaros-projekt upprepa SÖKVÄG` med sökvägen till en sparad körning. För ett skyddat projekt, lägg till `--skydd skyddad` när projektet skapas. För en labbkörning, använd `forskaros-projekt kör --labb "Min studie"`.
+Koppla till en forskningsfråga med `forskaros-projekt koppla "Min studie" --fråga "01 RIKTNING/Min fråga" --hypotes "02 HYPOTESER/Min hypotes" --medarbetare "Anna, Björn"`, eller med samma flaggor till `skapa`. Använd `forskaros-projekt upprepa SÖKVÄG` med sökvägen till en sparad körning. För ett skyddat projekt, lägg till `--skydd skyddad` när projektet skapas. För en labbkörning, använd `forskaros-projekt kör --labb "Min studie"`.

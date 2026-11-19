@@ -58,26 +58,33 @@ const fyllKarta = (rader) => e.TYPES.diversity.render({ date: DAY })
 
 test('faskrav: Utforska kräver motivering och en riktig perspektivkarta', () => {
   const q = note(Q, { typ: 'forskningsfråga', fas: 'utforska' }, e.questionNote({ date: DAY, titel: 'Q', varför: 'Kort.' }));
-  assert.deepEqual(e.phaseRequirements(q, [q]).map(r => r.ok), [false, false, false, false]);
-  const q2 = note(Q, q.fm, e.questionNote({ date: DAY, titel: 'Q', varför: MOTIVERING }));
+  assert.deepEqual(e.phaseRequirements(q, [q]).map(r => r.ok), [false, false, false, false, false, false]);
+  const q2 = note(Q, q.fm, e.questionNote({ date: DAY, titel: 'Q', varför: MOTIVERING })
+    .replace('-\n-\n-\n', '- Varför glömmer elever?\n- Gäller det vuxna?\n- Spelar uppgiften roll?\n')
+    .replace('## Vem bryr sig om svaret?\n> Vilka människor eller verksamheter har nytta av svaret, utanför ditt eget fält?\n',
+      '## Vem bryr sig om svaret?\n> Vilka människor eller verksamheter har nytta av svaret, utanför ditt eget fält?\nLärare och skolhuvudmän.\n'));
+  const tvåFrågor = note(Q, q.fm, q2.body.replace('- Spelar uppgiften roll?\n', '-\n'));
+  assert.equal(e.phaseRequirements(tvåFrågor, [])[1].ok, false, 'två saker att undra över räcker inte');
   const tom = note('k.md', { typ: 'perspektivkarta', fråga: link }, e.TYPES.diversity.render({ date: DAY }));
-  assert.deepEqual(e.phaseRequirements(q2, [q2, tom]).map(r => r.ok), [true, false, false, false], 'en tom karta räknas inte');
+  assert.deepEqual(e.phaseRequirements(q2, [q2, tom]).map(r => r.ok), [true, true, true, false, false, false], 'en tom karta räknas inte');
   const två = note('k.md', { typ: 'perspektivkarta', fråga: link }, fyllKarta(2));
-  assert.deepEqual(e.phaseRequirements(q2, [q2, två]).map(r => r.ok), [true, false, false, true]);
+  assert.deepEqual(e.phaseRequirements(q2, [q2, två]).map(r => r.ok), [true, true, true, false, false, true]);
   const full = note('k.md', { typ: 'perspektivkarta', fråga: link }, fyllKarta(3));
-  assert.deepEqual(e.phaseRequirements(q2, [q2, full]).map(r => r.ok), [true, true, true, true]);
+  assert.deepEqual(e.phaseRequirements(q2, [q2, full]).map(r => r.ok), [true, true, true, true, true, true]);
 });
 
-test('faskrav: Kombinera kräver grund, det nya och ett utmanat antagande', () => {
+test('faskrav: Kombinera kräver grund, det nya, ett utmanat antagande och vem som företräder det', () => {
   const q = note(Q, { typ: 'forskningsfråga', fas: 'kombinera' });
   const tom = note('h.md', { typ: 'hypotes', fråga: link }, e.TYPES.hypothesis.render({ date: DAY }));
-  assert.deepEqual(e.phaseRequirements(q, [tom]).map(r => r.ok), [true, false, false, false]);
+  assert.deepEqual(e.phaseRequirements(q, [tom]).map(r => r.ok), [true, false, false, false, false]);
   const full = note('h.md', { typ: 'hypotes', fråga: link }, tom.body
     .replace('## Etablerad kunskap jag bygger på\n', '## Etablerad kunskap jag bygger på\nForskning om kognitiv avlastning.\n')
     .replace('## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\n',
       '## Den ovanliga kombinationen\n> Vilka fält, idéer eller metoder kombineras som sällan möts?\nSpråkdidaktik möter förvaltningsforskning.\n')
     .replace('## Vilket etablerat antagande utmanar hypotesen?\n', '## Vilket etablerat antagande utmanar hypotesen?\nAtt mer stöd alltid ger mer lärande.\n'));
-  assert.deepEqual(e.phaseRequirements(q, [full]).map(r => r.ok), [true, true, true, true]);
+  assert.deepEqual(e.phaseRequirements(q, [full]).map(r => r.ok), [true, true, true, true, false]);
+  const företrädd = note('h.md', full.fm, full.body.replace(/(## Vem företräder antagandet i dag\?\n> .*\n)/, '$1Forskare i lärandeteknik.\n'));
+  assert.deepEqual(e.phaseRequirements(q, [företrädd]).map(r => r.ok), [true, true, true, true, true]);
 });
 
 test('faskrav: Välj kräver konfidens och vad som förändras', () => {
@@ -90,22 +97,49 @@ test('faskrav: Välj kräver konfidens och vad som förändras', () => {
   assert.deepEqual(e.phaseRequirements(q, [h('medel')]).map(r => r.ok), [true, true, true, true, true]);
 });
 
-test('faskrav: Pröva kräver besvarat motprov OCH en invändning från en människa', () => {
+test('faskrav: Pröva kräver besvarat motprov, en invändning från en människa och ett möte med den som företräder antagandet', () => {
   const q = note(Q, { typ: 'forskningsfråga', fas: 'pröva' });
   const motprov = note('m.md', { typ: 'motprov', fråga: link }, '## Mitt svar efter att ha övervägt invändningarna\nInvändningen håller delvis.');
-  assert.deepEqual(e.phaseRequirements(q, [motprov]).map(r => r.ok), [true, false], 'AI-kritik räcker inte');
+  assert.deepEqual(e.phaseRequirements(q, [motprov]).map(r => r.ok), [true, false, false], 'AI-kritik räcker inte');
   const tomtMöte = note('mö.md', { typ: 'forskningsmöte', fråga: link }, e.TYPES.meeting.render({ date: DAY }));
-  assert.deepEqual(e.phaseRequirements(q, [motprov, tomtMöte]).map(r => r.ok), [true, false], 'ett möte utan invändning räknas inte');
+  assert.deepEqual(e.phaseRequirements(q, [motprov, tomtMöte]).map(r => r.ok), [true, false, false], 'ett möte utan invändning räknas inte');
   const möte = note('mö.md', { typ: 'forskningsmöte', fråga: link }, '## Viktigaste invändningen jag fick\nUrvalet är för litet.\n');
-  assert.deepEqual(e.phaseRequirements(q, [motprov, möte]).map(r => r.ok), [true, true]);
+  assert.deepEqual(e.phaseRequirements(q, [motprov, möte]).map(r => r.ok), [true, true, false]);
+  const motpart = note('mö.md', { typ: 'forskningsmöte', fråga: link, företräder_antagandet: 'ja' }, möte.body);
+  assert.deepEqual(e.phaseRequirements(q, [motprov, motpart]).map(r => r.ok), [true, true, true]);
 });
 
-test('faskrav: Dela kräver en sammanfattning på 50–200 ord', () => {
+test('faskrav: Dela kräver en sammanfattning på 50–200 ord och nästa fråga', () => {
   const ord = n => Array.from({ length: n }, (_, i) => `ord${i}`).join(' ');
-  const q = n => note(Q, { typ: 'forskningsfråga', fas: 'dela' }, `## Sammanfattning för någon utanför fältet\n${ord(n)}\n## Delat med\nSeminariet.\n`);
-  assert.deepEqual(e.phaseRequirements(q(20), []).map(r => r.ok), [false, true]);
-  assert.deepEqual(e.phaseRequirements(q(120), []).map(r => r.ok), [true, true]);
-  assert.deepEqual(e.phaseRequirements(q(400), []).map(r => r.ok), [false, true]);
+  const q = n => note(Q, { typ: 'forskningsfråga', fas: 'dela' }, `## Sammanfattning för någon utanför fältet\n${ord(n)}\n## Delat med\nSeminariet.\n## Vilken fråga öppnar svaret?\nGäller det vuxna?\n`);
+  assert.deepEqual(e.phaseRequirements(q(20), []).map(r => r.ok), [false, true, true]);
+  assert.deepEqual(e.phaseRequirements(q(120), []).map(r => r.ok), [true, true, true]);
+  assert.deepEqual(e.phaseRequirements(q(400), []).map(r => r.ok), [false, true, true]);
+});
+
+test('faskrav: Utveckla och Dela läser projekt från appen ForskarOS', () => {
+  const projekt = (nivå, extra = '') => note('04 EXPERIMENT/Projekt.md',
+    { typ: 'experiment', fråga: link, projekt: '/home/forskare/Forskningsprojekt/Studie', nivå }, `## Resultat\nRapporten är byggd.\n${extra}`);
+  const utv = note(Q, { typ: 'forskningsfråga', fas: 'utveckla' }, '## Medarbetare\nAnna kodar intervjuerna.\n');
+  assert.deepEqual(e.phaseRequirements(utv, [projekt('Dokumenterad')]).map(r => r.ok), [true, true], 'en körning i appen är ett experiment med resultat');
+  const ensam = note(Q, { typ: 'forskningsfråga', fas: 'utveckla' });
+  assert.equal(e.phaseRequirements(ensam, [projekt('Dokumenterad')])[1].ok, false, 'ingen medarbetare och inget samarbete');
+  const samarbete = note('mö.md', { typ: 'forskningsmöte', fråga: link, form: 'samarbete' });
+  assert.equal(e.phaseRequirements(ensam, [projekt('Dokumenterad'), samarbete])[1].ok, true);
+  const dela = note(Q, { typ: 'forskningsfråga', fas: 'dela' });
+  const sista = rs => rs[rs.length - 1];
+  assert.equal(sista(e.phaseRequirements(dela, [projekt('Dokumenterad')])).ok, false, 'resultatet ska vara upprepat innan det delas');
+  assert.equal(sista(e.phaseRequirements(dela, [projekt('Återkörd')])).ok, true);
+  assert.equal(e.phaseRequirements(dela, []).length, 3, 'utan projekt i appen gäller inte kravet');
+});
+
+test('granskning: påståenden att ompröva i appens projekt och möten bara med kärnan', () => {
+  const projekt = note('04 EXPERIMENT/Projekt Studie.md', { typ: 'experiment', projekt: '/p', att_ompröva: 2 });
+  assert(e.audit([projekt], DAY).some(f => f.princip === 'Påstående att ompröva' && f.text.startsWith('2 påståenden')));
+  assert(!e.audit([note('x.md', { typ: 'experiment', projekt: '/p', att_ompröva: 0 })], DAY).some(f => f.princip === 'Påstående att ompröva'));
+  const möten = krets => [1, 2, 3].map(i => note(`m${i}.md`, { typ: 'forskningsmöte', datum: DAY, krets, deltagare: `P${i}` }));
+  assert(e.audit(möten('kärna'), DAY).some(f => f.princip === 'Bara kärnan'));
+  assert(!e.audit(möten('nätverk'), DAY).some(f => f.princip === 'Bara kärnan'));
 });
 
 test('faskrav: anteckningar till en annan fråga räknas inte', () => {

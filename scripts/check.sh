@@ -23,6 +23,7 @@ python3 -I tests/belagg.test.py
 python3 -I tests/zotero.test.py
 python3 -I tests/doman.test.py
 python3 -I tests/oversikt.test.py
+python3 -I tests/forskningsmapp.test.py
 bash tests/app.test.sh
 python3 -I tests/vault.test.py
 

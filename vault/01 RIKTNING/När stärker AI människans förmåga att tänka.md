@@ -12,12 +12,26 @@ cykel: 1
 ## Varför är frågan viktig?
 
 
+## Det jag undrar
+> Minst tre saker du inte vet än och vill veta.
+-
+-
+-
+
+## Vem bryr sig om svaret?
+> Vilka människor eller verksamheter har nytta av svaret, utanför ditt eget fält?
+
+
 ## Avgränsning
 > Vilka människor, vilka uppgifter, vilket AI-stöd, vilket mått?
 
 
 ## Om frågan besvaras
 > Vad vet vi då som vi inte vet i dag, och vem har nytta av det?
+
+
+## Medarbetare
+> De som arbetar med frågan tillsammans med dig, och vad de gör.
 
 
 ## Det jag väljer bort
@@ -30,6 +44,10 @@ cykel: 1
 4. Skissa ett experiment som kan visa att hypotesen är fel.
 
 ## Lärdomar
+
+
+## Vilken fråga öppnar svaret?
+> Det viktigaste med ett svar är nästa fråga. Den hamnar i idébanken när frågan avslutas.
 
 
 ## Sammanfattning för någon utanför fältet

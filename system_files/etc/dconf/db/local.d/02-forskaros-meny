@@ -25,12 +25,12 @@ apps=['forskaros-fokus.desktop']
 [org/gnome/desktop/app-folders/folders/forskaros-4]
 name='4 · Pröva'
 translate=false
-apps=['com.jeffser.Alpaca.desktop']
+apps=['com.jeffser.Alpaca.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Calendar.desktop', 'org.jitsi.jitsi-meet.desktop']
 
 [org/gnome/desktop/app-folders/folders/forskaros-5]
 name='5 · Utveckla'
 translate=false
-apps=['forskaros-labb.desktop', 'org.jaspstats.JASP.desktop', 'org.jamovi.jamovi.desktop', 'org.kde.labplot.desktop', 'forskaros-jupyterlab.desktop', 'com.vscodium.codium.desktop', 'net.mkiol.SpeechNote.desktop', 'forskaros-taguette.desktop']
+apps=['forskaros-labb.desktop', 'org.jaspstats.JASP.desktop', 'org.jamovi.jamovi.desktop', 'org.kde.labplot.desktop', 'forskaros-jupyterlab.desktop', 'com.vscodium.codium.desktop', 'net.mkiol.SpeechNote.desktop', 'forskaros-taguette.desktop', 'im.riot.Riot.desktop']
 
 [org/gnome/desktop/app-folders/folders/forskaros-6]
 name='6 · Ompröva'
@@ -40,4 +40,4 @@ apps=['org.gnome.DejaDup.desktop']
 [org/gnome/desktop/app-folders/folders/forskaros-7]
 name='7 · Dela'
 translate=false
-apps=['org.libreoffice.LibreOffice.writer.desktop', 'org.libreoffice.LibreOffice.calc.desktop', 'org.libreoffice.LibreOffice.impress.desktop', 'com.zettlr.Zettlr.desktop', 'org.onlyoffice.desktopeditors.desktop', 'org.texstudio.TeXstudio.desktop']
+apps=['org.libreoffice.LibreOffice.writer.desktop', 'org.libreoffice.LibreOffice.calc.desktop', 'org.libreoffice.LibreOffice.impress.desktop', 'com.zettlr.Zettlr.desktop', 'org.onlyoffice.desktopeditors.desktop', 'org.texstudio.TeXstudio.desktop', 'org.gnome.Evolution.desktop']

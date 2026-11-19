@@ -4,6 +4,11 @@
 
 ## Under utveckling
 
+- Ett forskningsprojekt kan kopplas till en forskningsfråga och den hypotes det prövar. Projektets körningar, täckningsgrad och påståenden att ompröva skrivs till forskningsmappen och styr fasernas krav i ForskarOS Core. Appens sista steg leder tillbaka till frågan. [Koppla projektet](docs/PROJEKT.md#koppla-projektet-till-en-forskningsfråga)
+- Arbetsmetoden bärs av 25 begrepp, från nyfikenhet till framtiden. Varje begrepp har ett krav eller en regel som slår till när det brister, och sidan *Begreppen* i forskningsmappen visar var det finns.
+- Nya krav: saker du undrar över och vem som bryr sig om svaret (Utforska), vem som företräder antagandet hypotesen utmanar (Kombinera) och ett möte med den personen (Pröva), att någon mer arbetar med frågan (Utveckla), och vilken ny fråga svaret öppnar (Dela). Nästa fråga hamnar i idébanken när frågan avslutas.
+- Kontakter och Kalender ingår i grundprofilen. Den nya profilen Möten och samarbete har Jitsi Meet, Element, Syncthing och Evolution.
+
 - I granskningsvyn går det att jämföra tidigare och aktuellt underlag. Forskaren kan ändra meningen i manuset eller bekräfta den mot det nya underlaget.
 - Källtolkning har en egen projektmall för motstridiga skriftliga källor. PDF-markeringar kan importeras från Zotero på samma dator med källa, sida och citat.
 - Projektöversikten visar vilken upprepning som avviker. En flyttad körning behåller sin licens när den upprepas.

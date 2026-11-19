@@ -1,9 +1,11 @@
 # Genererad från katalog/verktyg.json. Ändra inte för hand.
 # namn: Grund
-# beskrivning: Installeras automatiskt vid första start: webbläsare, kontorspaket, referenshantering, statistik, PDF-anteckningar och säkerhetskopiering.
+# beskrivning: Installeras automatiskt vid första start: webbläsare, kontorspaket, referenshantering, statistik, PDF-anteckningar, kontakter, kalender och säkerhetskopiering.
 flatpak org.mozilla.firefox                     Firefox – Webbläsare
 flatpak org.libreoffice.LibreOffice             LibreOffice – Ordbehandling, kalkyl och presentation
 flatpak org.zotero.Zotero                       Zotero – Källhantering och citat
 flatpak org.jaspstats.JASP                      JASP – Statistik med klick, klassisk och bayesiansk
 flatpak com.github.xournalpp.xournalpp          Xournal++ – Anteckna direkt i PDF:er
 flatpak org.gnome.DejaDup                       Déjà Dup – Säkerhetskopiering
+flatpak org.gnome.Contacts                      Kontakter – Personerna i ditt nätverk
+flatpak org.gnome.Calendar                      Kalender – Boka forskningsmöten

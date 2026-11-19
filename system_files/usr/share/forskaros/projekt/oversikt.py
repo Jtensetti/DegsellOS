@@ -39,7 +39,9 @@ def overview(project, domain):
     manifest = domain(project)
     state = {"projekt": project, "namn": manifest.get("titel") or project.name,
              "skydd": manifest["skydd"], "fel": None, "påståenden": {}, "körningar": [],
-             "underlag_ändrat": False}
+             "underlag_ändrat": False,
+             "fråga": manifest.get("fråga"), "hypotes": manifest.get("hypotes"),
+             "medarbetare": manifest.get("medarbetare") or []}
     try:
         state["påståenden"] = inspect(project / "underlag")
     except (ValueError, OSError, KeyError) as error:
@@ -107,6 +109,10 @@ def next_step(state):
     if not claims:
         return ("rapport", "Läs den upprepade rapporten",
                 "Resultaten gick att återskapa. Manuset har inga länkade påståenden att granska.")
+    if state.get("fråga"):
+        return ("fråga", "Ta resultatet till forskningsfrågan",
+                "Påståendena är granskade och körningen är upprepad. Resultatet finns i forskningsmappen. "
+                "Ompröva frågan där, och dela resultatet med någon som kan granska det.")
     return ("rapport", "Läs och dela rapporten",
             "Alla påståenden är granskade och den senaste körningen är upprepad med samma resultat.")
 
@@ -117,7 +123,7 @@ STEG = [("granska", "Granska"), ("bygg", "Bygg"), ("upprepa", "Upprepa"), ("rapp
 def progress(state):
     """Arbetsflödets fyra steg som (namn, "klar" | "nu" | "senare"). Steget "nu" är nästa steg."""
     action = next_step(state)[0]
-    action = "granska" if action == "manus" else action
+    action = {"manus": "granska", "fråga": "rapport"}.get(action, action)
     runs = state["körningar"]
     built = bool(runs) and not state["underlag_ändrat"]
     done = {"granska": bool(state["påståenden"]) and not state["fel"] and all(c["status"] == "Granskad" for c in state["påståenden"].values()),

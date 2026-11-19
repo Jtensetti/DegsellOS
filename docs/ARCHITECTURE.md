@@ -1,6 +1,6 @@
 # Arkitektur
 
-ForskarOS är en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. Skrivbordsappen hanterar forskningsprojekt med underlag och sparade körningar. Det valfria Obsidian-tillägget ForskarOS Core hanterar forskningsfrågor och arbetsmetod i en separat Markdown-vault.
+ForskarOS är en bootc-avbildning för amd64 och arm64 ovanpå Bluefin LTS. Skrivbordsappen hanterar forskningsprojekt med underlag och sparade körningar. Det valfria Obsidian-tillägget ForskarOS Core hanterar forskningsfrågor och arbetsmetod i en Markdown-vault. Ett projekt kan kopplas till en fråga; appen skriver då projektets läge som en anteckning i vaulten, och Core läser den.
 
 ## Projektets krav
 
@@ -34,7 +34,7 @@ Appen och `forskaros-projekt` använder samma projektlogik och filer. Projekten 
 
 | Fil eller mapp | Innehåll |
 |---|---|
-| `projekt.json` | Formatversion, projekt-ID, titel, metod, skyddsnivå, skapandetid och valfri licens |
+| `projekt.json` | Formatversion, projekt-ID, titel, metod, skyddsnivå, skapandetid, valfri licens och valfri koppling till forskningsfråga, hypotes och medarbetare |
 | `underlag/` | Arbetsmaterial, analyskod, manus och referenser |
 | `underlag/belagg.json` | Påståenden med ID, lydelse och kopplingar till data eller källor |
 | `underlag/granskningar.json` | Beslut kopplade till avtryck av det granskade underlaget |

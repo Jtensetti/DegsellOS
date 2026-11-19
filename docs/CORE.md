@@ -33,7 +33,7 @@ En befintlig mapp skrivs inte över. På en dator utan Bash kan du kopiera hela 
 
 Core förbereder AI-konsultationer som text att kopiera. Tillägget gör inga nätverksanrop. Du väljer själv vilken tjänst som får texten.
 
-Core-anteckningarna och skrivbordsappens forskningsprojekt är separata mappar. Appens projekt ligger normalt i `~/Forskningsprojekt`; Core-vaulten ligger normalt i `~/ForskarOS`.
+Core-anteckningarna ligger normalt i `~/ForskarOS` och appens forskningsprojekt i `~/Forskningsprojekt`. Ett projekt som är kopplat till en fråga skriver sitt läge till `04 EXPERIMENT`, och panelen läser det. [Koppla projektet till en forskningsfråga](PROJEKT.md#koppla-projektet-till-en-forskningsfråga) · [Begreppen](../vault/00%20START/Begreppen.md)
 
 ## Uppdatering och säkerhetskopiering
 

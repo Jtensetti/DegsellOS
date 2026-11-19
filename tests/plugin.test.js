@@ -126,6 +126,12 @@ const { engine } = ForskarOSPlugin;
     .replace('| Oväntat fält | | | |', '| Oväntat fält | Träningslära | Kontext | Ericsson |')
     .replace('## Där perspektiven motsäger varandra\n', '## Där perspektiven motsäger varandra\nKort- mot långsiktigt.\n');
 
+  qFile.content = qFile.content
+    .replace('## Det jag undrar\n> Minst tre saker du inte vet än och vill veta.\n-\n-\n-\n',
+      '## Det jag undrar\n> Minst tre saker du inte vet än och vill veta.\n- Vad händer när stödet tas bort?\n- Gäller det vuxna?\n- Spelar uppgiften roll?\n')
+    .replace('## Vem bryr sig om svaret?\n> Vilka människor eller verksamheter har nytta av svaret, utanför ditt eget fält?\n',
+      '## Vem bryr sig om svaret?\n> Vilka människor eller verksamheter har nytta av svaret, utanför ditt eget fält?\nLärare, elever och skolhuvudmän.\n');
+
   // Fasbyte: frontmatter uppdateras och beslutet loggas öppet, med motivering.
   const notes = await p.collectNotes();
   const q = notes.find(n => n.fm.typ === 'forskningsfråga');
@@ -152,8 +158,12 @@ const { engine } = ForskarOSPlugin;
   assert.match(qFile.content, /status: aktiv/);
   assert.doesNotMatch(qFile.content, /vila_till/);
   assert.match(qFile.content, /Återupptagen\. Ny data från SCB gör frågan aktuell igen\./);
+  qFile.content = qFile.content.replace('## Vilken fråga öppnar svaret?\n> Det viktigaste med ett svar är nästa fråga. Den hamnar i idébanken när frågan avslutas.\n',
+    '## Vilken fråga öppnar svaret?\n> Det viktigaste med ett svar är nästa fråga. Den hamnar i idébanken när frågan avslutas.\nGäller det också vuxna som lär sig ett yrke?\n');
   const q5 = (await p.collectNotes()).find(n => n.fm.typ === 'forskningsfråga');
   await p.closeQuestion(q5, 'förkastad', 'Ingen skillnad mellan grupperna.');
+  const nästa = files.get('01 RIKTNING/Idébank/Gäller det också vuxna som lär sig ett yrke.md');
+  assert(nästa && /typ: idé/.test(nästa.content) && /Från \[\[01 RIKTNING\/När stärker AI tänkandet\]\]/.test(nästa.content), 'nästa fråga hamnar i idébanken');
   assert.match(qFile.content, /status: avslutad/);
   assert.match(qFile.content, /utfall: förkastad/);
   assert.match(qFile.content, /Utfall: Hypotesen förkastad\. Ingen skillnad mellan grupperna\./);

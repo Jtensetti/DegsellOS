@@ -33,7 +33,7 @@
     {
       "id": "grund",
       "namn": "Grund",
-      "beskrivning": "Installeras automatiskt vid första start: webbläsare, kontorspaket, referenshantering, statistik, PDF-anteckningar och säkerhetskopiering."
+      "beskrivning": "Installeras automatiskt vid första start: webbläsare, kontorspaket, referenshantering, statistik, PDF-anteckningar, kontakter, kalender och säkerhetskopiering."
     },
     {
       "id": "obsidian",
@@ -65,6 +65,11 @@
       "id": "kvalitativ",
       "namn": "Kvalitativ forskning",
       "beskrivning": "Transkribera intervjuer lokalt och koda kvalitativa data."
+    },
+    {
+      "id": "samarbete",
+      "namn": "Möten och samarbete",
+      "beskrivning": "Videomöten, chatt, e-post och delade projektmappar med medarbetare. Inget går via ForskarOS."
     },
     {
       "id": "ideer",
@@ -423,6 +428,66 @@
       "kort": "AI-sök i forskningsartiklar i molnet",
       "metod": "AI-sök i forskningsartiklar. Molntjänst.",
       "läs_mer": "https://consensus.app"
+    },
+    {
+      "id": "org.gnome.Contacts",
+      "typ": "flatpak",
+      "namn": "Kontakter",
+      "profil": "grund",
+      "fas": "pröva",
+      "kort": "Personerna i ditt nätverk",
+      "metod": "Spara de personer du möter, med kompetens och fält. Forskningsmötena i forskningsmappen pekar på samma personer.",
+      "läs_mer": "https://apps.gnome.org/Contacts/"
+    },
+    {
+      "id": "org.gnome.Calendar",
+      "typ": "flatpak",
+      "namn": "Kalender",
+      "profil": "grund",
+      "fas": "pröva",
+      "kort": "Boka forskningsmöten",
+      "metod": "Boka mötet där någon utanför projektet får invända, och följ upp det du lovade.",
+      "läs_mer": "https://apps.gnome.org/Calendar/"
+    },
+    {
+      "id": "org.jitsi.jitsi-meet",
+      "typ": "flatpak",
+      "namn": "Jitsi Meet",
+      "profil": "samarbete",
+      "fas": "pröva",
+      "kort": "Videomöten med öppen källkod",
+      "metod": "Möt forskare som inte finns i närheten. Anteckna invändningarna i ett forskningsmöte.",
+      "läs_mer": "https://jitsi.org/jitsi-meet/"
+    },
+    {
+      "id": "im.riot.Riot",
+      "typ": "flatpak",
+      "namn": "Element",
+      "profil": "samarbete",
+      "fas": "utveckla",
+      "kort": "Chatt för forskargrupper (Matrix)",
+      "metod": "Ett gemensamt rum per projekt för dem som arbetar med underlaget.",
+      "läs_mer": "https://element.io"
+    },
+    {
+      "id": "syncthing",
+      "typ": "brew",
+      "namn": "Syncthing",
+      "profil": "samarbete",
+      "fas": "utveckla",
+      "kort": "Dela projektmappar direkt mellan datorer",
+      "metod": "Dela ett forskningsprojekt med medarbetare utan molntjänst. Skyddat material ska inte delas på det här sättet utan stöd i projektets tillstånd.",
+      "läs_mer": "https://syncthing.net"
+    },
+    {
+      "id": "org.gnome.Evolution",
+      "typ": "flatpak",
+      "namn": "Evolution",
+      "profil": "samarbete",
+      "fas": "dela",
+      "kort": "E-post, kalender och kontakter",
+      "metod": "Skicka resultatet till den som ska granska det och följ upp svaret.",
+      "läs_mer": "https://gitlab.gnome.org/GNOME/evolution/-/wikis/home"
     }
   ]
 }

@@ -31,14 +31,15 @@ sys.path.insert(0, str(HERE))
 from belagg import add_source, approve, review_changes, source_choices, source_label  # noqa: E402
 from oversikt import (PROJEKTMAPP, STATUS_STYLE, next_step, overview, pending_claims, progress,  # noqa: E402
                       recent_projects, remember_project, suggest_key)
-from projekt import METODER, create, domain, run, verify  # noqa: E402
+from projekt import METODER, create, domain, link, run, sync, verify  # noqa: E402
+import forskningsmapp  # noqa: E402
 from zotero import import_reference, read_annotation  # noqa: E402
 
 APP_ID = "io.github.jtensetti.Forskaros"
 PROFILES = Path(os.environ.get("FORSKAROS_PROFILDIR") or HERE.parent / "profiler")
 SETUP = HERE.parents[2] / "bin" / "forskaros-setup"
 ACTION_LABEL = {"granska": "Granska", "bygg": "Bygg rapport", "upprepa": "Upprepa",
-                "rapport": "Öppna rapporten", "manus": "Öppna manus"}
+                "rapport": "Öppna rapporten", "manus": "Öppna manus", "fråga": "Öppna frågan"}
 
 # Appen följer systemets accentfärg och ljusa eller mörka läge (docs/DESIGN.md).
 CSS = """
@@ -401,6 +402,55 @@ class Window(Adw.ApplicationWindow):
             self.open_project(Path(folder.get_path()))
         dialog.select_folder(self, None, chosen)
 
+    def question_fields(self, group, manifest=None):
+        """Forskningsfråga, hypotes och medarbetare. Returnerar en funktion som läser valen."""
+        manifest = manifest or {}
+        found = forskningsmapp.questions()
+        none = "Ingen koppling än"
+        question = Adw.ComboRow(title="Forskningsfråga", subtitle="Från forskningsmappen i Obsidian",
+                                model=Gtk.StringList.new([none] + [q["titel"] for q in found]))
+        hypothesis = Adw.ComboRow(title="Hypotes som prövas", model=Gtk.StringList.new([none]))
+        people = Adw.EntryRow(title="Medarbetare, åtskilda med komma")
+        people.set_text(", ".join(manifest.get("medarbetare") or []))
+        state = {"hyps": []}
+
+        def chosen_question():
+            index = question.get_selected()
+            return found[index - 1] if 0 < index <= len(found) else None
+
+        def fill_hypotheses(*_):
+            q = chosen_question()
+            state["hyps"] = forskningsmapp.hypotheses(q["ref"]) if q else []
+            hypothesis.set_model(Gtk.StringList.new([none] + [h["titel"] + " · " + h["ref"].rsplit("/", 1)[-1]
+                                                            for h in state["hyps"]]))
+            hypothesis.set_sensitive(bool(state["hyps"]))
+            current = manifest.get("hypotes")
+            index = next((i for i, h in enumerate(state["hyps"]) if h["ref"] == current), None)
+            hypothesis.set_selected(index + 1 if index is not None else 0)
+        current = next((i for i, q in enumerate(found) if q["ref"] == manifest.get("fråga")), None)
+        question.set_selected(current + 1 if current is not None else 0)
+        question.connect("notify::selected", fill_hypotheses)
+        fill_hypotheses()
+        for widget in (question, hypothesis, people):
+            group.add(widget)
+        if not found:
+            question.set_sensitive(False)
+            question.set_subtitle("Inga aktiva frågor i forskningsmappen än. Skapa en i Obsidian med ForskarOS Core.")
+
+        def values():
+            q = chosen_question()
+            h_index = hypothesis.get_selected()
+            h = state["hyps"][h_index - 1] if q and 0 < h_index <= len(state["hyps"]) else None
+            return {"fråga": q["ref"] if q else "", "hypotes": h["ref"] if h else "",
+                    "medarbetare": people.get_text()}
+        return values, {"question": question, "hypothesis": hypothesis, "people": people}
+
+    def open_note(self, ref):
+        try:
+            Gio.AppInfo.launch_default_for_uri(forskningsmapp.obsidian_uri(ref), None)
+        except GLib.Error:
+            self.open_obsidian()
+
     def open_obsidian(self):
         if subprocess.run(["flatpak", "info", "md.obsidian.Obsidian"], capture_output=True).returncode == 0:
             self.spawn(["flatpak", "run", "md.obsidian.Obsidian"])
@@ -446,6 +496,12 @@ class Window(Adw.ApplicationWindow):
                                   subtitle="Intervjuer eller personuppgifter. Analysen körs utan nätverk och utan åtkomst till hemkatalogen.")
         material.add(protected)
         body.append(material)
+
+        research = Adw.PreferencesGroup(title="Forskningsfråga",
+                                        description="Valfritt. Projektet prövar då en hypotes ur forskningsmappen, och resultatet "
+                                                    "skrivs tillbaka dit så att frågan kan gå vidare i Obsidian.")
+        chosen, research_widgets = self.question_fields(research)
+        body.append(research)
 
         place = Gtk.Box(spacing=6)
         where = label("", "caption", "dim-label", hexpand=True)
@@ -493,7 +549,9 @@ class Window(Adw.ApplicationWindow):
             path = target()
             method = next(key for key, button in method_buttons.items() if button.get_active())
             path.parent.mkdir(parents=True, exist_ok=True)
-            create(method, path, "skyddad" if protected.get_active() else "öppen")
+            choice = chosen()
+            create(method, path, "skyddad" if protected.get_active() else "öppen",
+                   choice["fråga"] or None, choice["hypotes"] or None, choice["medarbetare"] or None)
             self.nav.pop()
             self.open_project(path)
             self.toast("Projektet är skapat. Börja med att granska exemplets påståenden.")
@@ -501,7 +559,7 @@ class Window(Adw.ApplicationWindow):
         name.connect("changed", refresh)
         name.connect("entry-activated", lambda *_: self.guarded(make))
         refresh()
-        self.new_project_widgets = {"name": name, "protected": protected, "create": make}
+        self.new_project_widgets = {"name": name, "protected": protected, "create": make, **research_widgets}
         return page("Nytt projekt", body)
 
     # ---- projekt ---------------------------------------------------------
@@ -520,7 +578,52 @@ class Window(Adw.ApplicationWindow):
         if self.project_page is not None:
             self.render_project()
 
+    def question_group(self, state):
+        """Helheten: frågan, hypotesen och medarbetarna som projektet hör till."""
+        group = Adw.PreferencesGroup(title="Forskningsfrågan")
+        edit = lambda: self.nav.push(self.question_page())  # noqa: E731
+        q = forskningsmapp.question(state["fråga"]) if state["fråga"] else None
+        if not state["fråga"]:
+            group.add(row("Koppla till en forskningsfråga",
+                          "Då skrivs resultatet till forskningsmappen och frågan kan gå vidare i Obsidian.",
+                          on_activate=edit, icon="insert-link-symbolic"))
+            return group
+        group.set_header_suffix(flat_button("Ändra", edit))
+        if q:
+            phase = (q["fm"].get("fas") or "utforska").capitalize()
+            group.add(row(q["titel"], f"Fas: {phase} · öppnas i Obsidian",
+                          on_activate=lambda: self.open_note(q["ref"]), icon="dialog-question-symbolic"))
+        else:
+            group.add(row("Frågan finns inte i forskningsmappen", state["fråga"], on_activate=edit,
+                          icon="dialog-warning-symbolic"))
+        if state["hypotes"]:
+            group.add(row(state["hypotes"].rsplit("/", 1)[-1], "Hypotesen som prövas",
+                          on_activate=lambda: self.open_note(state["hypotes"]), icon="emblem-documents-symbolic"))
+        people = ", ".join(state["medarbetare"])
+        group.add(row(people or "Inga medarbetare angivna", "Medarbetare" if people else
+                      "Den som arbetar med underlaget tillsammans med dig. Ange under Ändra.", icon="system-users-symbolic"))
+        return group
+
+    def question_page(self):
+        body = column()
+        body.append(label("Projektet prövar en hypotes i en forskningsfråga. Resultatet, täckningsgraden och "
+                          "påståenden att ompröva skrivs till 04 EXPERIMENT i forskningsmappen.", "dim-label"))
+        group = Adw.PreferencesGroup()
+        chosen, widgets = self.question_fields(group, domain(self.project))
+        body.append(group)
+
+        def save():
+            choice = chosen()
+            link(self.project, choice["fråga"], choice["hypotes"], choice["medarbetare"])
+            self.nav.pop()
+            self.refresh_project()
+            self.toast("Projektet är kopplat till forskningsfrågan." if choice["fråga"] else "Kopplingen är borttagen.")
+        body.append(primary_button("Spara", lambda: self.guarded(save)))
+        self.question_widgets = {**widgets, "save": save}
+        return page("Forskningsfråga", body)
+
     def render_project(self):
+        sync(self.project)  # Forskningsmappen visar samma läge som appen.
         state = overview(self.project, domain)
         self.state = state
         action, title, why = next_step(state)
@@ -539,6 +642,7 @@ class Window(Adw.ApplicationWindow):
         actions.append(self.spinner)
         card.append(actions)
         body.append(card)
+        body.append(self.question_group(state))
 
         claims = Adw.PreferencesGroup(title="Påståenden",
                                       description="Meningar i manuset som är kopplade till data, filer eller källpassager.")
@@ -645,6 +749,8 @@ class Window(Adw.ApplicationWindow):
             self.open_report(self.state["körningar"][-1]["mapp"])
         elif action == "manus":
             self.open_path(self.project / "underlag/manus.md")
+        elif action == "fråga":
+            self.open_note(self.state["fråga"])
 
     def built(self, result, error):
         self.set_busy(False)
@@ -1013,6 +1119,18 @@ def screenshot(window, path):
     return True
 
 
+def testvault(vault):
+    """En forskningsmapp med en fråga och en hypotes, som ForskarOS Core skapar dem."""
+    (vault / "01 RIKTNING").mkdir(parents=True, exist_ok=True)
+    (vault / "02 HYPOTESER").mkdir(exist_ok=True)
+    (vault / "01 RIKTNING/Hypotesbyten.md").write_text(
+        "---\ntyp: forskningsfråga\nstatus: aktiv\nfas: utveckla\n---\n"
+        "# Byter elever hypotes efter saklig respons?\n", encoding="utf-8")
+    (vault / "02 HYPOTESER/Saklig respons.md").write_text(
+        '---\ntyp: hypotes\nfråga: "[[01 RIKTNING/Hypotesbyten]]"\n---\n# Saklig respons ger fler byten\n',
+        encoding="utf-8")
+
+
 def selftest(window, app):
     """Gå igenom alla vyer med ett riktigt projekt. Avslutar med kod 1 vid fel.
 
@@ -1033,10 +1151,15 @@ def selftest(window, app):
         widgets = window.new_project_widgets
         widgets["name"].set_text("Hypotesbyten efter återkoppling")
         widgets["protected"].set_active(True)
+        widgets["question"].set_selected(1)
+        widgets["hypothesis"].set_selected(1)
+        widgets["people"].set_text("Anna")
 
     def create_project():
         window.new_project_widgets["create"]()
         assert window.project is not None and window.state["skydd"] == "skyddad"
+        assert window.state["fråga"] == "01 RIKTNING/Hypotesbyten" and window.state["medarbetare"] == ["Anna"]
+        assert forskningsmapp.note_path(window.project).is_file(), "projektet syns i forskningsmappen"
         assert next_step(window.state)[0] == "granska"
 
     def review_first():
@@ -1059,6 +1182,17 @@ def selftest(window, app):
             return "vänta"
         assert window.state["körningar"], "ingen körning byggdes"
         assert next_step(window.state)[0] == "upprepa", next_step(window.state)
+        fields, _ = forskningsmapp.split_frontmatter(forskningsmapp.note_path(window.project).read_text(encoding="utf-8"))
+        assert fields["status"] == "genomfört" and fields["nivå"], fields
+
+    def open_question():
+        window.nav.push(window.question_page())
+
+    def save_question():
+        assert window.question_widgets["question"].get_selected() == 1
+        window.question_widgets["people"].set_text("Anna, Björn")
+        window.question_widgets["save"]()
+        assert window.state["medarbetare"] == ["Anna", "Björn"]
 
     def open_link():
         window.nav.push(window.link_page())
@@ -1107,7 +1241,7 @@ def selftest(window, app):
 
     steps = [("1-start", start), (None, fill_new), ("2-nytt-projekt", create_project),
              ("3-projekt", review_first), ("4-pastaende", confirm), (None, review_rest), (None, wait_build),
-             ("5-projekt-efter-korning", open_link), (None, fill_link), ("6-koppla-underlag", store_link),
+             ("5-projekt-efter-korning", open_question), ("10-forskningsfraga", save_question), (None, open_link), (None, fill_link), ("6-koppla-underlag", store_link),
              (None, tools), ("7-verktyg", changed_data), ("8-ompröva", reconsider), ("9-ompröva-påstående", None)]
 
     def tick():
@@ -1152,6 +1286,8 @@ def main(argv):
             test_dir = Path(next(args))
             os.environ["FORSKAROS_PROJEKTROT"] = str(test_dir / PROJEKTMAPP)
             os.environ["FORSKAROS_KONFIG"] = str(test_dir / "konfig")
+            os.environ["FORSKAROS_VAULT"] = str(test_dir / "ForskarOS")
+            testvault(test_dir / "ForskarOS")
     app = Adw.Application(application_id=APP_ID, flags=Gio.ApplicationFlags.NON_UNIQUE)
     holder = {}
 

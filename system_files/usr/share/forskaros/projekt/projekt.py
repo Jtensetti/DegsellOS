@@ -44,7 +44,44 @@ def domain(project):
     return manifest
 
 
-def create(method, project, protection="öppen"):
+def link(project, fråga=None, hypotes=None, medarbetare=None):
+    """Koppla projektet till en forskningsfråga och hypotes i forskningsmappen."""
+    path = project / "projekt.json"
+    manifest = domain(project)
+    for key, value in (("fråga", fråga), ("hypotes", hypotes)):
+        if value is not None:
+            if value:
+                manifest[key] = value.removesuffix(".md")
+            else:
+                manifest.pop(key, None)
+    if medarbetare is not None:
+        names = [n.strip() for n in (medarbetare.split(",") if isinstance(medarbetare, str) else medarbetare)]
+        manifest["medarbetare"] = [n for n in names if n]
+        if not manifest["medarbetare"]:
+            del manifest["medarbetare"]
+    if not path.exists():
+        manifest["id"] = str(uuid4())
+    tmp = path.with_name(".projekt.json.tmp")
+    tmp.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    tmp.replace(path)
+    sync(project)
+    return manifest
+
+
+def sync(project):
+    """Skriv projektets läge till forskningsmappen om projektet är kopplat till en fråga."""
+    from forskningsmapp import sync as write_note
+    from oversikt import overview
+    try:
+        manifest = domain(project)
+        if manifest.get("fråga"):
+            return write_note(project, overview(project, domain), manifest)
+    except (OSError, ValueError, KeyError):
+        pass  # Forskningsmappen är ett tillägg. Projektet fungerar utan den.
+    return False
+
+
+def create(method, project, protection="öppen", fråga=None, hypotes=None, medarbetare=None):
     if method not in METODER:
         raise ValueError("Välj en av metoderna " + ", ".join(METODER) + ".")
     if protection not in SKYDD:
@@ -65,6 +102,8 @@ def create(method, project, protection="öppen"):
     except BaseException:
         shutil.rmtree(project)
         raise
+    if fråga or medarbetare:
+        link(project, fråga, hypotes, medarbetare)
     return project
 
 
@@ -147,13 +186,19 @@ def run(project, lab=False):
                 os.environ.pop("FORSKAROS_SKYDD", None)
         write_crate(work, manifest)
         work.rename(runs / name)
+    sync(project)
     return runs / name
 
 
 def verify(folder):
     # Även äldre körprogram uppdaterar loggen och paketet en i taget.
-    with locked(folder):
-        _verify_locked(folder)
+    try:
+        with locked(folder):
+            _verify_locked(folder)
+    finally:
+        project = folder.parent.parent
+        if (project / "underlag").is_dir():
+            sync(project)
 
 
 def _verify_locked(folder):
@@ -198,6 +243,14 @@ def main():
     new.add_argument("mapp", type=Path)
     new.add_argument("--skydd", choices=list(SKYDD), default="öppen",
                      help="skyddad: analysen körs utan nätverk och utan hemkatalog, annars inte alls.")
+    new.add_argument("--fråga", help="Forskningsfrågan i forskningsmappen, t.ex. '01 RIKTNING/Min fråga'.")
+    new.add_argument("--hypotes", help="Hypotesen som projektet prövar, t.ex. '02 HYPOTESER/Hypotes 2026-11-19'.")
+    new.add_argument("--medarbetare", help="Namn, åtskilda med komma.")
+    tie = commands.add_parser("koppla", help="Koppla projektet till en forskningsfråga i forskningsmappen.")
+    tie.add_argument("mapp", type=Path)
+    tie.add_argument("--fråga", help="Tom sträng tar bort kopplingen.")
+    tie.add_argument("--hypotes")
+    tie.add_argument("--medarbetare")
     commands.add_parser("status", help="Visa skyddsnivå och körningarnas täckningsgrad.").add_argument("mapp", type=Path)
     pack = commands.add_parser("paketera", help="Skriv om körningens RO-Crate-metadata.")
     pack.add_argument("mapp", type=Path)
@@ -214,7 +267,10 @@ def main():
     review.add_argument("--avtryck", required=True, help="Avtrycket från belägg-kommandot.")
     args = parser.parse_args()
     if args.command == "skapa":
-        print(create(args.metod, args.mapp.resolve(), args.skydd))
+        print(create(args.metod, args.mapp.resolve(), args.skydd, args.fråga, args.hypotes, args.medarbetare))
+    elif args.command == "koppla":
+        manifest = link(args.mapp.resolve(), args.fråga, args.hypotes, args.medarbetare)
+        print(manifest.get("fråga") or "Projektet är inte kopplat till någon forskningsfråga.")
     elif args.command == "status":
         print(status(args.mapp.resolve()))
     elif args.command == "paketera":

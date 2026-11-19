@@ -223,6 +223,11 @@ function rowFilled(body, label) {
   return Boolean(row) && row.split('|').slice(2).some(c => c.trim());
 }
 
+/** Antal punkter med innehåll i en lista. */
+function listItems(text) {
+  return (String(text).match(/^\s*(?:[-*]|\d+\.)\s+\S/gm) || []).length;
+}
+
 /** Antal ord forskaren själv skrivit i en anteckning. */
 function ownWords(body) {
   return countWords(contentLines(stripFrontmatter(body).split('\n')).join('\n'));
@@ -254,6 +259,8 @@ function phaseRequirements(question, notes) {
     case 'utforska':
       return [
         req(countWords(section(question.body, 'Varför')) >= 30, 'Motiveringen till frågan är minst 30 ord'),
+        req(listItems(section(question.body, 'Det jag undrar')) >= 3, 'Minst tre saker du undrar över'),
+        req(section(question.body, 'Vem bryr sig'), 'Frågan anger vem som bryr sig om svaret'),
         req(kartor.some(k => filledRows(k.body, 'Utgångsfråga') >= 3), 'En perspektivkarta med minst tre ifyllda perspektiv'),
         req(kartor.some(k => rowFilled(k.body, 'Oväntat fält')), 'Perspektivkartan har ett perspektiv från ett oväntat fält'),
         req(kartor.some(k => section(k.body, 'Där perspektiven motsäger varandra')), 'Perspektivkartan anger var perspektiven motsäger varandra')
@@ -263,7 +270,8 @@ function phaseRequirements(question, notes) {
         req(hyps.length > 0, 'Minst en hypotes'),
         req(hyps.some(h => section(h.body, 'Etablerad kunskap')), 'Hypotesen anger vilken etablerad kunskap den bygger på'),
         req(hyps.some(h => section(h.body, 'Den ovanliga kombinationen')), 'Hypotesen anger vad som är nytt'),
-        req(hyps.some(h => section(h.body, 'Vilket etablerat antagande')), 'Hypotesen anger vilket etablerat antagande den utmanar')
+        req(hyps.some(h => section(h.body, 'Vilket etablerat antagande')), 'Hypotesen anger vilket etablerat antagande den utmanar'),
+        req(hyps.some(h => section(h.body, 'Vem företräder')), 'Hypotesen anger vem som företräder antagandet den utmanar')
       ];
     case 'välj':
       return [
@@ -276,11 +284,15 @@ function phaseRequirements(question, notes) {
     case 'pröva':
       return [
         req(of('motprov').some(m => section(m.body, 'Mitt svar')), 'Minst ett besvarat motprov'),
-        req(möten.some(m => section(m.body, 'Viktigaste invändningen')), 'Ett forskningsmöte där någon utanför projektet framfört en invändning')
+        req(möten.some(m => section(m.body, 'Viktigaste invändningen')), 'Ett forskningsmöte där någon utanför projektet framfört en invändning'),
+        req(möten.some(m => m.fm.företräder_antagandet === 'ja'), 'Ett forskningsmöte med någon som företräder det antagande hypotesen utmanar')
       ];
     case 'utveckla':
       return [
-        req(of('experiment').some(e => section(e.body, 'Resultat')), 'Minst ett experiment eller arbetsprov med resultat')
+        req(of('experiment').some(e => section(e.body, 'Resultat')), 'Minst ett experiment eller arbetsprov med resultat'),
+        req(section(question.body, 'Medarbetare') || möten.some(m => m.fm.form === 'samarbete')
+          || of('experiment').some(e => e.fm.medarbetare),
+          'Någon mer arbetar med frågan: en medarbetare eller ett möte om samarbete')
       ];
     case 'ompröva':
       return [
@@ -290,7 +302,12 @@ function phaseRequirements(question, notes) {
     case 'dela':
       return [
         req(sammanfattning >= 50 && sammanfattning <= 200, `En sammanfattning för någon utanför fältet, 50–200 ord (nu ${sammanfattning})`),
-        req(section(question.body, 'Delat med'), 'Resultatet har delats med någon som kan granska det')
+        req(section(question.body, 'Delat med'), 'Resultatet har delats med någon som kan granska det'),
+        req(section(question.body, 'Vilken fråga öppnar'), 'Frågan anger vilken ny fråga svaret öppnar'),
+        ...(of('experiment').some(e => e.fm.projekt)
+          ? [req(of('experiment').some(e => e.fm.projekt && e.fm.nivå === 'Återkörd'),
+            'Analysen bakom resultatet är upprepad med samma resultat (appen ForskarOS)')]
+          : [])
       ];
     default:
       return [];
@@ -406,6 +423,10 @@ function audit(notes, date) {
         `"${basename(m.path)}" har ${öppna} uppföljning(ar) som inte är gjorda.`, m.path));
     }
   }
+  if (möten180.length >= 3 && möten180.every(m => m.fm.krets === 'kärna')) {
+    out.push(finding('påminnelse', 'Bara kärnan',
+      `${möten180.length} forskningsmöten senaste halvåret, alla med den närmaste kretsen. Träffa någon i nätverket eller från ett annat fält.`));
+  }
   const personer = new Set(möten180.map(m => String(m.fm.deltagare || '').trim().toLowerCase()).filter(Boolean));
   if (möten180.length >= 3 && personer.size === 1) {
     out.push(finding('påminnelse', 'Samma person',
@@ -469,6 +490,13 @@ function audit(notes, date) {
           `Lägst skattad: ${svagastNamn}. Ingen övning för den senaste 30 dagarna.`));
       }
     }
+  }
+
+  // Detaljer och helhet: påståenden i appens projekt som behöver omprövas.
+  for (const e of of('experiment').filter(e => Number(e.fm.att_ompröva || 0) > 0)) {
+    const antal = Number(e.fm.att_ompröva);
+    out.push(finding('påminnelse', 'Påstående att ompröva',
+      `${antal === 1 ? 'Ett påstående' : `${antal} påståenden`} i "${basename(e.path)}" bygger på underlag som ändrats. Öppna projektet i appen ForskarOS.`, e.path));
   }
 
   // Tillit: öppna felrättningar.
@@ -664,6 +692,10 @@ ${source || ''}
 ## Vilket etablerat antagande utmanar hypotesen?
 
 
+## Vem företräder antagandet i dag?
+> En person, en skola eller en grupp som troligen skulle invända. Bjud in någon av dem till ett forskningsmöte i fasen Pröva.
+
+
 ## Prediktioner
 1.
 2.
@@ -805,10 +837,12 @@ ${source || ''}
   },
   meeting: {
     label: 'Forskningsmöte', folder: '07 SAMVERKAN', prefix: 'Möte',
-    render: ({ date, fråga }) => fm({ typ: 'forskningsmöte', datum: date, deltagare: '', kompetens: 'ämne', krets: 'nätverk', ny_kontakt: 'ja', fråga }) + `# Forskningsmöte
+    render: ({ date, fråga }) => fm({ typ: 'forskningsmöte', datum: date, deltagare: '', kompetens: 'ämne', krets: 'nätverk', ny_kontakt: 'ja', form: 'återkoppling', företräder_antagandet: 'nej', fråga }) + `# Forskningsmöte
 
 > deltagare: namn. kompetens: ämne, metod eller annat fält.
 > krets: kärna (handledare, nära forskningspartner) eller nätverk.
+> form: återkoppling (någon granskar ditt arbete) eller samarbete (ni arbetar med det tillsammans).
+> företräder_antagandet: ja om personen företräder det antagande hypotesen utmanar.
 
 ## Deltagare och expertområden
 
@@ -890,7 +924,21 @@ function questionNote({ date, titel, varför, status = 'aktiv' }) {
 ## Varför är frågan viktig?
 ${varför || ''}
 
+## Det jag undrar
+> Minst tre saker du inte vet än och vill veta.
+-
+-
+-
+
+## Vem bryr sig om svaret?
+> Vilka människor eller verksamheter har nytta av svaret, utanför ditt eget fält?
+
+
 ## Avgränsning
+
+
+## Medarbetare
+> De som arbetar med frågan tillsammans med dig, och vad de gör.
 
 
 ## Om frågan besvaras
@@ -901,6 +949,10 @@ ${varför || ''}
 
 
 ## Lärdomar
+
+
+## Vilken fråga öppnar svaret?
+> Det viktigaste med ett svar är nästa fråga. Den hamnar i idébanken när frågan avslutas.
 
 
 ## Sammanfattning för någon utanför fältet
@@ -1460,7 +1512,13 @@ module.exports = class ForskarOSPlugin extends Plugin {
     });
     const body = await this.app.vault.read(file);
     await this.app.vault.modify(file, appendPhaseLog(body, `${today()}: Avslutad i fasen ${phaseOf(q.fm.fas).namn}. Utfall: ${UTFALL[utfall]}. ${motivering}`));
-    new Notice(`"${basename(q.path)}" avslutad: ${UTFALL[utfall]}.`);
+    // Framtiden: frågan som svaret öppnar blir en idé att ta upp.
+    const nästa = section(body, 'Vilken fråga öppnar');
+    if (nästa) {
+      const path = await this.uniquePath('01 RIKTNING/Idébank', safeName(nästa.split('\n')[0]));
+      await this.app.vault.create(path, ideaNote({ date: today(), idé: `${nästa}\n\nFrån [[${q.path.replace(/\.md$/, '')}]].` }));
+    }
+    new Notice(`"${basename(q.path)}" avslutad: ${UTFALL[utfall]}.${nästa ? ' Nästa fråga ligger i idébanken.' : ''}`);
     this.refreshDashboard();
   }
 
